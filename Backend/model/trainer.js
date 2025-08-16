@@ -78,3 +78,5 @@ const adminSchema = new mongoose.Schema({
   },
 
 })
+const Trainer = mongoose.model('Trainer', adminSchema);
+export default Trainer;

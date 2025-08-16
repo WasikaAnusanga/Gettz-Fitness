@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import CustomerSupporter from "../model/customerSupporter.js";
+import logiAdminController from "./loggingController.js";
 
 
 dotenv.config();
@@ -64,43 +65,10 @@ customerSupporter.save()
                 });
 }
 export function loginCustomerSupporter(req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
 
-    CustomerSupporter.findOne({ email: email }).then((supporter) => {
-        if (supporter == null) {
-            res.status(404).json({
-                message: "Customer supporter not found"
-            });
-        } else {
-            const isPasswordCorrect = bcrypt.compareSync(password, supporter.password);
-            if (isPasswordCorrect) {
-                const supporterData = {
-                    email: supporter.email,
-                    firstName: supporter.firstName,
-                    lastName: supporter.lastName,
-                    role: supporter.role,
-                    supporterId: supporter.supporterId
-                };
-                const token = jwt.sign(supporterData, process.env.JWT_KEY)
-                res.status(200).json({
-                    message: "Login successful",
-                    data: supporterData,
-                    token: token
-                });
-            } else {
-                res.status(401).json({
-                    message: "Incorrect password"
-                });
-            }
-        }
-    }).catch((err) => {
-        res.status(500).json({
-            message: "Error logging in",
-            error: err.message
-        });
-    }
-    );
+    req.body.role ="customerSupporter";
+    return logiAdminController(req,res);
+
 }
 export function updateCustomerSupporter(req,res){
     CustomerSupporter.findOneAndUpdate({

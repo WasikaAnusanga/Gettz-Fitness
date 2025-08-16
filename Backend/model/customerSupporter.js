@@ -70,7 +70,7 @@ CustomerSupporterSchema.pre("save",async function(next){
     if(this.isNew){
         const counter = await Counter.findByIdAndUpdate(
             { _id: 'customerSupporterId' },
-            { $inc: { seq: 100 } },
+            { $inc: { seq: 1 } },
             { new: true, upsert: true }
         );
         this.supporterId = `Supporter${counter.seq}`;
