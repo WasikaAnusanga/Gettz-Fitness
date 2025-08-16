@@ -1,0 +1,83 @@
+import mongoose from 'mongoose';
+import validator from 'validator';
+
+const userSchema = new mongoose.Schema({
+    email:{
+        type :String,
+        required : [true, 'Please provide Valid email'],
+        unique :true,
+        validate:[validator.isEmail, 'Please provide a valid email'],
+        trim : true,
+        lowercase : true
+    },
+    firstName:{
+        type :String,
+        required : true
+    },
+    lastName:{
+        type :String,
+        required : true
+    },
+    password:{
+        type :String,
+        required : [true, 'Please provide a password'],
+        minlength : 8,
+    },
+    phone:{
+        type :String,
+        required : true,
+        default : "Not given"
+
+    },
+    height :{
+        type :String,
+        required : true,
+        default : "Not given"
+    },
+    weight :{
+        type :String,
+        required : true,
+        default : "Not given"
+    },
+   dob :{
+        type :Date,
+        required : true,
+        default : Date.now
+   },
+    profilePicture: {
+    type: String,
+    default: 'default-profile.jpg'
+    },
+
+    role:{
+        type :String,
+        required : true,
+        enum : ['user','member'],
+        default : "user"
+    },
+    point:{
+        type :Number,
+        default : 0,
+        required : true
+    },
+    isDisabled :{
+        type : Boolean,
+        default : false,
+        required : true
+    },
+    createdAt: {
+    type: Date,
+    default: Date.now
+    },
+    updatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  lastLogin:{
+    type: Date
+  },
+
+});
+const User = new mongoose.model('User', userSchema);
+export default User;
+
