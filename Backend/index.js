@@ -7,6 +7,7 @@ import verifyJWT from './middleware/auth.js';
 import userRouter from './routes/userRouter.js';
 import customerRouter from './routes/customerSupporterRouter.js';
 import trainerRouter from './routes/trainerRoute.js';
+import adminRouter from './routes/adminRoute.js';
 
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use(verifyJWT);
 app.use("/api/user",userRouter);
 app.use("/api/customerSupporter", customerRouter);
 app.use("/api/trainer", trainerRouter);
+app.use("/api/admin", adminRouter);
 
 
 
