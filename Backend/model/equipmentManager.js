@@ -47,3 +47,5 @@ const equipmentManagerSchema = new mongoose.Schema({
         type: String
     },
 })
+const EquipmentManager = mongoose.model('EquipmentManager',equipmentManagerSchema)
+export default EquipmentManager;

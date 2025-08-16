@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
+    adminId:{
+        type: String,
+        unique: true
+    },
     email:{
         type :String,
         required : [true, 'Please provide Valid email'],
@@ -29,36 +33,14 @@ const userSchema = new mongoose.Schema({
         default : "Not given"
 
     },
-    height :{
-        type :String,
-        required : true,
-        default : "Not given"
-    },
-    weight :{
-        type :String,
-        required : true,
-        default : "Not given"
-    },
-   dob :{
-        type :Date,
-        required : true,
-        default : Date.now
-   },
     profilePicture: {
     type: String,
     default: 'default-profile.jpg'
     },
-
     role:{
         type :String,
         required : true,
-        enum : ['user','member'],
-        default : "user"
-    },
-    point:{
-        type :Number,
-        default : 0,
-        required : true
+        default : "admin"
     },
     isDisabled :{
         type : Boolean,
@@ -78,6 +60,6 @@ const userSchema = new mongoose.Schema({
   },
 
 });
-const User = new mongoose.model('User', userSchema);
-export default User;
+const Admin = new mongoose.model('Admin', adminSchema);
+export default Admin;
 
