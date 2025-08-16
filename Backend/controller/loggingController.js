@@ -1,132 +1,42 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import Admin from "../model/admin";
+import Admin from "../model/admin.js";
+import EquipmentManager from "../model/equipmentManager.js";
+import Trainer from "../model/trainer.js";
+import CustomerSupporter from "../model/customerSupporter.js";
 dotenv.config();
 
-export default function logiAdminController(req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
-    const role = req.body.role;
+function norm(r) { return String(r || '').replace(/\s+/g, '').toLowerCase(); }
 
-    if(role == "Admin"){
-        Admin.findOne({
-            email : email
-        }).then((admin)=>{
-            if(admin == null){
-                return res.status(404).json({
-                    message: "Admin not found"
-                })
-            }else{
-                const isPasswordValid = bcrypt.compareSync(password, admin.password);
-                if(isPasswordValid){
-                    const AdminData = {
-                        email : admin.email,
-                        firstName : admin.firstName,
-                        lastName : admin.lastName,
-                        phone : admin.phone,
-                        profilePicture : admin.profilePicture,
-                        role : admin.role,
-                        isDisabled : admin.isDisabled,
-                        adminId : admin.adminId
-                    };
-                    const token = jwt.sign(AdminData,process.env.JWT_KEY)
-                    res.json({
-                        message: "Login successful",
-                        token: token,
-                        user: AdminData
-                    });
-                }else{
-                    return res.status(401).json({
-                        message: "Invalid password"
-                    });
-                }
-            }
-        })
+export default async function loginController(req, res) {
+  try {
+    const { email, password } = req.body;
+    const roleKey = norm(req.body.role);
 
-    }else if(role == "Equipment Manager"){
-        EquipmentManager.findOne({
-            email : email
-        }).then((equipmentManager)=>{
-            if(equipmentManager == null){
-                return res.status(404).json({
-                    message: "Equipment Manager not found"
-                })
-            }else{
-                const isPasswordValid = bcrypt.compareSync(password, equipmentManager.password);
-                if(isPasswordValid){
-                    const EquipmentManagerData = {
-                        name : equipmentManager.name,
-                        email : equipmentManager.email,
-                        phoneNumber : equipmentManager.phoneNumber,
-                        address : equipmentManager.address,
-                        profilePicture : equipmentManager.profilePicture,
-                        role : equipmentManager.role,
-                        equipmentList : equipmentManager.equipmentList,
-                        shiftSchedule : equipmentManager.shiftSchedule,
-                        maintenanceSchedule : equipmentManager.maintenanceSchedule,
-                        equipmentManagerId : equipmentManager.equipmentManagerId,
-                        isDisabled : equipmentManager.isDisabled,
-                        createdAt : equipmentManager.createdAt,
-                        updatedAt : equipmentManager.updatedAt
+    let Model, notFoundMsg;
+    if (roleKey === 'admin')                { Model = Admin; notFoundMsg = 'Admin not found'; }
+    else if (roleKey === 'equipmentmanager'){ Model = EquipmentManager; notFoundMsg = 'Equipment Manager not found'; }
+    else if (roleKey === 'trainer')         { Model = Trainer; notFoundMsg = 'Trainer not found'; }
+    else if (roleKey === 'customersupporter'){ Model = CustomerSupporter; notFoundMsg = 'Customer Supporter not found'; }
+    else return res.status(400).json({ message: 'Unsupported role' });
 
-                    };
-                    const token = jwt.sign(EquipmentManagerData,process.env.JWT_KEY)
-                    res.json({
-                        message: "Login successful",
-                        token: token,
-                        user: EquipmentManagerData
-                    });
-                }else{
-                    return res.status(401).json({
-                        message: "Invalid password"
-                    });
-                }
-            }
-        })
-    }else if(role == "Trainer"){
-        Trainer.findOne({
-            email : email
-        }).then((trainer)=>{
-            if(trainer == null){
-                return res.status(404).json({
-                    message: "Trainer not found"
-                })
-            }else{
-                const isPasswordValid = bcrypt.compareSync(password, trainer.password);
-                if(isPasswordValid){
-                    const TrainerData = {
-                        firstName : trainer.firstName,
-                        lastName : trainer.lastName,
-                        email : trainer.email,
-                        phone : trainer.phone,
-                        profilePicture : trainer.profilePicture,
-                        role : trainer.role,
-                        trainerId : trainer.trainerId,
-                        specialization : trainer.specialization,
-                        certifications : trainer.certifications,
-                        experienceYears : trainer.experienceYears,
-                        rating : trainer.rating,
-                        reviews : trainer.reviews,
-                        isActive : trainer.isActive,
-                        isDisabled : trainer.isDisabled
+    const user = await Model.findOne({ email }).select('+password');
+    if (!user) return res.status(404).json({ message: notFoundMsg });
 
-                    };
-                    const token = jwt.sign(TrainerData,process.env.JWT_KEY)
-                    res.json({
-                        message: "Login successful",
-                        token: token,
-                        user: TrainerData
-                    });
-                }else{
-                    return res.status(401).json({
-                        message: "Invalid password"
-                    });
-                }
-            }
-        })
-    }
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok)  return res.status(401).json({ message: 'Invalid password' });
 
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_KEY);
+
+    const safe = user.toObject();
+    delete safe.password;
+    return res.json({ message: 'Login successful', token, user: safe });
+  } catch (err) {
+    console.error('login error:', err);
+    return res.status(500).json({ message: 'Login failed' });
+  }
 }
+
 
             

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose' ;
 
 const adminSchema = new mongoose.Schema({
-//Admin requirements 
     trainerId:{
         type: String,
         unique: true
