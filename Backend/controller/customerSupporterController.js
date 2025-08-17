@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import CustomerSupporter from "../model/customerSupporter.js";
-import logiAdminController from "./loggingController.js";
+import loggingController from "./loggingController.js";
 
 
 dotenv.config();
@@ -65,12 +65,22 @@ customerSupporter.save()
                 });
 }
 export function loginCustomerSupporter(req, res) {
-
-    req.body.role ="customerSupporter";
-    return logiAdminController(req,res);
-
+  req.body.role = 'customerSupporter';  
+  return loggingController(req, res);
 }
 export function updateCustomerSupporter(req,res){
+    if(req.user == null){
+        res.status(403).json({
+            message: "Please login as admin to update a customer supporter"
+        });
+        return;
+    }
+    if(req.user.role != "admin"|| req.user.role != "customerSupporter"){
+        res.status(403).json({
+            message: "You are not authorized to update a customer supporter"
+        });
+        return;
+    }
     CustomerSupporter.findOneAndUpdate({
         supporterId : req.params.supporterId
     },req.body).then(
@@ -107,6 +117,18 @@ export async function getCustomerSupporterById(req,res){
     });
 }
 export function deleteCustomerSupporter(req, res) {
+    if(req.user == null){
+        res.status(403).json({
+            message: "Please login as admin to delete a customer supporter"
+        });
+        return;
+    }
+    if(req.user.role != "admin"){
+        res.status(403).json({
+            message: "You are not authorized to delete a customer supporter"
+        });
+        return;
+    }
     const supporterId = req.params.id;
     CustomerSupporter.findOneAndDelete({ supporterId: supporterId }).then(
             (supporter) => {

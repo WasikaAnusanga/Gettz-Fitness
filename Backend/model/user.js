@@ -55,15 +55,17 @@ const userSchema = new mongoose.Schema({
         enum : ['user','member'],
         default : "user"
     },
+    bmi:{
+        type :Number,
+        default : 0,
+    },
     point:{
         type :Number,
         default : 0,
-        required : true
     },
     isDisabled :{
         type : Boolean,
         default : false,
-        required : true
     },
     createdAt: {
     type: Date,

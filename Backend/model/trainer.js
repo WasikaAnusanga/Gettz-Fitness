@@ -1,7 +1,7 @@
 import mongoose from 'mongoose' ;
+import Counter from './counter.js';
 
-const adminSchema = new mongoose.Schema({
-//Admin requirements 
+const trainerSchema = new mongoose.Schema({
     trainerId:{
         type: String,
         unique: true
@@ -78,5 +78,16 @@ const adminSchema = new mongoose.Schema({
   },
 
 })
-const Trainer = mongoose.model('Trainer', adminSchema);
+trainerSchema.pre("save",async function(next){
+    if(this.isNew){
+        const counter = await Counter.findByIdAndUpdate(
+            { _id: 'trainerId' },
+            { $inc: { seq: 1 } },
+            { new: true, upsert: true }
+        );
+        this.trainerId = `trainer ${counter.seq}`;
+    }
+    next();
+})
+const Trainer = mongoose.model('Trainer', trainerSchema);
 export default Trainer;

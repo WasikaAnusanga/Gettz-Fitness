@@ -6,6 +6,10 @@ import cors from 'cors';
 import verifyJWT from './middleware/auth.js';
 import userRouter from './routes/userRouter.js';
 import customerRouter from './routes/customerSupporterRouter.js';
+import trainerRouter from './routes/trainerRoute.js';
+import adminRouter from './routes/adminRoute.js';
+import loggingRouter from './routes/loggingRoute.js';
+import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
 
@@ -30,6 +34,10 @@ app.use(verifyJWT);
 
 app.use("/api/user",userRouter);
 app.use("/api/customerSupporter", customerRouter);
+app.use("/api/trainer", trainerRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/logging",loggingRouter);
+app.use("/api/equipmentManager",equipmentManagerRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
