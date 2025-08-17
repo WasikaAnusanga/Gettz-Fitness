@@ -8,6 +8,8 @@ import userRouter from './routes/userRouter.js';
 import customerRouter from './routes/customerSupporterRouter.js';
 import trainerRouter from './routes/trainerRoute.js';
 import adminRouter from './routes/adminRoute.js';
+import loggingRouter from './routes/loggingRoute.js';
+import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 
 
 dotenv.config();
@@ -32,6 +34,8 @@ app.use("/api/user",userRouter);
 app.use("/api/customerSupporter", customerRouter);
 app.use("/api/trainer", trainerRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/logging",loggingRouter);
+app.use("/api/equipmentManager",equipmentManagerRouter);
 
 
 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Counter from './counter.js';
 
 const equipmentManagerSchema = new mongoose.Schema({
     equipmentManagerId:{
@@ -46,6 +47,18 @@ const equipmentManagerSchema = new mongoose.Schema({
     maintenanceSchedule: {
         type: String
     },
+});
+equipmentManagerSchema.pre("save",async function(next){
+    if(this.isNew){
+        const counter = await Counter.findByIdAndUpdate(
+            { _id: 'equipmentManagerId' },
+            { $inc: { seq: 1 } },
+            { new: true, upsert: true }
+        );
+        this.equipmentManagerId = `equipmentManagerId ${counter.seq}`;
+    }
+    next();
 })
 const EquipmentManager = mongoose.model('EquipmentManager',equipmentManagerSchema)
 export default EquipmentManager;
+
