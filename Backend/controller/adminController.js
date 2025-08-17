@@ -40,4 +40,16 @@ export function adminLoging(req,res){
     req.body.role = 'admin';  
     return loggingController(req, res);
 }
+export async function getAllAdmins(req, res) {
+    try {
+        const admins = await Admin.find();
+        res.json(admins);
+    } catch (err) {
+        res.status(500).json({
+            message: "Error retrieving admins",
+            error: err.message
+        });
+    }
+}
+
 
