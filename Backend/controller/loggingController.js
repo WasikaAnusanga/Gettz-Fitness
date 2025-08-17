@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import Admin from "../model/admin";
+import Admin from "../model/admin.js";
 dotenv.config();
 
 export default function logiAdminController(req, res) {
