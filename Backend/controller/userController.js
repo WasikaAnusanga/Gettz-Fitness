@@ -64,6 +64,7 @@ export function loginUser(req, res) {
             if(isPasswordCorrect){
                
                 const userData = {
+                    _id:user._id,          //Mata oni meka.(Wasika)
                     email : user.email,
                     firstName : user.firstName,
                     lastName : user.lastName,
