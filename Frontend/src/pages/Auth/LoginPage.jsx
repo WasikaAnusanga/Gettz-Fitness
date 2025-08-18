@@ -1,84 +1,107 @@
+
 import { useState } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import loginImage from "./loging.jpg"; 
 
-export default function LoginPage(){
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
 
-        const [email,setEmail] = useState("");
-        const [password, setPassword]= useState("");
-        const [loading, setLoading ] = useState(false)
-        const navigate = useNavigate();
+  function onSubmit(e) {
+    e.preventDefault();
+    // TODO: integrate with your auth API
+    console.log({ email, password, remember });
+  }
 
-    function handleLoging(){
-
-        setLoading(true)
-
-        console.log("Email : ",email);
-        console.log("Password : ",password);
-
-        axios.post(import.meta.env.VITE_BACKEND_URL+"/api/user/login",{
-            email : email,
-            password : password
-        }).then((response) => {
-
-        if (response.data.message === "Login successful") {
-        
-        console.log("Loging Success ", response.data);
-        toast.success("Login Success");
-        localStorage.setItem("token",response.data.token)
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        const user = response.data.user;
-        if(user.role === "Mmeber"){
-
-            navigate("/member/dashboard")
-
-        }else{
-            navigate("/")
-        }
-        setLoading(false)
-    } 
-    else {
-
-        toast.error(response.data.message || "Login Failed");
-    }
-})
-
-
-        console.log("Loging button click")
-    }
-    return(
-    <div className="flex flex-col md:flex-row w-full min-h-screen">
-      <div className="hidden md:flex md:w-1/2 bg-red-600 relative overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-red-900/80 to-transparent"></div>
-        <img
-          src="https://images.unsplash.com/photo-1554344728-7560c38c1720?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Gym Equipment"
-          className="object-cover w-full h-full"
-        />
-      </div>
-      <div className=" w-[50%] h-full flex justify-center items-center">
-                <div className="w-[600px] h-[700px]  shadow-xl rounded-xl flex flex-col justify-center items-center">
-                    Email :- 
-                    <input type="email" placeholder="Email" className="w-[400px] h-[50px] border border-black rounded-xl text-center m-[5px]" onChange={(e)=>{setEmail(e.target.value)}}/>
-                    <h4 className="items-left">Password:- </h4>
-                    <input type="password" placeholder="password" className="w-[400px] h-[50px] border border-black rounded-xl text-center m-[5px]" onChange={(e)=>{setPassword(e.target.value)}}/>
-                    <button className="w-[400px] h-[50px] bg-green-400 text-white rounded-xl cursor-pointer"onClick={handleLoging}>Log In
-                        {loading?"Loading...":"Loging"}
-                    </button>
-                    <p className="text-blue-400 m-2">
-                        Don't have an account yet? &nbsp;
-                        <span className="text-green-500 cursor-pointer hover:text-green-700">
-                           <Link to={"/register"}>Register Now</Link> 
-                        </span>
-
-                    </p>
+  return (
+    <div className="min-h-screen w-full bg-white text-black">
+      <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
+        {/* LEFT: image only */}
+        <div className="relative hidden md:block">
+          <img 
+            src={loginImage} // <-- put your image here
+            alt="Gym illustration"
+            className="h-full w-full object-cover "
+          />
+          {/* optional small logo on top-left */}
+          <div className="absolute left-0 top-0 p-6 md:p-8">
+            <div className="flex items-center gap-2">
+              <div className="h-9 w-9 rounded-full bg-white/90" />
+              <div className="text-black drop-shadow-sm">
+                <div className="text-xl font-bold leading-tight">
+                  Gettz <span className="text-red-600">Fitness</span>
                 </div>
-
+                <div className="text-xs text-neutral-700">Gym Management</div>
+              </div>
             </div>
-
+          </div>
         </div>
-  )
+
+        {/* RIGHT: form */}
+        
+        <div className="flex items-center justify-center px-6 py-12 md:px-14">
+          <div className="w-full max-w-md rounded-[20px]">
+            <h1 className="text-4xl font-bold tracking-tight">Login</h1>
+            <p className="mt-3 text-sm text-neutral-600">
+              Don’t have an account?{" "}
+              <Link to="/signup" className="font-medium text-red-600 hover:underline">
+                Create your account
+              </Link>
+            </p>
+
+            <form onSubmit={onSubmit} className="mt-8 space-y-5">
+              <div>
+                <input
+                  type="email"
+                  placeholder="Username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-full border border-neutral-200 bg-white px-5 py-3 text-sm outline-none placeholder:text-neutral-400 focus:border-red-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-full border border-neutral-200 bg-white px-5 py-3 text-sm outline-none placeholder:text-neutral-400 focus:border-red-500"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-4 w-4 accent-red-600"
+                  />
+                  <span className="text-neutral-600">Remember Me</span>
+                </label>
+                <Link to="/forgot-password" className="text-neutral-500 hover:text-black">
+                  Forgot Password?
+                </Link>
+              </div>
+
+            <center>
+              <button
+                type="submit"
+                className="w-75 mt-1.5 rounded-full bg-red-600 px-6 py-3 text-white transition hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+              >
+                Login
+              </button>
+              </center>
+              <div className="pt-2 text-center text-sm text-neutral-500">Or Login with</div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
+
