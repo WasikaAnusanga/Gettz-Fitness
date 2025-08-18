@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-import LoginPage from './pages/loginPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import LoginPage from './pages/Auth/LoginPage'
 
 
 
