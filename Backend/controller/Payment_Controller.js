@@ -14,8 +14,8 @@ export function createPayment(req,res){
     
 
     const merchant_id = 1231699
-    const return_url = "URL to redirect users when payment is approved"
-    const cancel_url = "URL to redirect users when user cancel the payment"
+    const return_url = "https://70d17c57fbec.ngrok-free.app"
+    const cancel_url = "https://70d17c57fbec.ngrok-free.app"
     const notify_url =  "https://70d17c57fbec.ngrok-free.app/api/pay/verifyPayment"
     const first_name = "Wasika"
     const last_name = "Anusanga"
@@ -24,7 +24,7 @@ export function createPayment(req,res){
     const address = "Matara"
     const city = "Matara"
     const country = "Sri Lanka"
-    const order_id = '68a0cf7d7fba38523b7a3432'
+    const order_id = '68a0cf7d7fba38523b7a3432'+Date.now()
     const items = "Subscription Fees"
     const currency ="LKR"
     const amount = 10000
@@ -42,7 +42,7 @@ export function createPayment(req,res){
             
             const paymentData={
                 subscription_id:subId,
-                user_id:req.user._id,
+                user_id:sub.user_id,
                 amount:sub.plan_id.price,
                 currency:"LKR",
                 status:"pending",
