@@ -10,6 +10,8 @@ import trainerRouter from './routes/trainerRoute.js';
 import adminRouter from './routes/adminRoute.js';
 import loggingRouter from './routes/loggingRoute.js';
 import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
+import subscriptionRouter from './routes/subscriptionRouter.js';
+import planRouter from './routes/plansRouter.js';
 
 
 dotenv.config();
@@ -37,7 +39,8 @@ app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
-
+app.use("/api/plan",planRouter);
+app.use("/api/sub",subscriptionRouter);
 
 app.listen(3000, () =>{
     console.log('Server is running on port 3000');
