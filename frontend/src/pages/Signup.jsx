@@ -1,21 +1,26 @@
-
+// src/pages/SignupPage.jsx
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, User, Phone, Calendar, Ruler, Weight, Image as ImageIcon } from "lucide-react";
+import {
+  Eye, EyeOff, Mail, Lock, User, Phone, Calendar, Ruler, Weight, Image as ImageIcon
+} from "lucide-react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import meadiaUploader from "../utils/mediaUpload"; 
+import meadiaUpload from "../utils/mediaUpload"; // your Supabase uploader (default export)
 
 import loginBg from "../assets/loging.jpg";
 import GymLogo from "../assets/GymLogo.jpg";
 
 export default function SignupPage() {
   const navigate = useNavigate();
+
+  // UI state
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // form fields
   const [form, setForm] = useState({
     email: "",
     firstName: "",
@@ -25,14 +30,15 @@ export default function SignupPage() {
     height: "",
     weight: "",
     dob: "",
-    profilePicture: "",     
+    profilePicture: "",     // optional URL fallback
     role: "user",
   });
 
-
+  // image upload state
   const [profileFile, setProfileFile] = useState(null);
   const [preview, setPreview] = useState("");
 
+  // BMI (auto)
   const bmi = useMemo(() => {
     const h = parseFloat(form.height) / 100;
     const w = parseFloat(form.weight);
@@ -41,6 +47,7 @@ export default function SignupPage() {
     return Number.isFinite(v) ? Number(v.toFixed(1)) : 0;
   }, [form.height, form.weight]);
 
+  // handlers
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -57,14 +64,18 @@ export default function SignupPage() {
     const e = {};
     if (!form.email) e.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email";
+
     if (!form.firstName) e.firstName = "First name is required";
     if (!form.lastName) e.lastName = "Last name is required";
+
     if (!form.password) e.password = "Password is required";
     else if (form.password.length < 8) e.password = "Minimum 8 characters";
+
     if (!form.phone) e.phone = "Phone is required";
     if (!form.height) e.height = "Height is required";
     if (!form.weight) e.weight = "Weight is required";
     if (!form.dob) e.dob = "Date of birth is required";
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -77,13 +88,13 @@ export default function SignupPage() {
     try {
       setLoading(true);
 
-     
+      // 1) Upload image to Supabase if a file was selected
       let profilePictureUrl = form.profilePicture?.trim() || "";
       if (profileFile) {
-        profilePictureUrl = await meadiaUploader(profileFile); 
+        profilePictureUrl = await meadiaUpload(profileFile); // returns public URL
       }
 
-      
+      // 2) Build payload
       const payload = {
         email: form.email.trim().toLowerCase(),
         firstName: form.firstName.trim(),
@@ -99,21 +110,24 @@ export default function SignupPage() {
         point: 0,
       };
 
-      const { data } = await axios.post(
+      // 3) Send to backend
+      const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/user/register`,
         payload
       );
+      const data = res?.data ?? {};
+      const msg = String(data.message || "").toLowerCase();
 
-      const success =
-        data?.success === true ||
-        (typeof data?.message === "string" && data.message.toLowerCase().includes("success")) ||
-        Boolean(data?.user);
+      // Robust success detector (handles “sucessfully” typos & variants)
+      const isSuccess =
+        data.success === true ||
+        Boolean(data.user || data._id) ||
+        /succ(e)?ss|sucess|saved|created/.test(msg);
 
-      if (success) {
-        toast.success(data?.message || "Account created successfully");
-        
+      if (isSuccess) {
+        toast.success(data.message || "Account created successfully");
 
-        
+        // reset & redirect
         setForm({
           email: "",
           firstName: "",
@@ -129,9 +143,9 @@ export default function SignupPage() {
         setProfileFile(null);
         setPreview("");
 
-        navigate("/login", { replace: true }); 
+        navigate("/login", { replace: true });
       } else {
-        toast.error(data?.message || "Signup failed");
+        toast.error(data.message || "Signup failed");
       }
     } catch (err) {
       console.error("Signup error:", err);
@@ -143,7 +157,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen w-full bg-white text-black grid grid-cols-1 lg:grid-cols-2">
-      
+      {/* Left hero */}
       <div className="relative hidden lg:flex items-center justify-center overflow-hidden">
         <img src={loginBg} alt="Gym Background" className="absolute inset-0 h-full w-full object-cover" />
         <div className="relative z-10 text-center text-white bg-black/40 p-10 rounded-3xl">
@@ -153,8 +167,13 @@ export default function SignupPage() {
         </div>
       </div>
 
-      
-      <motion.section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="flex items-center justify-center p-6 sm:p-10 bg-white">
+      {/* Right: form */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="flex items-center justify-center p-6 sm:p-10 bg-white"
+      >
         <div className="w-full max-w-xl">
           <div className="mb-8 text-center lg:hidden">
             <img src={GymLogo} alt="Gettz Fitness Logo" className="mx-auto h-16 mb-4" />
@@ -164,85 +183,126 @@ export default function SignupPage() {
 
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-lg">
             <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+              {/* Email */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Email</label>
-                <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.email ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.email ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Mail className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="email" type="email" value={form.email} onChange={onChange} placeholder="you@gettz.fit" className="w-full bg-transparent py-1.5 text-sm outline-none placeholder:text-gray-400" />
+                  <input
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={onChange}
+                    placeholder="you@gettz.fit"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none placeholder:text-gray-400"
+                  />
                 </div>
                 {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
               </div>
 
-            
+              {/* First / Last */}
               <div>
                 <label className="block text-sm font-medium">First name</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.firstName ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.firstName ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <User className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="firstName" value={form.firstName} onChange={onChange} placeholder="John" className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input name="firstName" value={form.firstName} onChange={onChange} placeholder="John"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium">Last name</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.lastName ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.lastName ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <User className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="lastName" value={form.lastName} onChange={onChange} placeholder="Doe" className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input name="lastName" value={form.lastName} onChange={onChange} placeholder="Doe"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
               </div>
 
-             
+              {/* Password */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Password</label>
-                <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.password ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.password ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Lock className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="password" type={showPassword ? "text" : "password"} value={form.password} onChange={onChange} placeholder="At least 8 characters" className="w-full bg-transparent py-1.5 text-sm outline-none" />
-                  <button type="button" onClick={() => setShowPassword((s) => !s)} className="ml-2 inline-flex items-center justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={onChange}
+                    placeholder="At least 8 characters"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="ml-2 inline-flex items-center justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100"
+                  >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
               </div>
 
-             
+              {/* Phone */}
               <div>
                 <label className="block text-sm font-medium">Phone</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.phone ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.phone ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="phone" value={form.phone} onChange={onChange} placeholder="07xxxxxxxx" className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input name="phone" value={form.phone} onChange={onChange} placeholder="07xxxxxxxx"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
               </div>
 
-             
+              {/* Height / Weight */}
               <div>
                 <label className="block text-sm font-medium">Height (cm)</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.height ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.height ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Ruler className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="height" value={form.height} onChange={onChange} placeholder="170" className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input name="height" value={form.height} onChange={onChange} placeholder="170"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.height && <p className="text-xs text-red-500 mt-1">{errors.height}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium">Weight (kg)</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.weight ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.weight ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Weight className="mr-2 h-4 w-4 text-gray-400" />
-                  <input name="weight" value={form.weight} onChange={onChange} placeholder="70" className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input name="weight" value={form.weight} onChange={onChange} placeholder="70"
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.weight && <p className="text-xs text-red-500 mt-1">{errors.weight}</p>}
               </div>
 
+              {/* DOB */}
               <div>
                 <label className="block text-sm font-medium">Date of Birth</label>
-                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${errors.dob ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"}`}>
+                <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                  errors.dob ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                }`}>
                   <Calendar className="mr-2 h-4 w-4 text-gray-400" />
-                  <input type="date" name="dob" value={form.dob} onChange={onChange} className="w-full bg-transparent py-1.5 text-sm outline-none" />
+                  <input type="date" name="dob" value={form.dob} onChange={onChange}
+                    className="w-full bg-transparent py-1.5 text-sm outline-none" />
                 </div>
                 {errors.dob && <p className="text-xs text-red-500 mt-1">{errors.dob}</p>}
               </div>
 
-              
+              {/* Profile Picture Upload (file or URL) */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Profile picture (optional)</label>
                 <div className="mt-1 flex items-center gap-3">
@@ -267,12 +327,12 @@ export default function SignupPage() {
                 )}
               </div>
 
-             
+              {/* BMI note */}
               <div className="md:col-span-2 text-xs text-gray-500">
                 BMI (auto): <span className="font-medium text-gray-700">{bmi}</span>
               </div>
 
-              
+              {/* Submit */}
               <div className="md:col-span-2">
                 <motion.button
                   whileTap={{ scale: 0.98 }}
@@ -291,14 +351,16 @@ export default function SignupPage() {
                 </motion.button>
 
                 <p className="mt-3 text-center text-sm text-gray-600">
-                  Already have an account? <Link to="/login" className="text-red-600 hover:underline">Sign in</Link>
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-red-600 hover:underline">Sign in</Link>
                 </p>
               </div>
             </form>
           </div>
 
           <p className="mt-6 text-center text-[11px] text-gray-500">
-            By continuing, you agree to our <a className="underline" href="#">Terms</a> and <a className="underline" href="#">Privacy Policy</a>.
+            By continuing, you agree to our <a className="underline" href="#">Terms</a> and{" "}
+            <a className="underline" href="#">Privacy Policy</a>.
           </p>
         </div>
       </motion.section>
