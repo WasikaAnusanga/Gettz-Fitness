@@ -19,7 +19,16 @@ export async  function registerTrainer(req,res){
         });
         return;
     }
-    const trainer = new Trainer(req.body);
+    const hashedPassword = bcrypt.hashSync(req.body.password,10);
+    console.log(hashedPassword);
+    const trainer = new Trainer({
+        name:req.body.name,
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
+        password: hashedPassword,
+        profilePicture: req.body.profilePicture || 'default-profile.jpg',
+        role: req.body.role || 'trainer'
+    });
     try{
         await trainer.save();
         res.status(201).json({
