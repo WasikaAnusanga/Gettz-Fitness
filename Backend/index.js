@@ -12,6 +12,9 @@ import loggingRouter from './routes/loggingRoute.js';
 import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
+import equipmentRouter from './routes/equipmentRoute.js';
+
+
 
 
 dotenv.config();
@@ -38,6 +41,8 @@ app.use("/api/trainer", trainerRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
+
+app.use("/api/equipment",equipmentRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
