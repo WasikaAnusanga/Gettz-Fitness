@@ -1,4 +1,4 @@
-// src/pages/SignupPage.jsx
+
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import meadiaUpload from "../utils/mediaUpload"; // your Supabase uploader (default export)
+import meadiaUpload from "../utils/mediaUpload"; 
 
 import loginBg from "../assets/loging.jpg";
 import GymLogo from "../assets/GymLogo.jpg";
@@ -15,12 +15,12 @@ import GymLogo from "../assets/GymLogo.jpg";
 export default function SignupPage() {
   const navigate = useNavigate();
 
-  // UI state
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // form fields
+  
   const [form, setForm] = useState({
     email: "",
     firstName: "",
@@ -30,15 +30,14 @@ export default function SignupPage() {
     height: "",
     weight: "",
     dob: "",
-    profilePicture: "",     // optional URL fallback
+    profilePicture: "",     
     role: "user",
   });
 
-  // image upload state
+ 
   const [profileFile, setProfileFile] = useState(null);
   const [preview, setPreview] = useState("");
 
-  // BMI (auto)
   const bmi = useMemo(() => {
     const h = parseFloat(form.height) / 100;
     const w = parseFloat(form.weight);
@@ -47,7 +46,7 @@ export default function SignupPage() {
     return Number.isFinite(v) ? Number(v.toFixed(1)) : 0;
   }, [form.height, form.weight]);
 
-  // handlers
+ 
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -88,13 +87,13 @@ export default function SignupPage() {
     try {
       setLoading(true);
 
-      // 1) Upload image to Supabase if a file was selected
+
       let profilePictureUrl = form.profilePicture?.trim() || "";
       if (profileFile) {
-        profilePictureUrl = await meadiaUpload(profileFile); // returns public URL
+        profilePictureUrl = await meadiaUpload(profileFile); 
       }
 
-      // 2) Build payload
+  
       const payload = {
         email: form.email.trim().toLowerCase(),
         firstName: form.firstName.trim(),
@@ -110,7 +109,7 @@ export default function SignupPage() {
         point: 0,
       };
 
-      // 3) Send to backend
+      
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/user/register`,
         payload
@@ -118,7 +117,7 @@ export default function SignupPage() {
       const data = res?.data ?? {};
       const msg = String(data.message || "").toLowerCase();
 
-      // Robust success detector (handles “sucessfully” typos & variants)
+      
       const isSuccess =
         data.success === true ||
         Boolean(data.user || data._id) ||
@@ -127,7 +126,7 @@ export default function SignupPage() {
       if (isSuccess) {
         toast.success(data.message || "Account created successfully");
 
-        // reset & redirect
+        
         setForm({
           email: "",
           firstName: "",
@@ -157,7 +156,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen w-full bg-white text-black grid grid-cols-1 lg:grid-cols-2">
-      {/* Left hero */}
+      
       <div className="relative hidden lg:flex items-center justify-center overflow-hidden">
         <img src={loginBg} alt="Gym Background" className="absolute inset-0 h-full w-full object-cover" />
         <div className="relative z-10 text-center text-white bg-black/40 p-10 rounded-3xl">
@@ -167,7 +166,7 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* Right: form */}
+      
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -183,7 +182,7 @@ export default function SignupPage() {
 
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-lg">
             <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Email */}
+              
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Email</label>
                 <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -200,9 +199,7 @@ export default function SignupPage() {
                   />
                 </div>
                 {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-              </div>
-
-              {/* First / Last */}
+              </div>              
               <div>
                 <label className="block text-sm font-medium">First name</label>
                 <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -225,8 +222,6 @@ export default function SignupPage() {
                 </div>
                 {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
               </div>
-
-              {/* Password */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Password</label>
                 <div className={`mt-1 group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -252,7 +247,6 @@ export default function SignupPage() {
                 {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="block text-sm font-medium">Phone</label>
                 <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -265,7 +259,7 @@ export default function SignupPage() {
                 {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
               </div>
 
-              {/* Height / Weight */}
+              
               <div>
                 <label className="block text-sm font-medium">Height (cm)</label>
                 <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -289,7 +283,7 @@ export default function SignupPage() {
                 {errors.weight && <p className="text-xs text-red-500 mt-1">{errors.weight}</p>}
               </div>
 
-              {/* DOB */}
+              
               <div>
                 <label className="block text-sm font-medium">Date of Birth</label>
                 <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
@@ -302,7 +296,7 @@ export default function SignupPage() {
                 {errors.dob && <p className="text-xs text-red-500 mt-1">{errors.dob}</p>}
               </div>
 
-              {/* Profile Picture Upload (file or URL) */}
+              
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium">Profile picture (optional)</label>
                 <div className="mt-1 flex items-center gap-3">
@@ -327,12 +321,12 @@ export default function SignupPage() {
                 )}
               </div>
 
-              {/* BMI note */}
+             
               <div className="md:col-span-2 text-xs text-gray-500">
                 BMI (auto): <span className="font-medium text-gray-700">{bmi}</span>
               </div>
 
-              {/* Submit */}
+           
               <div className="md:col-span-2">
                 <motion.button
                   whileTap={{ scale: 0.98 }}
