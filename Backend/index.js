@@ -30,6 +30,7 @@ mongoose.connect(process.env.MONGO_URL).then(
     }
 )
 
+
 app.use(bodyParser.json());
 app.use(verifyJWT);
 

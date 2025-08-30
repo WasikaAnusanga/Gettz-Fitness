@@ -3,8 +3,8 @@ import "./user.js";
 import "./Subscription_Model.js";
 
 const paymentSchema = new mongoose.Schema({
-    
-    subscription_id: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription", required: true },
+    payment_id:{type:Number,required:true},
+    subscription_id: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription"},
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     amount: { type: Number, required: true, min: 0 },
     currency: { type: String, default: "LKR" },
