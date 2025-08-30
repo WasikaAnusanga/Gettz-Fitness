@@ -37,7 +37,6 @@ export const addEquipment= async (req ,res)=>{
         let equipment;
         
         try{
-            console.log(Eq_name);
             equipment= new Equipment({
                 Eq_name,
                 Eq_type,
@@ -58,7 +57,7 @@ export const addEquipment= async (req ,res)=>{
     }else {
         res.status(401).json({
         message:"You need Equipment Manager access"
-        })
+        });
     }
 }
 

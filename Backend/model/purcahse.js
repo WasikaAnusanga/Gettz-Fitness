@@ -26,6 +26,9 @@ const purchaseSchema = new schema({
         required : true
     },
     Sup_ID:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplement',
+        required : true
 
     }
 });

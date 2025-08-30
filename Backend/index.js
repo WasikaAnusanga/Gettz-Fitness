@@ -13,6 +13,7 @@ import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
 import equipmentRouter from './routes/equipmentRoute.js';
+import supplementRouter from './routes/supplementRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 
@@ -43,6 +44,7 @@ app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
 app.use("/api/equipment",equipmentRouter);
+app.use("/api/supplement",supplementRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
