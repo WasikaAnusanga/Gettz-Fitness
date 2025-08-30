@@ -7,6 +7,7 @@ import Testing from './pages/testing'
 import { Toaster } from 'react-hot-toast'
 import SignupPage from './pages/Signup'
 import Homepage from './pages/homepage'
+import AdminLoginForm from './pages/admin/adminLogging'
 import TestingCheckout from './pages/testingCheckout'
 import PaymentSuccess from './pages/client/paymentSuccess'
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
         <Route path="/testing" element={<Testing />} />
         <Route path="/register" element={<SignupPage/>} />
+        <Route path="/adminLog" element={<AdminLoginForm/>}/>        
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
         <Route path="/*" element={<Homepage />} />
         

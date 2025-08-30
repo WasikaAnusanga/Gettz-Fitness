@@ -12,6 +12,9 @@ import loggingRouter from './routes/loggingRoute.js';
 import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
+import equipmentRouter from './routes/equipmentRoute.js';
+import authRoutes from './routes/auth.js';
+import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
 
 
@@ -41,8 +44,12 @@ app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
+app.use("/api/equipment",equipmentRouter);
+
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
+app.use('/api/auth', authRoutes);
+app.use("/api/video",videoRouter);
 app.use("/api/pay",paymentRouter);
 
 app.listen(3000, () =>{
