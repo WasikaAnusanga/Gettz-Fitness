@@ -87,7 +87,7 @@ export function updatePlan(req,res){
 }
 
 export function getPlans(req,res){
-    MembershipPlan.find()
+    MembershipPlan.find({isDisabled:false})
     .then((plans)=>{
         res.status(200).json(plans);
     })

@@ -18,6 +18,7 @@ import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
+import paymentRouter from './routes/paymentRoute.js';
 
 
 
@@ -36,6 +37,7 @@ mongoose.connect(process.env.MONGO_URL).then(
     }
 )
 
+
 app.use(bodyParser.json());
 app.use(verifyJWT);
 
@@ -52,6 +54,7 @@ app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
 app.use('/api/auth', authRoutes);
 app.use("/api/video",videoRouter);
+app.use("/api/pay",paymentRouter);
 
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)

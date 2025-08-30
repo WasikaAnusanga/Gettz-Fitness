@@ -4,12 +4,13 @@ import Subscription from "../model/Subscription_Model.js";
 
 export function addSubscription(req,res){
     
+    
 
     if(req.user==null){
         res.status(401).json({
             message:"You need to Login First"
         })
-        
+     
     }else{
         const planId = req.params.id;
         const start= new Date();
@@ -42,7 +43,7 @@ export function addSubscription(req,res){
                 //         body.plan_id=(lastPlanId+1);
                 //     }
                 // })
-                    console.log(SubscriptionData);
+                    
                     Subscription.findOne({user_id:req.user._id}).then((sub)=>{
                     if(sub!=null){
                         if(sub.status=="pending"|| sub.status=="active"){
