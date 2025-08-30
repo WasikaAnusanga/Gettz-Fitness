@@ -7,6 +7,8 @@ import Testing from './pages/testing'
 import { Toaster } from 'react-hot-toast'
 import SignupPage from './pages/Signup'
 import Homepage from './pages/homepage'
+import TestingCheckout from './pages/testingCheckout'
+import PaymentSuccess from './pages/client/paymentSuccess'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,9 +20,12 @@ function App() {
 
         <Route path="/admin/*" element={<AdminPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/*" element={<Homepage />} />
+        <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
         <Route path="/testing" element={<Testing />} />
         <Route path="/register" element={<SignupPage/>} />
+        <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
+        <Route path="/*" element={<Homepage />} />
+        
 
       </Routes>
 
