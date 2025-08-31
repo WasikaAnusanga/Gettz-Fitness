@@ -17,6 +17,10 @@ import planRouter from './routes/plansRouter.js';
 import leaderboardRouter from './routes/leaderboardRouter.js'
 import challengeRouter from './routes/challengeRouter.js'
 import comPostRouter from './routes/comPostRouter.js'
+import equipmentRouter from './routes/equipmentRoute.js';
+import authRoutes from './routes/auth.js';
+import videoRouter from './routes/videoRoute.js';
+
 import notificationRouter from './routes/notificationRouter.js';
 
 
@@ -74,8 +78,12 @@ app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
+app.use("/api/equipment",equipmentRouter);
+
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
+app.use('/api/auth', authRoutes);
+app.use("/api/video",videoRouter);
 
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
