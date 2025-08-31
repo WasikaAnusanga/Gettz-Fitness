@@ -12,11 +12,16 @@ import loggingRouter from './routes/loggingRoute.js';
 import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
+import leaderboardRouter from './routes/leaderboardRouter.js'
+import challengeRouter from './routes/challengeRouter.js'
+import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
 import supplementRouter from './routes/supplementRoute.js';
 import purchaseRouter from './routes/purchaseRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
+import paymentRouter from './routes/paymentRoute.js';
+
 
 
 dotenv.config();
@@ -33,6 +38,7 @@ mongoose.connect(process.env.MONGO_URL).then(
         console.error('Failed to connect to MongoDB');
     }
 )
+
 
 app.use(bodyParser.json());
 app.use(verifyJWT);
@@ -52,6 +58,11 @@ app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
 app.use('/api/auth', authRoutes);
 app.use("/api/video",videoRouter);
+app.use("/api/pay",paymentRouter);
+
+app.use("/api/leaderboard", leaderboardRouter)
+app.use("/api/challenge", challengeRouter)
+app.use("/api/comfeed", comPostRouter)
 
 app.listen(3000, () =>{
     console.log('Server is running on port 3000');

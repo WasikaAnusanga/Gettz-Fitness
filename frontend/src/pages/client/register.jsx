@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.jsx
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -22,7 +21,7 @@ export default function RegisterPage() {
   }
 
   async function handleRegister() {
-    // basic client‑side validation
+  
     if (
       !form.firstName ||
       !form.lastName ||
@@ -47,12 +46,12 @@ export default function RegisterPage() {
           firstName: form.firstName,
           lastName: form.lastName,
           password: form.password,
-          phone: form.phone || undefined, // let backend fall back to default
+          phone: form.phone || undefined, 
         }
       );
 
       toast.success(data.message || "Registration successful");
-      navigate("/login"); // send user to login after successful signup
+      navigate("/login"); 
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Registration failed, try again"
@@ -64,14 +63,13 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full h-screen bg-[url(/logingBack.jpg)] bg-cover bg-center flex">
-      {/* Left panel */}
+      
       <div className="w-1/2 h-full flex items-center justify-center">
         <h1 className="text-green-500 text-2xl animate-bounce">
           Create your account
         </h1>
       </div>
 
-      {/* Right panel */}
       <div className="w-1/2 h-full flex justify-center items-center">
         <div className="w-[450px] h-[700px] backdrop-blur-xl shadow-xl rounded-xl flex flex-col justify-center items-center p-4 space-y-2">
           <input
