@@ -20,7 +20,12 @@ import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
+import paymentRouter from './routes/paymentRoute.js';
 
+import mealPlanRouter from './routes/mealPlanRoute.js';
+import employeeSalaryRouter from './routes/employeeSalaryRoute.js';
+import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js';
+import mealRequestRouter from './routes/mealRequestRouter.js';
 import notificationRouter from './routes/notificationRouter.js';
 
 
@@ -68,6 +73,7 @@ mongoose.connect(process.env.MONGO_URL).then(
     }
 )
 
+
 app.use(bodyParser.json());
 app.use(verifyJWT);
 
@@ -79,11 +85,16 @@ app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
 app.use("/api/equipment",equipmentRouter);
+app.use("/api/mealPlan", mealPlanRouter);
+app.use("/api/employeeSalary", employeeSalaryRouter);
+app.use("/api/employeeSalarayRecords", employeeSalaryRecordsRouter);
+app.use("/api/mealRequest", mealRequestRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
 app.use('/api/auth', authRoutes);
 app.use("/api/video",videoRouter);
+app.use("/api/pay",paymentRouter);
 
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
