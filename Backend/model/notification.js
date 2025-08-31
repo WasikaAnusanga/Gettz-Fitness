@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import './admin'
+import './admin.js'
 
 const notificationSchema = new mongoose.Schema(
 {

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import './user';
-import './notification';
+import './user.js';
+import './notification.js';
 
 const userNotificationSchema = new mongoose.Schema(
   {
@@ -18,5 +18,5 @@ const userNotificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const UserChallenge = mongoose.model('UserChallenge', userNotificationSchema);
-export default UserChallenge;
+const UserNotification = mongoose.model('UserNotification', userNotificationSchema);
+export default UserNotification;

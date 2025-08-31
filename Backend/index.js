@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import http from 'http';
+import { Server } from 'socket.io';
 import verifyJWT from './middleware/auth.js';
 import userRouter from './routes/userRouter.js';
 import customerRouter from './routes/customerSupporterRouter.js';
@@ -15,12 +17,42 @@ import planRouter from './routes/plansRouter.js';
 import leaderboardRouter from './routes/leaderboardRouter.js'
 import challengeRouter from './routes/challengeRouter.js'
 import comPostRouter from './routes/comPostRouter.js'
+import notificationRouter from './routes/notificationRouter.js';
 
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
+
+
+
+// Create HTTP server and integrate Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*', // Adjust for your frontend URL in production
+    methods: ['GET', 'POST', 'DELETE']
+  }
+});
+
+// Handle socket connections
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  // Join a room based on user ID (sent from frontend)
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+export { io };
+
+
 
 mongoose.connect(process.env.MONGO_URL).then(
     () => {
@@ -48,6 +80,8 @@ app.use("/api/sub",subscriptionRouter);
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
 app.use("/api/comfeed", comPostRouter)
+
+app.use('/api/notification',notificationRouter)
 
 app.listen(3000, () =>{
     console.log('Server is running on port 3000');

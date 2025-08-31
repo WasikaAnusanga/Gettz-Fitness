@@ -17,6 +17,27 @@ export function viewPosts(req, res){
 }
 
 export function addPost(req, res){
+
+     // if(req.user == null){
+    //     res.status(403).json({
+    //         message: "Please login to add a post"
+    //     });
+    //     return;
+    // }
+
+    if(req.user == null){
+        res.status(403).json({
+            message: "Please login as admin to create a new user"
+        });
+        return;
+    }
+    if(req.user.role != "admin"){
+        res.status(403).json({
+            message: "You are not authorized to create a new trainer account "
+        });
+        return;
+    }
+
     const post = new comPost(req.body)
 
     post.save().then(
