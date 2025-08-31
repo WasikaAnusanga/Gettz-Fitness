@@ -14,6 +14,7 @@ import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
 import equipmentRouter from './routes/equipmentRoute.js';
 import supplementRouter from './routes/supplementRoute.js';
+import purchaseRouter from './routes/purchaseRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 
@@ -45,6 +46,7 @@ app.use("/api/equipmentManager",equipmentManagerRouter);
 
 app.use("/api/equipment",equipmentRouter);
 app.use("/api/supplement",supplementRouter);
+app.use("/api/purchase",purchaseRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);

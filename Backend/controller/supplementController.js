@@ -13,7 +13,7 @@ export const getAllSupplements= async (req ,res)=>{
         //dsiplay
         return res.status(200).json({message:"Found",supplement});
     }catch(err){
-        console/log(err);
+        console.log(err);
         return res.status(500).json({message:"Server error",error: err.message});
     }
 };
@@ -110,6 +110,10 @@ export const updateSupplement= async (req ,res)=>{
             return res.status(404).json({message:"Unable to update supplement"});
         }
         return res.status(200).json({message:"Supplement updated successfully",supplement});
+    }else{
+        res.status(401).json({
+            message:"You need Equipment Manager access"
+        });
     }
 };
 
@@ -130,5 +134,9 @@ export const deleteSupplement= async (req ,res)=>{
             return res.status(404).json({message:"Unable to delete supplement"});
         }
         return res.status(200).json({message:"Supplement deleted successfully"});
+    }else{
+        res.status(401).json({
+            message:"You need Equipment Manager access"
+        });
     }
 };

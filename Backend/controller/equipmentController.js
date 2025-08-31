@@ -111,8 +111,12 @@ export const updateEquipment= async(req ,res)=>{
             return res.status(404).json({message: "Unable to update equipment"});
         }
         return res.status(200).json({message: "Equipment updated successfully",equipment});
+    }else{
+        res.status(401).json({
+            message:"You need Equipment Manager access"
+        });
     }
-}
+};
 
 //delete equipment
 export const deleteEquipment= async (req, res)=>{
@@ -131,6 +135,10 @@ export const deleteEquipment= async (req, res)=>{
             return res.status(404).json({message: "Unable to delete equipment"});
         }
         return res.status(200).json({message: "Equipment deleted successfully"});
+    }else{
+        res.status(401).json({
+            message:"You need Equipment Manager access"
+        });
     }
 };
 
