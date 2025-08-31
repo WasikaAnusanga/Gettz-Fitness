@@ -4,7 +4,7 @@ import GymLogo from "../assets/GymLogo.jpg";
 
 export  default function HomeFooter() {
   return (
-    <footer className="bg-gradient-to-r from-red-600 to-orange-500 text-white py-10 mt-16">
+    <footer className="bg-gradient-to-r from-red-600 to-orange-500 text-white py-10 mt-0">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         
