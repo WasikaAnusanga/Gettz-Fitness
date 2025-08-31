@@ -3,8 +3,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 
 
- import Homepage from "./homepage";
-import VideoPage from "../pages/admin/VideoPage";
+import Homepage from "./homepage";
+import VideoDetailsPage from "../utils/Testing/Video"
+import VideoUpload from "../utils/Testing/videoUpload";
 
 
 export default function AdminLayout() {
@@ -43,11 +44,12 @@ export default function AdminLayout() {
               
               <Route path="/trainers" element={<h1>Users</h1>} />
               <Route path="/sessions" element={<h1>Users</h1>} />
-              <Route path="/video" element={<VideoPage />} />
+              <Route path="/video" element={<VideoDetailsPage />} />
               <Route path="/equipment" element={<h1>Users</h1>} />
               <Route path="/supplement" element={<h1>Users</h1>} />
               <Route path="/membership" element={<h1>Users</h1>} />
               <Route path="/settings" element={<h1>Users</h1>} />
+              <Route path="/upload" element={<VideoUpload/>}/>
 
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
