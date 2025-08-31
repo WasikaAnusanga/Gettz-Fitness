@@ -12,6 +12,10 @@ import loggingRouter from './routes/loggingRoute.js';
 import equipmentManagerRouter from './routes/equipmentManagerRoute.js';
 import subscriptionRouter from './routes/subscriptionRouter.js';
 import planRouter from './routes/plansRouter.js';
+import mealPlanRouter from './routes/mealPlanRoute.js';
+import employeeSalaryRouter from './routes/employeeSalaryRoute.js';
+import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js';
+import mealRequestRouter from './routes/mealRequestRouter.js';
 
 
 dotenv.config();
@@ -38,6 +42,10 @@ app.use("/api/trainer", trainerRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
+app.use("/api/mealPlan", mealPlanRouter);
+app.use("/api/employeeSalary", employeeSalaryRouter);
+app.use("/api/employeeSalarayRecords", employeeSalaryRecordsRouter);
+app.use("/api/mealRequest", mealRequestRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
