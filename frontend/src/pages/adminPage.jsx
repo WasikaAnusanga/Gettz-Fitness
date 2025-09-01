@@ -5,7 +5,8 @@ import AdminSidebar from "../components/AdminSidebar";
 
 import Homepage from "./homepage";
 import VideoDetailsPage from "../utils/Testing/Video"
-import VideoUpload from "../utils/Testing/videoUpload";
+import VideoUpload from "../utils/Testing/VideoUpload";
+import VideoEdit from "../utils/Testing/Editvideo";
 
 
 export default function AdminLayout() {
@@ -49,7 +50,9 @@ export default function AdminLayout() {
               <Route path="/supplement" element={<h1>Users</h1>} />
               <Route path="/membership" element={<h1>Users</h1>} />
               <Route path="/settings" element={<h1>Users</h1>} />
-              <Route path="/upload" element={<VideoUpload/>}/>
+              <Route path="/videos" element={<VideoDetailsPage />} />
+              <Route path="/upload" element={<VideoUpload />} />
+              <Route path="/admin/Editvideo/:videoId" element={<VideoEdit />} />
 
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
