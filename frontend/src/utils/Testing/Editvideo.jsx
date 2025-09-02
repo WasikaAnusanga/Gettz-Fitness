@@ -1,6 +1,7 @@
+
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import meadiaUpload from "../../utils/mediaUpload";
 import {
@@ -13,7 +14,6 @@ import {
   Video as VideoIcon,
 } from "lucide-react";
 
-
 function getAxiosError(err) {
   const data = err?.response?.data;
   if (!data) return err?.message || "Unknown error";
@@ -21,9 +21,7 @@ function getAxiosError(err) {
   if (data?.message) return data.message;
   if (data?.error) return data.error;
   if (Array.isArray(data?.errors)) {
-    return data.errors
-      .map((e) => e.msg || e.message || JSON.stringify(e))
-      .join(", ");
+    return data.errors.map((e) => e.msg || e.message || JSON.stringify(e)).join(", ");
   }
   try {
     return JSON.stringify(data);
@@ -32,20 +30,13 @@ function getAxiosError(err) {
   }
 }
 
-const parseList = (s) =>
-  (s || "")
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
-
-const joinList = (arr) => (Array.isArray(arr) ? arr.join(", ") : "");
-
+const parseList = (s) => (s || "").split(",").map((t) => t.trim()).filter(Boolean);
+const joinList  = (arr) => (Array.isArray(arr) ? arr.join(", ") : "");
 
 export default function EditVideo() {
   const { videoId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [altNames, setAltNames] = useState("");
@@ -53,15 +44,11 @@ export default function EditVideo() {
   const [duration, setDuration] = useState(0);
   const [isPublished, setIsPublished] = useState(true);
   const [videoUrl, setVideoUrl] = useState("");
-
-
   const [videoFile, setVideoFile] = useState(null);
   const [preview, setPreview] = useState("");
 
-
   const [loading, setLoading] = useState(false);
   const [loadingVideo, setLoadingVideo] = useState(true);
-
 
   const [ytOpen, setYtOpen] = useState(false);
   const [ytQuery, setYtQuery] = useState("");
@@ -69,7 +56,6 @@ export default function EditVideo() {
   const [ytResults, setYtResults] = useState([]);
 
   const videoRef = useRef(null);
-
 
   useEffect(() => {
     if (!videoFile) return;
@@ -87,29 +73,24 @@ export default function EditVideo() {
     temp.onerror = () => URL.revokeObjectURL(objectURL);
   }, [videoFile]);
 
-
   useEffect(() => {
     let cancelled = false;
 
-    async function loadVideo() {
+    async function hydrateFromApi() {
       try {
         setLoadingVideo(true);
-
-        const url = `${import.meta.env.VITE_BACKEND_URL}/api/video/${videoId}`;
+        const detailUrl = `${import.meta.env.VITE_BACKEND_URL}/api/video/${videoId}`;
         let data;
         try {
-          const res = await axios.get(url);
+          const res = await axios.get(detailUrl);
           data = res?.data;
         } catch (e) {
-
-          const all = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/video`
-          );
+          const all = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/video`);
           data = (all?.data || []).find((v) => v.videoId === videoId);
-          if (!data) throw e; 
+          if (!data) throw e;
         }
-
         if (cancelled) return;
+
         setTitle(data?.title || "");
         setDescription(data?.description || "");
         setAltNames(joinList(data?.altNames));
@@ -118,7 +99,6 @@ export default function EditVideo() {
         setVideoUrl(data?.videoUrl || "");
         setIsPublished(Boolean(data?.isPublished));
       } catch (err) {
-        console.error(err);
         toast.error(`Failed to load video: ${getAxiosError(err)}`);
         navigate("/admin/video");
       } finally {
@@ -126,12 +106,25 @@ export default function EditVideo() {
       }
     }
 
-    loadVideo();
+    const s = location.state;
+    if (s && typeof s === "object") {
+
+      setTitle(s.title || "");
+      setDescription(s.description || "");
+      setAltNames(joinList(s.altNames));
+      setTags(joinList(s.tags));
+      setDuration(Number(s.duration) || 0);
+      setVideoUrl(s.videoUrl || "");
+      setIsPublished(Boolean(s.isPublished));
+      setLoadingVideo(false);
+    } else {
+      hydrateFromApi();
+    }
+
     return () => {
       cancelled = true;
     };
-  }, [videoId, navigate]);
-
+  }, [location.state, videoId, navigate]);
 
   async function handleSave() {
     if (!title.trim()) return toast.error("Title is required");
@@ -140,19 +133,11 @@ export default function EditVideo() {
     try {
       setLoading(true);
 
-
-      let finalVideoUrl = videoUrl.trim();
-      if (!finalVideoUrl && videoFile) {
+      let finalVideoUrl = (videoUrl || "").trim();
+      if (videoFile) {
         const uploaded = await meadiaUpload(videoFile);
         finalVideoUrl = uploaded?.url || uploaded?.secure_url || uploaded;
-        if (!finalVideoUrl)
-          return toast.error("Upload service did not return a video URL");
-      } else if (videoFile) {
-
-        const uploaded = await meadiaUpload(videoFile);
-        finalVideoUrl = uploaded?.url || uploaded?.secure_url || uploaded;
-        if (!finalVideoUrl)
-          return toast.error("Upload service did not return a video URL");
+        if (!finalVideoUrl) return toast.error("Upload service did not return a video URL");
       }
 
       const payload = {
@@ -165,49 +150,34 @@ export default function EditVideo() {
         isPublished,
       };
 
-      const token =
-        localStorage.getItem("token") || localStorage.getItem("jwt");
-
-
+      const token = localStorage.getItem("token") || localStorage.getItem("jwt");
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/video/update/${videoId}`,
         payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       toast.success("Video updated");
       navigate("/admin/video");
     } catch (err) {
-      console.error("Update failed:", err);
       toast.error(`Update failed: ${getAxiosError(err)}`);
     } finally {
       setLoading(false);
     }
   }
 
-  // YouTube picker
+
   async function searchYouTube(e) {
     e?.preventDefault?.();
     if (!ytQuery.trim()) return;
     try {
       setYtLoading(true);
       const key = import.meta.env.VITE_YT_API_KEY;
-      const { data } = await axios.get(
-        "https://www.googleapis.com/youtube/v3/search",
-        {
-          params: {
-            key,
-            part: "snippet",
-            q: ytQuery.trim(),
-            type: "video",
-            maxResults: 12,
-          },
-        }
-      );
+      const { data } = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+        params: { key, part: "snippet", q: ytQuery.trim(), type: "video", maxResults: 12 },
+      });
       const items =
-        data?.items?.map((it) => ({
+        (data?.items || []).map((it) => ({
           id: it?.id?.videoId,
           title: it?.snippet?.title,
           thumb:
@@ -216,8 +186,7 @@ export default function EditVideo() {
           channel: it?.snippet?.channelTitle,
         })) || [];
       setYtResults(items);
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("YouTube search failed");
     } finally {
       setYtLoading(false);
@@ -230,7 +199,6 @@ export default function EditVideo() {
     toast.success("YouTube video selected");
   }
 
-
   if (loadingVideo) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
@@ -241,7 +209,8 @@ export default function EditVideo() {
 
   return (
     <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
+
+      <div className="w-full max-w-6xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
 
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-4">
           <div className="flex items-center gap-2">
@@ -263,9 +232,9 @@ export default function EditVideo() {
         </div>
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
 
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-1 space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
               <input
@@ -277,13 +246,11 @@ export default function EditVideo() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Description
-              </label>
+              <label className="block text-sm font-medium mb-1">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                rows={4}
+                rows={6}
                 className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                 placeholder="Coach explains correct leg press form..."
               />
@@ -341,8 +308,7 @@ export default function EditVideo() {
               </div>
             </div>
           </div>
-
-          <div className="space-y-4">
+          <div className="lg:col-span-1 space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
                 Video URL (or pick YouTube)
@@ -364,8 +330,7 @@ export default function EditVideo() {
                 </button>
               </div>
               <p className="mt-1 text-xs text-neutral-500">
-                If you choose a new file below, we’ll replace this URL with the
-                uploaded file URL.
+                If you choose a new file below, we’ll replace this URL with the uploaded file URL.
               </p>
             </div>
 
@@ -390,7 +355,7 @@ export default function EditVideo() {
                     ref={videoRef}
                     src={preview || videoUrl}
                     controls
-                    className="w-full h-64 object-cover"
+                    className="w-full h-72 object-cover"
                   />
                 </div>
               )}
@@ -433,15 +398,9 @@ export default function EditVideo() {
               </button>
             </div>
 
-            <form
-              onSubmit={searchYouTube}
-              className="flex items-center gap-2 px-4 py-3 border-b"
-            >
+            <form onSubmit={searchYouTube} className="flex items-center gap-2 px-4 py-3 border-b">
               <div className="relative flex-1">
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
-                />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                 <input
                   value={ytQuery}
                   onChange={(e) => setYtQuery(e.target.value)}
@@ -449,18 +408,13 @@ export default function EditVideo() {
                   className="w-full rounded-xl border border-black/10 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                 />
               </div>
-              <button
-                type="submit"
-                className="rounded-xl bg-[#e30613] px-3 py-2 text-sm font-medium text-white hover:opacity-95"
-              >
+              <button type="submit" className="rounded-xl bg-[#e30613] px-3 py-2 text-sm font-medium text-white hover:opacity-95">
                 Search
               </button>
             </form>
 
             <div className="max-h-[60vh] overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {ytLoading && (
-                <p className="text-sm text-neutral-500">Searching…</p>
-              )}
+              {ytLoading && <p className="text-sm text-neutral-500">Searching…</p>}
               {!ytLoading &&
                 ytResults.map((v) => (
                   <button
@@ -468,18 +422,10 @@ export default function EditVideo() {
                     onClick={() => pickYouTube(v.id)}
                     className="text-left rounded-xl border border-black/10 hover:border-[#e30613] hover:bg-[#e30613]/5 overflow-hidden"
                   >
-                    <img
-                      src={v.thumb}
-                      alt={v.title}
-                      className="w-full aspect-video object-cover"
-                    />
+                    <img src={v.thumb} alt={v.title} className="w-full aspect-video object-cover" />
                     <div className="p-2">
-                      <p className="text-sm font-medium line-clamp-2">
-                        {v.title}
-                      </p>
-                      <p className="text-xs text-neutral-500 line-clamp-1">
-                        {v.channel}
-                      </p>
+                      <p className="text-sm font-medium line-clamp-2">{v.title}</p>
+                      <p className="text-xs text-neutral-500 line-clamp-1">{v.channel}</p>
                     </div>
                   </button>
                 ))}
