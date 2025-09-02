@@ -153,12 +153,12 @@ export default function VideoUpload() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
+     <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
+      <div className="w-full max-w-4xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
      
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e30613] text-white">
+             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e30613] text-white">
               <VideoIcon size={18} />
             </div>
             <div>

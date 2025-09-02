@@ -1,3 +1,4 @@
+// src/utils/Testing/Video.jsx
 import axios from "axios";
 import Loader from "../../components/lorder-animate";
 import { useState, useEffect } from "react";
@@ -24,6 +25,31 @@ export default function VideoDetailsPage() {
     }
   }, [loaded]);
 
+  async function confirmDelete(id) {
+    toast.custom((t) => (
+      <div className="bg-white shadow-lg rounded-lg border border-gray-200 p-4 flex flex-col gap-3 w-72">
+        <p className="text-sm text-gray-800">Are you sure you want to delete this video?</p>
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 rounded-md border text-sm hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              deleteVideo(id);
+            }}
+            className="px-3 py-1 rounded-md bg-red-600 text-white text-sm hover:bg-red-700"
+          >
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    ));
+  }
+
   async function deleteVideo(id) {
     const token = localStorage.getItem("token") || localStorage.getItem("jwt");
     if (!token) {
@@ -47,8 +73,9 @@ export default function VideoDetailsPage() {
     <div className="relative w-full h-full rounded-lg">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Videos</h2>
+
         <Link
-          to="/admin/upload"
+          to="/admin/video/upload"
           className="inline-flex items-center rounded-lg bg-[#e30613] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition"
         >
           + Add Video
@@ -64,8 +91,8 @@ export default function VideoDetailsPage() {
                 <th className="px-3 py-2 text-left">Video ID</th>
                 <th className="px-3 py-2 text-left">Title</th>
                 <th className="px-3 py-2 text-left">Duration</th>
+                <th className="px-3 py-2 text-left">Description</th>
                 <th className="px-3 py-2 text-left">Views</th>
-                <th className="px-3 py-2 text-left">Likes</th>
                 <th className="px-3 py-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -84,14 +111,17 @@ export default function VideoDetailsPage() {
                   <td className="px-3 py-2">{vid.videoId}</td>
                   <td className="px-3 py-2">{vid.title}</td>
                   <td className="px-3 py-2">{vid.duration} sec</td>
+                  <td className="px-3 py-2">{vid.description}</td>
                   <td className="px-3 py-2">{vid.viewCount}</td>
-                  <td className="px-3 py-2">{vid.likeCount}</td>
+
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
-                      {/* ✅ fix: navigate to the admin edit route */}
                       <button
                         onClick={() =>
-                          navigate(`/admin/Editvideo/${encodeURIComponent(vid.videoId)}`)
+                          navigate(
+                            `/admin/video/edit/${encodeURIComponent(vid.videoId)}`,
+                            { state: vid }
+                          )
                         }
                         className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
                       >
@@ -99,7 +129,7 @@ export default function VideoDetailsPage() {
                       </button>
 
                       <button
-                        onClick={() => deleteVideo(vid.videoId)}
+                        onClick={() => confirmDelete(vid.videoId)}
                         className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
                       >
                         Delete
