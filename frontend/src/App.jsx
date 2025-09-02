@@ -11,6 +11,7 @@ import AdminLoginForm from './pages/admin/adminLogging'
 import Video from './pages/admin/VideoPage';
 import TestingCheckout from './pages/testingCheckout'
 import PaymentSuccess from './pages/client/paymentSuccess'
+import TrainerLayout from './dashboard/trainerDashboard'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,7 +21,7 @@ function App() {
     <Toaster position='top-right' />
       <Routes path="/*">
 
-         <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
         <Route path="/testing" element={<Testing />} />
@@ -29,6 +30,7 @@ function App() {
         <Route path="/video" element={<Video/>}/>
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
         <Route path="/*" element={<Homepage />} />
+        <Route path="/trainerDashboard/*" element={<TrainerLayout/>} />
         
 
       </Routes>
