@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
+import NotificationBell from "./notificationBell/NotificationBell"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -52,6 +53,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-4">
+               <NotificationBell/>
               <span className="font-medium text-gray-700">{user.firstName}</span>
                 <button
                 onClick={handleLogout}

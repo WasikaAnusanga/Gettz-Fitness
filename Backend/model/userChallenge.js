@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import './user';
-import './communityPost';
+import './user.js';
+import './challenge.js';
 
 const userChallengeSchema = new mongoose.Schema(
   {

@@ -13,7 +13,11 @@ const userNotificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'User', 
       required: true
-    }
+    },
+    isRead: {
+    type: Boolean,
+    default: false
+  }
   },
   { timestamps: true }
 );

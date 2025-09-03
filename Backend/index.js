@@ -3,8 +3,6 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import http from 'http';
-import { Server } from 'socket.io';
 import verifyJWT from './middleware/auth.js';
 import userRouter from './routes/userRouter.js';
 import customerRouter from './routes/customerSupporterRouter.js';
@@ -33,35 +31,6 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-
-
-
-// Create HTTP server and integrate Socket.IO
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*', // Adjust for your frontend URL in production
-    methods: ['GET', 'POST', 'DELETE']
-  }
-});
-
-// Handle socket connections
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-
-  // Join a room based on user ID (sent from frontend)
-  socket.on('join', (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined`);
-  });
-
-  socket.on('disconnect', () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-export { io };
-
-
 
 mongoose.connect(process.env.MONGO_URL).then(
     () => {

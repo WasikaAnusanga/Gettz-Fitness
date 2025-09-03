@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import User from '../model/user.js';
-import { membershipApprovalNotification } from "./notificatinController.js";
 
 
 dotenv.config();
@@ -195,89 +194,89 @@ export function deleteUser(req, res) {
 }
 
 
-export function updateUserRole(req, res) {
-  if (req.user == null) {
-    res.status(400).json({ message: "Please login to update user role" });
-    return;
-  }
+// export function updateUserRole(req, res) {
+//   if (req.user == null) {
+//     res.status(400).json({ message: "Please login to update user role" });
+//     return;
+//   }
 
-  if (req.user.role != "admin") {
-    res.status(400).json({ message: "You are not authorized to update user role" });
-    return;
-  }
+//   if (req.user.role != "admin") {
+//     res.status(400).json({ message: "You are not authorized to update user role" });
+//     return;
+//   }
 
-  const userId = req.params.id;
-  const newRole = req.body.role;
+//   const userId = req.params.id;
+//   const newRole = req.body.role;
 
-  User.findOneAndUpdate(
-    { _id: userId },
-    { role: newRole },
-    { new: true }
-  ).then(async (user) => {
-    if (user == null) {
-      res.status(404).json({ message: "User not found" });
-    } else {
-      if (newRole === 'member') {
-        try {
-          await membershipApprovalNotification(req.user._id, userId);
-        } catch (err) {
-          console.error('Failed to send notification:', err);
-        }
-      }
-      res.status(200).json({
-        message: "User role updated successfully",
-        user: user
-      });
-    }
-  }).catch((err) => {
-    res.status(500).json({
-      message: "Error updating user role",
-      error: err.message
-    });
-  });
-}
-
-
-
-
-// export function updateUserRole(req,res){
-//     if(req.user == null){
-//         res.status(400).json({
-//             message: "Please login to update user role"
-//         });
-//         return;
-//     }
-//     if(req.user.role != "admin"){
-//         res.status(400).json({
-//             message: "You are not authorized to update user role"
-//         });
-//         return;
-//     }
-    
-//     User.findOneAndUpdate(
-//         { userId: req.params.id },
-//         { role: req.body.role },
-//         { new: true }
-//     ).then(
-//         (user) => {
-//             if(user == null){
-//                 res.status(404).json({
-//                     message: "User not found"
-//                 });
-//             }else{
-//                 res.status(200).json({
-//                     message: "User role updated successfully",
-//                     user: user
-//                 });
-//             }
+//   User.findOneAndUpdate(
+//     { _id: userId },
+//     { role: newRole },
+//     { new: true }
+//   ).then(async (user) => {
+//     if (user == null) {
+//       res.status(404).json({ message: "User not found" });
+//     } else {
+//       if (newRole === 'member') {
+//         try {
+//           await membershipApprovalNotification(req.user._id, userId);
+//         } catch (err) {
+//           console.error('Failed to send notification:', err);
 //         }
-//     ).catch(
-//         (err) => {
-//             res.status(500).json({
-//                 message: "Error updating user role",
-//                 error: err.message
-//             });
-//         }
-//     )
+//       }
+//       res.status(200).json({
+//         message: "User role updated successfully",
+//         user: user
+//       });
+//     }
+//   }).catch((err) => {
+//     res.status(500).json({
+//       message: "Error updating user role",
+//       error: err.message
+//     });
+//   });
 // }
+
+
+
+
+export function updateUserRole(req,res){
+    if(req.user == null){
+        res.status(400).json({
+            message: "Please login to update user role"
+        });
+        return;
+    }
+    if(req.user.role != "admin"){
+        res.status(400).json({
+            message: "You are not authorized to update user role"
+        });
+        return;
+    }
+    
+    User.findOneAndUpdate(
+        { userId: req.params.id },
+        { role: req.body.role },
+        { new: true }
+    ).then(
+        (user) => {
+            if(user == null){
+                res.status(404).json({
+                    message: "User not found"
+                });
+            }else{
+                res.status(200).json({
+                    message: "User role updated successfully",
+                    user: user
+                });
+            }
+        }
+    ).catch(
+        (err) => {
+            res.status(500).json({
+                message: "Error updating user role",
+                error: err.message
+            });
+        }
+    )
+}
 

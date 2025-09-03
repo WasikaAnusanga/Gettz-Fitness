@@ -11,6 +11,10 @@ import AdminLoginForm from './pages/admin/adminLogging'
 import Video from './pages/admin/VideoPage';
 import TestingCheckout from './pages/testingCheckout'
 import PaymentSuccess from './pages/client/paymentSuccess'
+import CommunityFeed from './pages/client/communityPosts';
+import ChallengesPage from './pages/client/challengesPage';
+import AddNotification from './pages/AddNotification';
+import Leaderboard from './pages/leaderboard';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -27,6 +31,10 @@ function App() {
         <Route path="/register" element={<SignupPage/>} />
         <Route path="/adminLog" element={<AdminLoginForm/>}/>        
         <Route path="/video" element={<Video/>}/>
+        <Route path="/community" element={<CommunityFeed/>}/>
+        <Route path="/challenges" element={<ChallengesPage />} />
+        <Route path="/admin/notifications/new" element={<AddNotification />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
         <Route path="/*" element={<Homepage />} />
         

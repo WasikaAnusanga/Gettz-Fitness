@@ -8,12 +8,6 @@ const leaderboardSchema = new mongoose.Schema({
     }
   },
 
-  points: { 
-    type: Number, 
-    required: true, 
-    default: 0 
-  },
-
   user_id: { 
     type: Schema.Types.ObjectId,
     ref: 'User', 
@@ -27,4 +21,4 @@ const leaderboardSchema = new mongoose.Schema({
 
 
 const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
-export default Leaderboard 
+export default Leaderboard;
