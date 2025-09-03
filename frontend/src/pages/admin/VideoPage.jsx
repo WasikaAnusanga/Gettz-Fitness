@@ -3,7 +3,8 @@ import { Plus, Search, X } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function Video() {
+
+export default function VideoUploader() {
   const [videos, setVideos] = useState([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -19,11 +20,10 @@ export default function Video() {
     isPublished: true,
   });
 
-  const token = localStorage.getItem("token"); 
+const jwt = localStorage.getItem('jwt');    
+const auth = jwt ? { Authorization: `Bearer ${jwt}` } : {};
 
-  const auth = token ? { Authorization: `Bearer ${token}` } : {};
-
-  const handleChange = (e) => {
+  const onChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
   };
@@ -43,28 +43,24 @@ export default function Video() {
     const q = query.trim().toLowerCase();
     if (!q) return videos;
     return videos.filter((v) => {
-      const title = v.title?.toLowerCase() || "";
-      const tags = (v.tags || []).join(",").toLowerCase();
-      const alts = (v.altNames || []).join(",").toLowerCase();
-      const id = v.videoId?.toLowerCase() || "";
-      return (
-        title.includes(q) || tags.includes(q) || alts.includes(q) || id.includes(q)
-      );
+      const title = v.title?.toLowerCase() ?? "";
+      const tags = (v.tags ?? []).join(",").toLowerCase();
+      const alts = (v.altNames ?? []).join(",").toLowerCase();
+      const id = v.videoId?.toLowerCase() ?? "";
+      return title.includes(q) || tags.includes(q) || alts.includes(q) || id.includes(q);
     });
   }, [query, videos]);
-
 
   async function fetchVideos() {
     try {
       setBusy(true);
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/video/`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/video`,
         { headers: auth }
       );
       setVideos(Array.isArray(data?.items) ? data.items : []);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to load videos";
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Failed to load videos");
     } finally {
       setBusy(false);
     }
@@ -76,14 +72,8 @@ export default function Video() {
     const payload = {
       title: form.title.trim(),
       description: form.description.trim(),
-      altNames: form.altNames
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      tags: form.tags
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      altNames: form.altNames.split(",").map((s) => s.trim()).filter(Boolean),
+      tags: form.tags.split(",").map((s) => s.trim()).filter(Boolean),
       duration: Number(form.duration),
       videoUrl: form.videoUrl.trim(),
       isPublished: !!form.isPublished,
@@ -110,8 +100,7 @@ export default function Video() {
       resetForm();
       fetchVideos();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to add video";
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Failed to add video");
     } finally {
       setBusy(false);
     }
@@ -119,16 +108,15 @@ export default function Video() {
 
   useEffect(() => {
     fetchVideos();
- 
   }, []);
-
 
   return (
     <div className="p-6">
       <div className="mx-auto max-w-6xl">
-        {/* header */}
+        {/* Header */}
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-black">Videos</h1>
+
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -139,6 +127,7 @@ export default function Video() {
                 className="w-72 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
+
             <button
               onClick={() => setOpen(true)}
               className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-700"
@@ -149,7 +138,7 @@ export default function Video() {
           </div>
         </div>
 
-        {/* list */}
+        {/* List */}
         <div className="rounded-2xl border border-gray-200 bg-white">
           <div className="grid grid-cols-12 gap-4 border-b border-gray-100 px-4 py-3 text-xs font-semibold text-gray-500">
             <div className="col-span-2">Video ID</div>
@@ -172,9 +161,7 @@ export default function Video() {
               >
                 <div className="col-span-2 font-mono">{v.videoId}</div>
                 <div className="col-span-3">{v.title}</div>
-                <div className="col-span-2 truncate">
-                  {v.tags?.length ? v.tags.join(", ") : "-"}
-                </div>
+                <div className="col-span-2 truncate">{v.tags?.length ? v.tags.join(", ") : "-"}</div>
                 <div className="col-span-2">{v.duration} min</div>
                 <div className="col-span-2">
                   {v.isPublished ? (
@@ -214,7 +201,7 @@ export default function Video() {
                 <input
                   name="title"
                   value={form.title}
-                  onChange={handleChange}
+                  onChange={onChange}
                   required
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                 />
@@ -225,7 +212,7 @@ export default function Video() {
                 <textarea
                   name="description"
                   value={form.description}
-                  onChange={handleChange}
+                  onChange={onChange}
                   rows={3}
                   required
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
@@ -238,7 +225,7 @@ export default function Video() {
                   <input
                     name="altNames"
                     value={form.altNames}
-                    onChange={handleChange}
+                    onChange={onChange}
                     placeholder="comma separated"
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
@@ -249,7 +236,7 @@ export default function Video() {
                   <input
                     name="tags"
                     value={form.tags}
-                    onChange={handleChange}
+                    onChange={onChange}
                     placeholder="e.g. HIIT, Cardio"
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
@@ -264,7 +251,7 @@ export default function Video() {
                     min="0"
                     name="duration"
                     value={form.duration}
-                    onChange={handleChange}
+                    onChange={onChange}
                     required
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
@@ -275,7 +262,7 @@ export default function Video() {
                   <input
                     name="videoUrl"
                     value={form.videoUrl}
-                    onChange={handleChange}
+                    onChange={onChange}
                     required
                     placeholder="https://…"
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
@@ -288,7 +275,7 @@ export default function Video() {
                   type="checkbox"
                   name="isPublished"
                   checked={form.isPublished}
-                  onChange={handleChange}
+                  onChange={onChange}
                   className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
                 />
                 Publish immediately
@@ -314,7 +301,7 @@ export default function Video() {
         </div>
       )}
 
-    
+      {/* Thin progress bar */}
       <div
         className={`pointer-events-none fixed left-0 top-0 h-0.5 bg-red-600 transition-all ${
           busy ? "w-full" : "w-0"
