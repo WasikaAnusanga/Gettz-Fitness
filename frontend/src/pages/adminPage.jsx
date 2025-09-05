@@ -6,6 +6,10 @@ import AdminSidebar from "../components/AdminSidebar";
  import Homepage from "./homepage";
 import VideoPage from "../pages/admin/VideoPage";
 
+import MembershipPlans from "./admin/membershipPlans/membershipPlan";
+import AddPlanForm from "./admin/membershipPlans/addPlan";
+import UpdatePlanForm from "./admin/membershipPlans/updatePlan";
+
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -46,7 +50,9 @@ export default function AdminLayout() {
               <Route path="/video" element={<VideoPage />} />
               <Route path="/equipment" element={<h1>Users</h1>} />
               <Route path="/supplement" element={<h1>Users</h1>} />
-              <Route path="/membership" element={<h1>Users</h1>} />
+              <Route path="/membership" element={<MembershipPlans/>} />
+              <Route path="/addPlan" element={<AddPlanForm/>} />
+              <Route path="/updatePlan" element={<UpdatePlanForm/>} />
               <Route path="/settings" element={<h1>Users</h1>} />
 
               <Route path="*" element={<Navigate to="." replace />} />

@@ -19,7 +19,8 @@ import equipmentRouter from './routes/equipmentRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
-
+import cron from "node-cron";
+import { expirePastEndDates } from "./jobs/expireSubscriptions.js";
 
 
 dotenv.config();
@@ -36,6 +37,15 @@ mongoose.connect(process.env.MONGO_URL).then(
         console.error('Failed to connect to MongoDB');
     }
 )
+
+// Every day at midnight
+cron.schedule("0 0 * * *", async () => {
+  try {
+    await expirePastEndDates();
+  } catch (err) {
+    console.error("Failed to expire subscriptions:", err);
+  }
+});
 
 
 app.use(bodyParser.json());
