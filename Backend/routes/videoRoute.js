@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteVideo, getAllvideo, getVideoById, updateVideo, uploadVideo } from '../controller/videoController.js';
+import { addView, deleteVideo, getAllvideo, getVideoById, toggleLike, updateVideo, uploadVideo } from '../controller/videoController.js';
 
 const videoRouter = express.Router();
 
@@ -8,5 +8,7 @@ videoRouter.get("/",getAllvideo);
 videoRouter.put("/update/:videoId",updateVideo);
 videoRouter.delete("/delete/:videoId",deleteVideo);
 videoRouter.get("/:id",getVideoById);
+videoRouter.post("/:id/view", addView);
+videoRouter.post("/:id/like", toggleLike);
 
 export default videoRouter;

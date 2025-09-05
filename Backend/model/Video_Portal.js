@@ -32,12 +32,12 @@ const videoSchema = new mongoose.Schema({
     required: true
   },
   viewCount: {
-    type: Number,
-    default: 0
-  },
-  likeCount: {
-    type: Number,
-    default: 0
+     type: Number, 
+     default: 0
+     },
+  likeCount: { 
+    type: Number, 
+    default: 0 
   },
   comments: [
     {
@@ -62,7 +62,8 @@ const videoSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }]
 })
 videoSchema.pre("save",async function(next){
   if(this.isNew){
