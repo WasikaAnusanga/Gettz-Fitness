@@ -20,18 +20,15 @@ import equipmentRouter from './routes/equipmentRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
-<<<<<<< HEAD
 import cron from "node-cron";
 import { expirePastEndDates } from "./jobs/expireSubscriptions.js";
 
-=======
 import mealPlanRouter from './routes/mealPlanRoute.js';
 import employeeSalaryRouter from './routes/employeeSalaryRoute.js';
 import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js';
 import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
->>>>>>> origin/develop
 
 dotenv.config();
 
@@ -44,7 +41,6 @@ mongoose.connect(process.env.MONGO_URL).then(
   ()=>{ console.error('Failed to connect to MongoDB'); }
 )
 
-<<<<<<< HEAD
 // Every day at midnight
 cron.schedule("0 0 * * *", async () => {
   try {
@@ -55,8 +51,6 @@ cron.schedule("0 0 * * *", async () => {
 });
 
 
-=======
->>>>>>> origin/develop
 app.use(bodyParser.json());
 app.use(verifyJWT);
 
