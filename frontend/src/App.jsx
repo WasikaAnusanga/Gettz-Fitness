@@ -20,7 +20,7 @@ function App() {
       <BrowserRouter>
       <Toaster position='top-right' />
         <Routes path="/*">
-
+s
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>

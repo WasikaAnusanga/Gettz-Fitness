@@ -20,6 +20,9 @@ import equipmentRouter from './routes/equipmentRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
+import cron from "node-cron";
+import { expirePastEndDates } from "./jobs/expireSubscriptions.js";
+
 import mealPlanRouter from './routes/mealPlanRoute.js';
 import employeeSalaryRouter from './routes/employeeSalaryRoute.js';
 import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js';
@@ -37,6 +40,16 @@ mongoose.connect(process.env.MONGO_URL).then(
 ).catch(
   ()=>{ console.error('Failed to connect to MongoDB'); }
 )
+
+// Every day at midnight
+cron.schedule("0 0 * * *", async () => {
+  try {
+    await expirePastEndDates();
+  } catch (err) {
+    console.error("Failed to expire subscriptions:", err);
+  }
+});
+
 
 app.use(bodyParser.json());
 app.use(verifyJWT);
