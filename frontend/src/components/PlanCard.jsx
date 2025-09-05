@@ -84,12 +84,7 @@ export default function PlanCard(props) {
         ))}
       </ul>
 
-      <div className="mb-4 flex items-center gap-2">
-        <input type="checkbox" id="autoRenew" className="h-4 w-4" />
-        <label htmlFor="autoRenew" className="text-sm text-black">
-          Auto renew
-        </label>
-      </div>
+    
 
       <button type="button"
         onClick={() => {
