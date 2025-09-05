@@ -1,4 +1,3 @@
-// index.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -26,6 +25,7 @@ import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js'
 import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
+import sessionRouter from './routes/liveSessionRoute.js';
 
 dotenv.config();
 
@@ -66,6 +66,7 @@ app.use("/api/pay",paymentRouter);
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
 app.use("/api/comfeed", comPostRouter)
+app.use("/api/livesession", sessionRouter)
 
 app.post('/api/auth/google', googleLogin);
 app.listen(3000, () =>{
