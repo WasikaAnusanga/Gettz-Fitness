@@ -70,7 +70,7 @@ export default function MembershipPlans() {
                   className="w-72 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
                 />
               </div>
-              <Link to={"/admin/addPlan"}>
+              <Link to={"/admin/membership/addPlan"}>
                 <button className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-700">
                   <Plus className="h-4 w-4" />
                   Add a Plan
@@ -121,7 +121,7 @@ export default function MembershipPlans() {
                         <button
                           className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 mr-[5px]"
                           onClick={() =>
-                            navigate("/admin/updatePlan", {
+                            navigate("/admin/membership/updatePlan", {
                               state:plan
                             })
                           }
