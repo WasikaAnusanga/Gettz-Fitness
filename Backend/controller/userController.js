@@ -8,9 +8,7 @@ dotenv.config();
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-/**
- * Save new user
- */
+
 export function saveUser(req, res) {
   if (req.body.role == "admin") {
     if (req.user == null) {
@@ -56,9 +54,7 @@ export function saveUser(req, res) {
     });
 }
 
-/**
- * Normal login (email + password)
- */
+
 export function loginUser(req, res) {
   const email = req.body.email;
   const password = req.body.password;
@@ -105,9 +101,7 @@ export function loginUser(req, res) {
   });
 }
 
-/**
- * Google login
- */
+
 export async function googleLogin(req, res) {
   try {
     const { credential } = req.body;
@@ -120,7 +114,7 @@ export async function googleLogin(req, res) {
     const p = ticket.getPayload();
     if (!p?.email) return res.status(400).json({ message: "Email not available from Google" });
 
-    // ---- Name normalization (robust) ----
+  
     const splitName = (full) => {
       if (!full) return { first: "User", last: "Account" };
       const parts = full.trim().replace(/\s+/g, " ").split(" ");
@@ -153,13 +147,13 @@ export async function googleLogin(req, res) {
         weight: "Not given",
         dob: Date.now(),
         isEmailVerified: verified || true,
-        // if your schema has these optional fields:
+       
         googleId,
         avatar: picture,
       });
     } else {
       let changed = false;
-      // If names are blank or placeholders, fill them from Google
+     
       if (!user.firstName || user.firstName === "User") { user.firstName = firstLast.first; changed = true; }
       if ((user.lastName ?? "") === "" || user.lastName === "Account") { user.lastName = firstLast.last; changed = true; }
       if (!user.isEmailVerified && verified) { user.isEmailVerified = true; changed = true; }
@@ -194,9 +188,7 @@ export async function googleLogin(req, res) {
   }
 }
 
-/**
- * Get all users
- */
+
 export function getAllUsers(req, res) {
   User.find()
     .then((users) => {
@@ -213,9 +205,7 @@ export function getAllUsers(req, res) {
     });
 }
 
-/**
- * Get user by ID
- */
+
 export async function getUserById(req, res) {
   const userId = req.params.id;
   const user = await User.findOne({ userId: userId });
@@ -230,9 +220,7 @@ export async function getUserById(req, res) {
   });
 }
 
-/**
- * Update user
- */
+
 export function updateUser(req, res) {
   User.findOneAndUpdate(
     {
@@ -260,9 +248,7 @@ export function updateUser(req, res) {
     });
 }
 
-/**
- * Delete user
- */
+
 export function deleteUser(req, res) {
   if (req.user == null) {
     res.status(400).json({
@@ -300,9 +286,7 @@ export function deleteUser(req, res) {
     });
 }
 
-/**
- * Update role
- */
+
 export function updateUserRole(req, res) {
   if (req.user == null) {
     res.status(400).json({

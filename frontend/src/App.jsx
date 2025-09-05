@@ -8,10 +8,11 @@ import { Toaster } from 'react-hot-toast'
 import SignupPage from './pages/Signup'
 import Homepage from './pages/homepage'
 import AdminLoginForm from './pages/admin/adminLogging'
-import Video from './pages/admin/VideoPage';
 import TestingCheckout from './pages/testingCheckout'
 import PaymentSuccess from './pages/client/paymentSuccess'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import VideoPortal from './pages/client/VideoPortal';
+import VideoDetails from './pages/client/VideoDetails';
 function App() {
   const [count, setCount] = useState(0)
 
@@ -27,9 +28,10 @@ function App() {
           <Route path="/testing" element={<Testing />} />
           <Route path="/register" element={<SignupPage/>} />
           <Route path="/adminLog" element={<AdminLoginForm/>}/>        
-          <Route path="/video" element={<Video/>}/>
           <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
           <Route path="/*" element={<Homepage />} />
+          <Route path="/videos" element={<VideoPortal />} />
+          <Route path="/videos/:videoId" element={<VideoDetails />} />
           
 
         </Routes>
