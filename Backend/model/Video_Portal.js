@@ -46,11 +46,6 @@ const videoSchema = new mongoose.Schema({
       createdAt: { type: Date, default: Date.now }
     }
   ],
-  uploadedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "admin",
-    required: true
-  },
   isPublished: {
     type: Boolean,
     default: true
