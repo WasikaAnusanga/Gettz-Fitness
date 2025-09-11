@@ -24,7 +24,7 @@ export default function AdminLayout() {
           <div className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
             <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
               <h1 className="text-lg font-semibold">Admin Console</h1>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-black">
                 {JSON.parse(localStorage.getItem("user") || "{}")?.firstName || "Admin"}
               </div>
             </div>
