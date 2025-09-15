@@ -117,6 +117,7 @@ export default function LoginPage() {
                     placeholder="you@gettz.fit"
                     className="w-full bg-transparent py-1.5 text-sm outline-none placeholder:text-gray-400"
                   />
+                  
                 </div>
                 {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
               </div>
