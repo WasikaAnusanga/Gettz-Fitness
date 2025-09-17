@@ -14,7 +14,7 @@ const idleStyle =
   "text-gray-700 hover:text-red-600 hover:bg-gray-100";
 
 const navItems = [
-  { to: "/trainerDashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/trainerDashboard/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/trainerDashboard/reqMeals", label: "User Requests", icon: ArrowDownToDot  },
   { to: "/trainerDashboard/mealPlans", label: "Meal Plans", icon: HandPlatter },
 

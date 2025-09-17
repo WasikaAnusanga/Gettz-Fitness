@@ -2,9 +2,9 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import TrainerSidebar from "../components/TrainerSidebar.jsx";
 
-import Homepage from "../pages/homepage";
 import RequestedMeals from "../pages/trainer/requestedMeals.jsx";
 import MealPlans from "../pages/trainer/mealPlans.jsx";
+import Dashboard from "../pages/trainer/dashboard.jsx";
 
 export default function TrainerLayout() {
 
@@ -25,12 +25,14 @@ export default function TrainerLayout() {
 
           <div className="mx-auto max-w-7xl px-4 py-6">
             <Routes>
-              <Route index element={<Homepage />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+
+              <Route path="/dashboard" element={<Dashboard/>} />
               <Route path="/reqMeals" element={<RequestedMeals/>} />
               <Route path="/mealPlans" element={<MealPlans/>} />
              
 
-              <Route path="*" element={<Navigate to="." replace />} />
+              <Route path="*" element={<Navigate to="dashboard" replace />} />
             </Routes>
           </div>
         </main>

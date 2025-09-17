@@ -3,301 +3,402 @@ import { Plus, Search, X } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function Video() {
-  const [videos, setVideos] = useState([]);
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
+export default function MealPlans() {
+  // Data
+  const [plans, setPlans] = useState([]);
   const [busy, setBusy] = useState(false);
 
+  // UI state
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [editId, setEditId] = useState(null); // mealPlan_id when editing
+
+  // Form (snake_case to match backend)
   const [form, setForm] = useState({
-    title: "",
+    mealPlan_id: "",
+    user_id: "",
+    meal_name: "",
     description: "",
-    altNames: "",
-    tags: "",
+    meal_type: "",
     duration: "",
-    videoUrl: "",
-    isPublished: true,
   });
-
-  const token = localStorage.getItem("token"); 
-
-  const auth = token ? { Authorization: `Bearer ${token}` } : {};
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
-  };
 
   const resetForm = () =>
     setForm({
-      title: "",
+      mealPlan_id: "",
+      user_id: "",
+      meal_name: "",
       description: "",
-      altNames: "",
-      tags: "",
+      meal_type: "",
       duration: "",
-      videoUrl: "",
-      isPublished: true,
     });
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return videos;
-    return videos.filter((v) => {
-      const title = v.title?.toLowerCase() || "";
-      const tags = (v.tags || []).join(",").toLowerCase();
-      const alts = (v.altNames || []).join(",").toLowerCase();
-      const id = v.videoId?.toLowerCase() || "";
-      return (
-        title.includes(q) || tags.includes(q) || alts.includes(q) || id.includes(q)
-      );
-    });
-  }, [query, videos]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
 
-
-  async function fetchVideos() {
+  // -------- FETCH ----------
+  async function fetchMealPlans() {
     try {
       setBusy(true);
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/video/`,
-        { headers: auth }
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealPlan`
       );
-      setVideos(Array.isArray(data?.items) ? data.items : []);
+      const items = Array.isArray(data?.response) ? data.response : [];
+      setPlans(items);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to load videos";
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to load meal plans";
       toast.error(msg);
     } finally {
       setBusy(false);
     }
   }
 
-  async function onSubmit(e) {
+  // -------- CREATE ----------
+  async function onCreate(e) {
     e.preventDefault();
 
-    const payload = {
-      title: form.title.trim(),
-      description: form.description.trim(),
-      altNames: form.altNames
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      tags: form.tags
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      duration: Number(form.duration),
-      videoUrl: form.videoUrl.trim(),
-      isPublished: !!form.isPublished,
-    };
-
-    if (!payload.title || !payload.description || !payload.videoUrl || !form.duration) {
-      toast.error("Please fill title, description, duration and video URL.");
+    if (!form.mealPlan_id || !form.user_id || !form.meal_name || !form.duration) {
+      toast.error("Please fill Meal Plan ID, User ID, Meal Name, and Duration.");
       return;
     }
-    if (!Number.isFinite(payload.duration) || payload.duration <= 0) {
-      toast.error("Duration must be a positive number.");
+
+    const payload = {
+      mealPlan_id: Number(form.mealPlan_id),
+      user_id: Number(form.user_id),
+      meal_name: form.meal_name.trim(),
+      description: form.description.trim(),
+      meal_type: form.meal_type.trim(),
+      duration: String(form.duration).trim(),
+    };
+
+    try {
+      setBusy(true);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/mealPlan`, payload);
+      
+      toast.success("Meal plan added");
+      setOpen(false);
+      resetForm();
+      fetchMealPlans();
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to add meal plan";
+      toast.error(String(msg));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // -------- EDIT PREP ----------
+  function startEdit(p) {
+    setEditId(p.mealPlan_id);
+    setForm({
+      mealPlan_id: p.mealPlan_id ?? "",
+      user_id: p.user_id ?? "",
+      meal_name: p.meal_name ?? "",
+      description: p.description ?? "",
+      meal_type: p.meal_type ?? "",
+      duration: p.duration ?? "",
+    });
+    setOpen(true);
+  }
+
+  // -------- UPDATE ----------
+  async function onUpdate(e) {
+    e.preventDefault();
+    if (!editId) {
+      toast.error("Missing mealPlan_id for update");
+      return;
+    }
+
+    const payload = {
+      mealPlan_id: Number(form.mealPlan_id),
+      user_id: Number(form.user_id),
+      meal_name: form.meal_name.trim(),
+      description: form.description.trim(),
+      meal_type: form.meal_type.trim(),
+      duration: String(form.duration).trim(),
+    };
+
+    try {
+      setBusy(true);
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealPlan/${encodeURIComponent(
+          form.mealPlan_id
+        )}`,
+        payload
+      );
+      toast.success("Meal plan updated");
+      setOpen(false);
+      setEditId(null);
+      resetForm();
+      fetchMealPlans();
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to update meal plan";
+      toast.error(String(msg));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // -------- DELETE ----------
+  async function deletePlan(p) {
+    const key = p.mealPlan_id ?? p._id; 
+    if (!key) {
+      toast.error("Missing id");
       return;
     }
 
     try {
       setBusy(true);
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/video/upload`,
-        payload,
-        { headers: auth }
-      );
-      toast.success(data?.message || "Video added");
-      setOpen(false);
-      resetForm();
-      fetchVideos();
+      await axios.delete(
+        import.meta.env.VITE_BACKEND_URL+"/api/mealPlan/"+key);
+      toast.success("Meal plan deleted");
+      fetchMealPlans();
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to add video";
-      toast.error(msg);
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to delete meal plan";
+      toast.error(String(msg));
     } finally {
       setBusy(false);
     }
   }
 
-  useEffect(() => {
-    fetchVideos();
- 
-  }, []);
+  // -------- SEARCH ----------
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return plans;
+    return plans.filter((p) => {
+      const id = String(p.mealPlan_id ?? "").toLowerCase();
+      const user = String(p.user_id ?? "").toLowerCase();
+      const name = String(p.meal_name ?? "").toLowerCase();
+      const desc = String(p.description ?? "").toLowerCase();
+      const type = String(p.meal_type ?? "").toLowerCase();
+      const dur = String(p.duration ?? "").toLowerCase();
+      return (
+        id.includes(q) ||
+        user.includes(q) ||
+        name.includes(q) ||
+        desc.includes(q) ||
+        type.includes(q) ||
+        dur.includes(q)
+      );
+    });
+  }, [query, plans]);
 
+  useEffect(() => {
+    fetchMealPlans();
+  }, []);
 
   return (
     <div className="p-6">
-      <div className="mx-auto max-w-6xl">
-        {/* header */}
+   
+      <div className="mx-auto w-full max-w-screen-2xl">
+  
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-black">Meal Plans</h1>
           <div className="flex items-center gap-2">
+            
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by title, tags, alt name, ID…"
-                className="w-72 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholder="Search by ID, user, name, type…"
+                className="w-80 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
+
+           
             <button
-              onClick={() => setOpen(true)}
+              type="button"
+              onClick={() => {
+                setEditId(null);
+                resetForm();
+                setOpen(true);
+              }}
               className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-700"
             >
               <Plus className="h-4 w-4" />
-              Add Meal Plans
+              Add Meal Plan
             </button>
           </div>
         </div>
 
-        {/* list */}
-        <div className="rounded-2xl border border-gray-200 bg-white">
-          <div className="grid grid-cols-12 gap-4 border-b border-gray-100 px-4 py-3 text-xs font-semibold text-gray-500">
-            <div className="col-span-2">Meal Plan Id</div>
-            <div className="col-span-3">User Id</div>
-            <div className="col-span-2">Name</div>
-            <div className="col-span-2">Description</div>
-            <div className="col-span-2">Type</div>
-            <div className="col-span-1 text-right">Duration</div>
-          </div>
+        {/* Table */}
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
+          <div className="min-w-[1100px]">
+            
+            <div className="grid grid-cols-13 gap-x-8 gap-y-4 border-b border-gray-100 px-6 py-3 text-xs font-semibold text-gray-500">
+              <div className="col-span-2">Meal Plan ID</div>
+              <div className="col-span-2">User ID</div>
+              <div className="col-span-2">Name</div>
+              <div className="col-span-2">Description</div>
+              <div className="col-span-2 pr-0">Type</div>
+              <div className="col-span-1 text-right pr-2 md:pr-4 -ml-2">Duration</div>
+              <div className="col-span-1 text-right pl-5 md:pl-7">Actions</div>
+            </div>
 
-          {busy ? (
-            <div className="p-6 text-sm text-gray-500">Loading…</div>
-          ) : filtered.length === 0 ? (
-            <div className="p-6 text-sm text-gray-500">No meal plans found</div>
-          ) : (
-            filtered.map((v) => (
-              <div
-                key={v._id || v.videoId}
-                className="grid grid-cols-12 gap-4 px-4 py-3 text-sm text-gray-800 border-b last:border-none"
-              >
-                <div className="col-span-2 font-mono">{v.videoId}</div>
-                <div className="col-span-3">{v.title}</div>
-                <div className="col-span-2 truncate">
-                  {v.tags?.length ? v.tags.join(", ") : "-"}
-                </div>
-                <div className="col-span-2">{v.duration} min</div>
-                <div className="col-span-2">
-                  {v.isPublished ? (
-                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
-                      Published
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
-                      Draft
-                    </span>
-                  )}
-                </div>
-                <div className="col-span-1 text-right">{v.viewCount ?? 0}</div>
-              </div>
-            ))
-          )}
+            {busy ? (
+              <div className="p-6 text-sm text-gray-500">Loading…</div>
+            ) : filtered.length === 0 ? (
+              <div className="p-6 text-sm text-gray-500">No meal plans found</div>
+            ) : (
+              filtered.map((p) => {
+                const key = p._id ?? p.mealPlan_id;
+                return (
+                  <div
+                    key={key}
+                    className="grid grid-cols-13 gap-x-8 gap-y-4 px-6 py-3 text-sm text-gray-800 border-b last:border-none"
+                  >
+                    <div className="col-span-2 font-mono">{p.mealPlan_id ?? "-"}</div>
+                    <div className="col-span-2">{p.user_id ?? "-"}</div>
+                    <div className="col-span-2">{p.meal_name ?? "-"}</div>
+                    <div className="col-span-2 truncate">{p.description ?? "-"}</div>
+                    <div className="col-span-2 pr-0">{p.meal_type ?? "-"}</div>
+                    <div className="col-span-1 text-right whitespace-nowrap pr-2 md:pr-4 -ml-2">
+                      {p.duration ?? "-"}
+                    </div>
+                    <div className="col-span-1 pl-5 md:pl-7 min-w-[140px]">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => startEdit(p)}
+                          className="rounded-lg border border-gray-300 px-3 py-1 text-xs hover:bg-gray-50"
+                        >
+                          Update
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deletePlan(p)}
+                          className="rounded-lg bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Add modal */}
+      
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
+            
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Add Meal</h3>
+              <h3 className="text-lg font-semibold">
+                {editId ? "Update Meal Plan" : "Add Meal Plan"}
+              </h3>
               <button
-                onClick={() => setOpen(false)}
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setEditId(null);
+                  resetForm();
+                }}
                 className="rounded-md p-1 text-gray-600 hover:bg-gray-100"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-3">
+            <form onSubmit={editId ? onUpdate : onCreate} className="space-y-3">
               <label className="text-sm block">
-                <span className="mb-1 block font-medium">Title *</span>
+                <span className="mb-1 block font-medium">Meal Plan ID *</span>
                 <input
-                  name="title"
-                  value={form.title}
+                  name="mealPlan_id"
+                  value={form.mealPlan_id}
+                  onChange={handleChange}
+                  required
+                  disabled={!!editId}
+                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 disabled:bg-gray-100"
+                />
+              </label>
+
+              <label className="text-sm block">
+                <span className="mb-1 block font-medium">User ID *</span>
+                <input
+                  name="user_id"
+                  value={form.user_id}
                   onChange={handleChange}
                   required
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                 />
               </label>
 
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <label className="text-sm block">
+                  <span className="mb-1 block font-medium">Meal Name *</span>
+                  <input
+                    name="meal_name"
+                    value={form.meal_name}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. whole-grain cereals, oats"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </label>
+
+                <label className="text-sm block">
+                  <span className="mb-1 block font-medium">Duration *</span>
+                  <input
+                    name="duration"
+                    value={form.duration}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. 3 months"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </label>
+              </div>
+
               <label className="text-sm block">
-                <span className="mb-1 block font-medium">Description *</span>
+                <span className="mb-1 block font-medium">Type</span>
+                <input
+                  name="meal_type"
+                  value={form.meal_type}
+                  onChange={handleChange}
+                  placeholder="e.g. pre-workout, post-workout"
+                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                />
+              </label>
+
+              <label className="text-sm block">
+                <span className="mb-1 block font-medium">Description</span>
                 <textarea
                   name="description"
                   value={form.description}
                   onChange={handleChange}
                   rows={3}
-                  required
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                 />
-              </label>
-
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Alt names</span>
-                  <input
-                    name="altNames"
-                    value={form.altNames}
-                    onChange={handleChange}
-                    placeholder="comma separated"
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
-
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Tags</span>
-                  <input
-                    name="tags"
-                    value={form.tags}
-                    onChange={handleChange}
-                    placeholder="e.g. HIIT, Cardio"
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Duration (min) *</span>
-                  <input
-                    type="number"
-                    min="0"
-                    name="duration"
-                    value={form.duration}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
-
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Video URL *</span>
-                  <input
-                    name="videoUrl"
-                    value={form.videoUrl}
-                    onChange={handleChange}
-                    required
-                    placeholder="https://…"
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
-              </div>
-
-              <label className="inline-flex items-center gap-2 text-sm pt-1">
-                <input
-                  type="checkbox"
-                  name="isPublished"
-                  checked={form.isPublished}
-                  onChange={handleChange}
-                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
-                />
-                Publish immediately
               </label>
 
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setOpen(false);
+                    setEditId(null);
+                    resetForm();
+                  }}
                   className="rounded-xl border border-gray-300 px-4 py-2 text-sm"
                 >
                   Cancel
@@ -306,7 +407,7 @@ export default function Video() {
                   type="submit"
                   className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                 >
-                  Save Video
+                  {editId ? "Update Meal Plan" : "Save Meal Plan"}
                 </button>
               </div>
             </form>
@@ -314,7 +415,6 @@ export default function Video() {
         </div>
       )}
 
-    
       <div
         className={`pointer-events-none fixed left-0 top-0 h-0.5 bg-red-600 transition-all ${
           busy ? "w-full" : "w-0"

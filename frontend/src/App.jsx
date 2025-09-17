@@ -22,6 +22,7 @@ function App() {
       <Routes path="/*">
 
         <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/trainerDashboard/*" element={<TrainerLayout/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
         <Route path="/testing" element={<Testing />} />
@@ -30,7 +31,7 @@ function App() {
         <Route path="/video" element={<Video/>}/>
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
         <Route path="/*" element={<Homepage />} />
-        <Route path="/trainerDashboard/*" element={<TrainerLayout/>} />
+        
         
 
       </Routes>
