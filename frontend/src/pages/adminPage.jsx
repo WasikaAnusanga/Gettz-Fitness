@@ -11,6 +11,7 @@ import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
 import EditVideo from "../pages/admin/Feature Video/Editvideo";
 
 
+
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   if (user?.role?.toLowerCase() !== "admin") return <Navigate to="/adminLog" replace />;
