@@ -7,6 +7,7 @@ const stripe = new Stripe(process.env.SECRET_KEY);
 
 
 export async function createPayment(req,res){
+  console.log("createPayment runs")
   if(req.user==null){
     return res.status(404).json({message:"You have to login"})
   }
@@ -89,6 +90,15 @@ export async function verifyPayment(req,res){
     payment.paid_at=new Date();
   }
   await payment.save()
+
+  // const token = req.headers["authorization"];
+
+      
+  // await axios.put("http://localhost:3000/api/plan/updatePlan/"+req.params.id,{auto_renew:req.body.auto_renew},{
+  //   headers:{
+  //     "Authorization": token
+  //   }
+  // })
 
   res.status(200).json({message:"Payment Successfull"})
 

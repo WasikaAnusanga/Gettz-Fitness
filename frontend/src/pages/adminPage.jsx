@@ -2,11 +2,14 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
-
+import MembershipPlans from "./admin/membershipPlans/membershipPlan";
+import AddPlanForm from "./admin/membershipPlans/addPlan";
+import UpdatePlanForm from "./admin/membershipPlans/updatePlan";
 import Homepage from "./homepage";
 import VideoDetailsPage from "../pages/admin/Feature Video/Video";
 import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
 import EditVideo from "../pages/admin/Feature Video/Editvideo";
+
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -40,11 +43,16 @@ export default function AdminLayout() {
               <Route path="/sessions" element={<h1>Sessions</h1>} />
               <Route path="/equipment" element={<h1>Equipment</h1>} />
               <Route path="/supplement" element={<h1>Supplement</h1>} />
-              <Route path="/membership" element={<h1>Membership</h1>} />
+
+              <Route path="/membership" element={<MembershipPlans/>} />
               <Route path="/settings" element={<h1>Settings</h1>} />
+              <Route path="/addPlan" element={<AddPlanForm/>} />
+              <Route path="/updatePlan" element={<UpdatePlanForm/>} />
+              
               <Route path="/video" element={<VideoDetailsPage />} />
               <Route path="/video/upload" element={<VideoUpload />} />
               <Route path="/video/edit/:videoId" element={<EditVideo />} />
+
 
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>

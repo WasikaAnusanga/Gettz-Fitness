@@ -4,7 +4,7 @@ import Subscription from "../model/Subscription_Model.js";
 
 export function addSubscription(req,res){
     
-    
+    console.log("Add Subscription runs")
 
     if(req.user==null){
         res.status(401).json({
