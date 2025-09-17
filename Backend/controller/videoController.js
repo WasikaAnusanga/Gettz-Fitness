@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
 import Video from "../model/Video_Portal.js";
 
-/**
- * Create a new video
- */
+
 export async function uploadVideo(req, res) {
   try {
     const video = new Video(req.body);
@@ -15,9 +13,7 @@ export async function uploadVideo(req, res) {
   }
 }
 
-/**
- * Get all videos
- */
+
 export async function getAllvideo(req, res) {
   try {
     const videos = await Video.find().sort({ createdAt: -1 });
@@ -28,9 +24,7 @@ export async function getAllvideo(req, res) {
   }
 }
 
-/**
- * Get one video by videoId or Mongo _id
- */
+
 export async function getVideoById(req, res) {
   try {
     const { id } = req.params;
@@ -45,12 +39,10 @@ export async function getVideoById(req, res) {
   }
 }
 
-/**
- * Update video info
- */
 export async function updateVideo(req, res) {
   try {
-    const { id } = req.params;
+    const { videoId } = req.params;
+    const id = videoId;
     const updated = await Video.findOneAndUpdate(
       mongoose.isValidObjectId(id) ? { $or: [{ videoId: id }, { _id: id }] } : { videoId: id },
       req.body,
@@ -64,9 +56,7 @@ export async function updateVideo(req, res) {
   }
 }
 
-/**
- * Delete video
- */
+
 export async function deleteVideo(req, res) {
   try {
     const { id } = req.params;
@@ -81,10 +71,7 @@ export async function deleteVideo(req, res) {
   }
 }
 
-/**
- * Increment view count
- * POST /api/video/:id/view
- */
+
 export async function addView(req, res) {
   try {
     const { id } = req.params;
@@ -107,17 +94,11 @@ export async function addView(req, res) {
   }
 }
 
-/**
- * Toggle like
- * POST /api/video/:id/like
- *
- * - If req.user exists: toggle user like (needs `likedBy: []` in schema)
- * - If no req.user: just increment/decrement based on body.delta
- */
+
 export async function toggleLike(req, res) {
   try {
     const { id } = req.params;
-    const userId = req.user?._id; // if you have auth middleware
+    const userId = req.user?._id; 
 
     if (userId) {
       const video = await Video.findOne(

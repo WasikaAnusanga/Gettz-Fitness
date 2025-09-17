@@ -6,9 +6,10 @@ import MembershipPlans from "./admin/membershipPlans/membershipPlan";
 import AddPlanForm from "./admin/membershipPlans/addPlan";
 import UpdatePlanForm from "./admin/membershipPlans/updatePlan";
 import Homepage from "./homepage";
-import VideoDetailsPage from "../utils/Testing/Video";
-import VideoUpload from "../utils/Testing/VideoUpload";
-import EditVideo from "../utils/Testing/Editvideo";
+import VideoDetailsPage from "../pages/admin/Feature Video/Video";
+import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
+import EditVideo from "../pages/admin/Feature Video/Editvideo";
+
 
 
 export default function AdminLayout() {

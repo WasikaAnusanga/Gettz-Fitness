@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+
 import GymLogo from "../assets/GymLogo.jpg";
+import DefaultAvatar from "../assets/default-avatar.png";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -9,7 +11,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // read user from localStorage
   const readUser = () => {
     try {
       const token = localStorage.getItem("token");
@@ -21,12 +22,11 @@ export default function Navbar() {
     }
   };
 
-  // initial + whenever route changes (e.g., navigate after login)
   useEffect(() => {
     setUser(readUser());
   }, [location.pathname]);
 
-  // also react to cross-tab/localStorage updates
+
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === "user" || e.key === "token") setUser(readUser());
@@ -42,17 +42,26 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  // Build a robust display name
+  
+
   const displayName = useMemo(() => {
-    if (!user) return "";
-    const full = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
-    if (full) return full;
-    if (user.name) return String(user.name); // in case backend sends a single 'name'
-    if (user.email) return user.email.split("@")[0];
+    if (!user) return "Guest";
+    if (user.firstName || user.lastName) {
+      return [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+    }
+    if (user.name && typeof user.name === "string") return user.name;
+    if (user.email && typeof user.email === "string") return user.email.split("@")[0];
     return "Member";
   }, [user]);
 
-  const avatarSrc = user?.avatar || user?.profilePicture || GymLogo;
+  // Use GymLogo as fallback, then default avatar if broken
+  const avatarSrc = useMemo(() => {
+    if (user?.avatar && typeof user.avatar === "string" && user.avatar.startsWith("http")) return user.avatar;
+    if (user?.profilePicture && typeof user.profilePicture === "string" && user.profilePicture.startsWith("http")) return user.profilePicture;
+    if (user?.profilePicture && typeof user.profilePicture === "string") return user.profilePicture;
+    if (user?.avatar && typeof user.avatar === "string") return user.avatar;
+    return DefaultAvatar;
+  }, [user]);
 
   const linkClasses = ({ isActive }) =>
     `relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
@@ -85,10 +94,14 @@ export default function Navbar() {
                 src={avatarSrc}
                 alt={displayName || "User"}
                 className="h-8 w-8 rounded-full object-cover border"
+                onError={e => { e.target.onerror = null; e.target.src = DefaultAvatar; }}
               />
-              <span className="font-medium text-gray-700">
+              <Link
+                to="/user/dashboard"
+                className="font-medium text-gray-700 hover:text-red-600 underline-offset-2 hover:underline transition"
+              >
                 {displayName}
-              </span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 text-white bg-red-600 rounded-lg shadow hover:bg-red-700 transition"
@@ -131,6 +144,7 @@ export default function Navbar() {
                     src={avatarSrc}
                     alt={displayName || "User"}
                     className="h-8 w-8 rounded-full object-cover border"
+                    onError={e => { e.target.onerror = null; e.target.src = DefaultAvatar; }}
                   />
                   <span className="font-medium text-gray-700">{displayName}</span>
                 </div>

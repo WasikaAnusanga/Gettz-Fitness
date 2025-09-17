@@ -23,6 +23,11 @@ const videoSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  category:{
+    type: String,
+    required: true
+  }
+  ,
   duration: {
     type: Number, 
     required: true
@@ -30,6 +35,10 @@ const videoSchema = new mongoose.Schema({
   videoUrl: {
     type: String,
     required: true
+  },
+  workOutStep:{
+    type:[String],
+    default:[]
   },
   viewCount: {
      type: Number, 

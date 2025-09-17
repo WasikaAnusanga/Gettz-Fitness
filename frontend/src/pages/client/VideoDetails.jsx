@@ -1,21 +1,20 @@
-// src/pages/videos/VideoDetails.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowLeft, Heart, Eye, AlertTriangle } from "lucide-react";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
 
 const RAW_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const API_BASE = RAW_BASE.replace(/\/+$/, "");
 
-// Backend endpoints (make sure these match your server)
 const endpoints = {
   getOne: (id) => `${API_BASE}/api/video/${id}`,
   addView: (id) => `${API_BASE}/api/video/${id}/view`,
   toggleLike: (id) => `${API_BASE}/api/video/${id}/like`,
 };
 
-/* ---------------- URL helpers ---------------- */
 function parseYouTubeId(url) {
   if (!url) return null;
   const raw = (url || "").trim();
@@ -23,33 +22,27 @@ function parseYouTubeId(url) {
   try {
     const u = new URL(raw);
     const host = u.hostname.replace(/^www\./, "").toLowerCase();
-    const isYT =
-      host === "youtu.be" || host === "youtube.com" || host === "m.youtube.com";
+    const isYT = host === "youtu.be" || host === "youtube.com" || host === "m.youtube.com";
     if (!isYT) return null;
-
-    // youtu.be/<id>
     if (host === "youtu.be") {
       const id = u.pathname.slice(1);
       return id || null;
     }
-
-    // youtube.com/watch?v=<id>
     const v = u.searchParams.get("v");
     if (v) return v;
-
-    // youtube.com/shorts/<id>, /embed/<id>, /live/<id>
     const m = u.pathname.match(/\/(shorts|embed|live)\/([^/?#]+)/i);
     if (m && m[2]) return m[2];
-
     return null;
   } catch {
     return null;
   }
 }
+
 function toYouTubeEmbed(url) {
   const id = parseYouTubeId(url);
   return id ? `https://www.youtube.com/embed/${id}` : null;
 }
+
 function normalizeDriveDirect(url) {
   try {
     const raw = (url || "").trim();
@@ -65,18 +58,14 @@ function normalizeDriveDirect(url) {
     return (url || "").trim();
   }
 }
-/* ---------------------------------------------- */
 
 export default function VideoDetails() {
   const { videoId } = useParams();
   const [data, setData] = useState(null);
   const [likeBusy, setLikeBusy] = useState(false);
-
-  // prevent double view bump per session
   const viewKey = useMemo(() => `viewed:${(videoId || "").trim()}`, [videoId]);
   const likeKey = useMemo(() => `liked:${(videoId || "").trim()}`, [videoId]);
 
-  // Load video (single endpoint -> fallback list+find)
   useEffect(() => {
     let mounted = true;
     async function load() {
@@ -105,7 +94,6 @@ export default function VideoDetails() {
     };
   }, [videoId]);
 
-  // Decide how to play
   const rawUrl = (data?.videoUrl || "").trim();
   const ytEmbed = useMemo(() => toYouTubeEmbed(rawUrl), [rawUrl]);
   const fileSrc = useMemo(() => {
@@ -114,19 +102,14 @@ export default function VideoDetails() {
     return normalizeDriveDirect(rawUrl);
   }, [ytEmbed, rawUrl]);
 
-  // ⬆️ Automatically bump view count once per session
   useEffect(() => {
     if (!data) return;
     if (sessionStorage.getItem(viewKey)) return;
-
-    sessionStorage.setItem(viewKey, "1"); // mark first
-    // optimistic UI
+    sessionStorage.setItem(viewKey, "1");
     setData((d) => (d ? { ...d, viewCount: (d.viewCount || 0) + 1 } : d));
-
     axios
       .post(endpoints.addView(videoId))
       .then((res) => {
-        // sync with server (optional; if server returns counts)
         const { viewCount, likeCount } = res.data || {};
         setData((d) =>
           d
@@ -141,39 +124,29 @@ export default function VideoDetails() {
         );
       })
       .catch(() => {
-        // if it fails, just keep the optimistic count and remove the session flag
         sessionStorage.removeItem(viewKey);
         console.warn("view bump failed");
       });
   }, [data, videoId, viewKey]);
 
-  // ❤️ Like (server-first with optimistic UI)
   async function handleLike() {
     if (!data || likeBusy) return;
     const alreadyLocal = localStorage.getItem(likeKey) === "1";
-
     setLikeBusy(true);
-    // optimistic
     setData((d) =>
       d ? { ...d, likeCount: (d.likeCount || 0) + (alreadyLocal ? -1 : 1) } : d
     );
-
     try {
       const res = await axios.post(endpoints.toggleLike(videoId), {
-        // if your server needs delta when unauthenticated:
         delta: alreadyLocal ? -1 : 1,
       });
-      // store local like toggle (for guests)
       if (alreadyLocal) localStorage.removeItem(likeKey);
       else localStorage.setItem(likeKey, "1");
-
-      // sync with server value if returned
       const { likeCount } = res.data || {};
       if (typeof likeCount === "number") {
         setData((d) => (d ? { ...d, likeCount } : d));
       }
     } catch (e) {
-      // revert on error
       setData((d) =>
         d ? { ...d, likeCount: (d.likeCount || 0) + (alreadyLocal ? 1 : -1) } : d
       );
@@ -188,90 +161,91 @@ export default function VideoDetails() {
   const hasPlayable = Boolean(ytEmbed || fileSrc);
 
   return (
-    
-    <div className="mx-auto max-w-5xl px-4 py-6">
-      <div className="mb-4 flex items-center justify-between">
-        <Link
-          to="/videos"
-          className="inline-flex items-center gap-1 text-sm text-red-600 hover:underline"
-        >
-          <ArrowLeft size={14} /> Back to videos
-        </Link>
-        <div className="text-xs text-neutral-500">ID: {videoId}</div>
-      </div>
-
-      {!data ? (
-        <div className="h-64 animate-pulse rounded-2xl bg-neutral-200" />
-      ) : (
-        <>
-          <div className="overflow-hidden rounded-2xl border border-black/10 bg-black">
-            {ytEmbed ? (
-              <iframe
-                className="h-[56vw] max-h-[60vh] w-full"
-                src={ytEmbed}
-                title={data.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : fileSrc ? (
-              <video
-                className="h-[56vw] max-h-[60vh] w-full"
-                controls
-                playsInline
-                preload="metadata"
-                crossOrigin="anonymous"
-              >
-                <source src={fileSrc} type="video/mp4" />
-                <source src={fileSrc} />
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <div className="flex h-[40vh] w-full items-center justify-center bg-neutral-900 text-neutral-300">
-                <div className="flex items-center gap-2 rounded-xl bg-neutral-800/60 px-4 py-3">
-                  <AlertTriangle className="text-yellow-400" />
-                  <div className="text-sm">
-                    This video has no playable URL.
-                    <div className="mt-1 text-xs text-neutral-400">
-                      <span className="font-mono">videoUrl: </span>
-                      <span className="font-mono break-all">
-                        {rawUrl || "(empty)"}
-                      </span>
-                    </div>
-                    <div className="mt-1 text-xs">
-                      Set a YouTube link (watch / shorts / share) or upload a
-                      video file in Admin → Video.
+    <div className="w-full min-h-screen flex flex-col bg-white">
+      <Header />
+      <main className="flex-1 mx-auto w-full max-w-3xl px-2 md:px-0 pt-20">
+        <div className="mb-6 flex items-center gap-2">
+          <Link
+            to="/videos"
+            className="inline-flex items-center gap-1 text-sm text-red-500 hover:underline"
+          >
+            <ArrowLeft size={16} /> Back
+          </Link>
+        </div>
+        {!data ? (
+          <div className="h-64 animate-pulse rounded-2xl bg-neutral-200" />
+        ) : (
+          <>
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-black mb-6">
+              {ytEmbed ? (
+                <iframe
+                  className="aspect-video w-full min-h-[220px] max-h-[60vh]"
+                  src={ytEmbed}
+                  title={data.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : fileSrc ? (
+                <video
+                  className="aspect-video w-full min-h-[220px] max-h-[60vh]"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  crossOrigin="anonymous"
+                >
+                  <source src={fileSrc} type="video/mp4" />
+                  <source src={fileSrc} />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <div className="flex h-[40vh] w-full items-center justify-center bg-neutral-900 text-neutral-300">
+                  <div className="flex items-center gap-2 rounded-xl bg-neutral-800/60 px-4 py-3">
+                    <AlertTriangle className="text-yellow-400" />
+                    <div className="text-sm">
+                      No playable video URL.
+                      <div className="mt-1 text-xs text-neutral-400">
+                        <span className="font-mono">videoUrl: </span>
+                        <span className="font-mono break-all">{rawUrl || "(empty)"}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-semibold">{data.title}</h1>
-              <div className="mt-1 inline-flex items-center gap-2 text-sm text-neutral-600">
-                <Eye size={16} />
-                <span>{data.viewCount ?? 0} views</span>
+              )}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900 flex-1 truncate">{data.title}</h1>
+              <div className="flex items-center gap-4">
+                <span className="inline-flex items-center gap-1 text-gray-500 text-sm">
+                  <Eye size={16} /> {data.viewCount ?? 0}
+                </span>
+                <button
+                  onClick={handleLike}
+                  disabled={likeBusy}
+                  className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-red-500 hover:bg-red-50 disabled:opacity-60 transition"
+                  title="Like"
+                >
+                  <Heart className="fill-red-500 text-red-500" size={18} />
+                  <span>{data.likeCount ?? 0}</span>
+                </button>
               </div>
             </div>
-
-            <button
-              onClick={handleLike}
-              disabled={likeBusy}
-              className="inline-flex items-center gap-2 rounded-xl border border-black/10 bg-white px-4 py-2 text-sm hover:bg-black/5 disabled:opacity-60"
-              title="Like"
-            >
-              <Heart className="fill-red-500 text-red-500" size={18} />
-              <span>{data.likeCount ?? 0}</span>
-            </button>
-          </div>
-
-          {data.description && (
-            <p className="mt-4 text-sm text-neutral-700">{data.description}</p>
-          )}
-        </>
-      )}
+            {data.description && (
+              <p className="mt-2 text-base text-gray-700 whitespace-pre-line border-l-4 border-red-100 pl-4">{data.description}</p>
+            )}
+            {Array.isArray(data.workOutStep) && data.workOutStep.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold mb-2 text-gray-900">Workout Steps</h2>
+                <ol className="list-decimal pl-6 space-y-1">
+                  {data.workOutStep.filter(Boolean).map((step, idx) => (
+                    <li key={idx} className="text-base text-gray-700">{step}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+      <Footer />
     </div>
   );
 }
