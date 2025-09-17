@@ -4,9 +4,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 
 import Homepage from "./homepage";
-import VideoDetailsPage from "../utils/Testing/Video";
-import VideoUpload from "../utils/Testing/VideoUpload";
-import EditVideo from "../utils/Testing/Editvideo";
+import VideoDetailsPage from "../pages/admin/Feature Video/Video";
+import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
+import EditVideo from "../pages/admin/Feature Video/Editvideo";
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");

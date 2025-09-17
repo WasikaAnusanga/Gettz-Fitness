@@ -1,9 +1,13 @@
 // src/utils/Testing/Video.jsx
+
 import axios from "axios";
-import Loader from "../../components/lorder-animate";
+import Loader from "../../../components/lorder-animate";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import GymLogo from "../../../assets/GymLogo.jpg";
 
 export default function VideoDetailsPage() {
   const [video, setVideo] = useState([]);
@@ -69,17 +73,83 @@ export default function VideoDetailsPage() {
     }
   }
 
+  // PDF Download Handler
+  const handleDownloadPDF = async () => {
+    const doc = new jsPDF();
+  
+    const img = new window.Image();
+    img.src = GymLogo;
+    await new Promise((resolve) => { img.onload = resolve; });
+    doc.addImage(img, 'JPEG', 10, 8, 18, 18);
+  
+    doc.setFontSize(18);
+    doc.setTextColor('#e30613');
+    doc.text('Gettz Fitness', 32, 18);
+    doc.setFontSize(11);
+    doc.setTextColor('#333');
+    doc.text('Address: Matara', 32, 25);
+    doc.setDrawColor('#e30613');
+    doc.line(10, 30, 200, 30);
+
+    
+    autoTable(doc, {
+      startY: 35,
+      head: [[
+        'No', 'Video ID', 'Title', 'Duration', 'Views', 'Likes', 'Category', 'Status'
+      ]],
+      body: video.map((vid, idx) => [
+        idx + 1,
+        vid.videoId,
+        vid.title,
+        vid.duration,
+        vid.viewCount,
+        vid.likeCount,
+        vid.category,
+        vid.isPublished ? 'Published' : 'Unlisted',
+      ]),
+      theme: 'grid',
+      headStyles: { fillColor: [227, 6, 19] },
+      styles: { fontSize: 9 },
+    });
+
+    
+    const sorted = [...video].sort((a, b) => (b.viewCount + b.likeCount) - (a.viewCount + a.likeCount));
+    const popular = sorted.slice(0, 5);
+    let y = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(14);
+    doc.setTextColor('#e30613');
+    doc.text('Popular Videos', 10, y);
+    y += 2;
+    autoTable(doc, {
+      startY: y + 3,
+      head: [[ 'Title', 'Views', 'Likes', 'Category' ]],
+      body: popular.map(v => [v.title, v.viewCount, v.likeCount, v.category]),
+      theme: 'striped',
+      headStyles: { fillColor: [227, 6, 19] },
+      styles: { fontSize: 9 },
+    });
+
+    doc.save('gettz_fitness_videos.pdf');
+  };
+
   return (
     <div className="relative w-full h-full rounded-lg">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Videos</h2>
-
-        <Link
-          to="/admin/video/upload"
-          className="inline-flex items-center rounded-lg bg-[#e30613] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition"
-        >
-          + Add Video
-        </Link>
+        <div className="flex gap-2">
+          <button
+            onClick={handleDownloadPDF}
+            className="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition"
+          >
+            Download PDF
+          </button>
+          <Link
+            to="/admin/video/upload"
+            className="inline-flex items-center rounded-lg bg-[#e30613] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition"
+          >
+            + Add Video
+          </Link>
+        </div>
       </div>
 
       {loaded ? (
@@ -93,6 +163,8 @@ export default function VideoDetailsPage() {
                 <th className="px-3 py-2 text-left">Duration</th>
                 <th className="px-3 py-2 text-left">Description</th>
                 <th className="px-3 py-2 text-left">Views</th>
+                <th className="px-3 py-2 text-left">Category</th>
+                <th className="px-3 py-2 text-left">Status</th>
                 <th className="px-3 py-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -113,7 +185,29 @@ export default function VideoDetailsPage() {
                   <td className="px-3 py-2">{vid.duration} sec</td>
                   <td className="px-3 py-2">{vid.description}</td>
                   <td className="px-3 py-2">{vid.viewCount}</td>
-
+                  <td className="px-3 py-2">{vid.category}</td>
+                  <td className="px-3 py-2">
+                    <select
+                      value={vid.isPublished ? "published" : "unlisted"}
+                      onChange={async (e) => {
+                        const newStatus = e.target.value === "published";
+                        try {
+                          await axios.put(
+                            `${import.meta.env.VITE_BACKEND_URL}/api/video/update/${vid.videoId}`,
+                            { ...vid, isPublished: newStatus }
+                          );
+                          toast.success(`Video set to ${newStatus ? "Published" : "Unlisted"}`);
+                          setLoaded(false);
+                        } catch (err) {
+                          toast.error("Failed to update status");
+                        }
+                      }}
+                      className="rounded border px-2 py-1 text-sm"
+                    >
+                      <option value="published">Published</option>
+                      <option value="unlisted">Unlisted</option>
+                    </select>
+                  </td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
                       <button

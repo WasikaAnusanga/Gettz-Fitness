@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import meadiaUpload from "../../utils/mediaUpload"; 
+import meadiaUpload from "../../../utils/mediaUpload";
 import {
   UploadCloud,
   Video as VideoIcon,
@@ -13,20 +13,30 @@ import {
 
 
 export default function VideoUpload() {
-  
+  const CATEGORIES = [
+    "Strength",
+    "Cardio",
+    "Mobility",
+    "Yoga",
+    "HIIT",
+    "Warm-up",
+    "Cooldown",
+    "Technique",
+  ];
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [altNames, setAltNames] = useState(""); 
-  const [tags, setTags] = useState(""); 
-  const [duration, setDuration] = useState(0); 
+  const [altNames, setAltNames] = useState("");
+  const [tags, setTags] = useState("");
+  const [duration, setDuration] = useState(0);
   const [isPublished, setIsPublished] = useState(true);
+  const [category, setCategory] = useState("");
+  const [workOutStep, setWorkOutStep] = useState([""]);
 
-  
   const [videoFile, setVideoFile] = useState(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [preview, setPreview] = useState("");
 
-  
   const [loading, setLoading] = useState(false);
   const [ytOpen, setYtOpen] = useState(false);
   const [ytQuery, setYtQuery] = useState("");
@@ -36,7 +46,7 @@ export default function VideoUpload() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
- 
+
   useEffect(() => {
     if (!videoFile) return;
     const objectURL = URL.createObjectURL(videoFile);
@@ -59,14 +69,16 @@ export default function VideoUpload() {
       .map((t) => t.trim())
       .filter(Boolean);
 
+
   async function handleSubmit() {
     if (!title.trim()) return toast.error("Title is required");
     if (!description.trim()) return toast.error("Description is required");
+    if (!category) return toast.error("Please pick a category"); 
 
     try {
       setLoading(true);
 
-
+    
       let finalVideoUrl = videoUrl.trim();
       if (!finalVideoUrl) {
         if (!videoFile) {
@@ -90,11 +102,11 @@ export default function VideoUpload() {
         duration: Number(duration) || 0,
         videoUrl: finalVideoUrl,
         isPublished,
+        category,
+        workOutStep: workOutStep.filter(Boolean),
       };
 
-
-      const token = localStorage.getItem("token")
-
+      const token = localStorage.getItem("token");
 
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/video/upload/`,
@@ -118,16 +130,19 @@ export default function VideoUpload() {
     if (!ytQuery.trim()) return;
     try {
       setYtLoading(true);
-      const key = import.meta.env.VITE_YT_API_KEY; 
-      const { data } = await axios.get("https://www.googleapis.com/youtube/v3/search", {
-        params: {
-          key,
-          part: "snippet",
-          q: ytQuery.trim(),
-          type: "video",
-          maxResults: 12,
-        },
-      });
+      const key = import.meta.env.VITE_YT_API_KEY;
+      const { data } = await axios.get(
+        "https://www.googleapis.com/youtube/v3/search",
+        {
+          params: {
+            key,
+            part: "snippet",
+            q: ytQuery.trim(),
+            type: "video",
+            maxResults: 12,
+          },
+        }
+      );
       const items =
         data?.items?.map((it) => ({
           id: it?.id?.videoId,
@@ -153,18 +168,18 @@ export default function VideoUpload() {
   }
 
   return (
-     <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
+    <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
       <div className="w-full max-w-4xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
-     
+        
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-4">
           <div className="flex items-center gap-2">
-             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e30613] text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e30613] text-white">
               <VideoIcon size={18} />
             </div>
             <div>
               <h1 className="font-semibold">Upload Training Video</h1>
               <p className="text-xs text-neutral-500">
-                MP4/WebM or YouTube link — keep it short & crisp.
+                MP4/WebM or YouTube link — keep it short &amp; crisp.
               </p>
             </div>
           </div>
@@ -173,9 +188,9 @@ export default function VideoUpload() {
           </Link>
         </div>
 
-       
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
-          
+         
           <div className="lg:col-span-2 space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
@@ -186,6 +201,41 @@ export default function VideoUpload() {
                 className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Workout Steps</label>
+              {workOutStep.map((step, idx) => (
+                <div key={idx} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={step}
+                    onChange={e => {
+                      const arr = [...workOutStep];
+                      arr[idx] = e.target.value;
+                      setWorkOutStep(arr);
+                    }}
+                    placeholder={`Step ${idx + 1}`}
+                    className="flex-1 rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setWorkOutStep(workOutStep.filter((_, i) => i !== idx))}
+                    className="rounded bg-gray-100 px-2 text-gray-500 hover:bg-red-100"
+                    disabled={workOutStep.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setWorkOutStep([...workOutStep, ""])}
+                className="mt-1 rounded bg-[#e30613] px-3 py-1 text-white text-xs hover:opacity-90"
+              >
+                + Add Step
+              </button>
+              <p className="mt-1 text-xs text-neutral-500">Add each step of the workout (optional).</p>
+            </div>
+            
 
             <div>
               <label className="block text-sm font-medium mb-1">Description</label>
@@ -198,6 +248,7 @@ export default function VideoUpload() {
               />
             </div>
 
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">
@@ -221,11 +272,37 @@ export default function VideoUpload() {
                   className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                 />
               </div>
+
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                >
+                  <option value="" disabled>
+                    Select a category…
+                  </option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                  
+                </select>
+                <p className="mt-1 text-xs text-neutral-500">
+                  Choose the most relevant category for this video.
+                </p>
+              </div>
             </div>
 
+           
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Duration (seconds)</label>
+                <label className="block text-sm font-medium mb-1">
+                  Duration (seconds)
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -252,7 +329,7 @@ export default function VideoUpload() {
             </div>
           </div>
 
-          
+         
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
@@ -283,9 +360,9 @@ export default function VideoUpload() {
               <label className="block text-sm font-medium mb-1">
                 Or upload a video file
               </label>
-              <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-black/20 p-6 text-center hover:bg-black/5">
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-black/20 p-6 text-center hover:bg:black/5 hover:bg-black/5">
                 <UploadCloud className="mb-2" />
-                <span className="text-sm">Drag & drop or click to choose</span>
+                <span className="text-sm">Drag &amp; drop or click to choose</span>
                 <input
                   type="file"
                   accept="video/*"
@@ -296,7 +373,12 @@ export default function VideoUpload() {
 
               {preview && (
                 <div className="mt-3 w-full rounded-xl border border-black/10 overflow-hidden">
-                  <video ref={videoRef} src={preview} controls className="w-full h-64 object-cover" />
+                  <video
+                    ref={videoRef}
+                    src={preview}
+                    controls
+                    className="w-full h-64 object-cover"
+                  />
                 </div>
               )}
             </div>
@@ -305,7 +387,10 @@ export default function VideoUpload() {
 
        
         <div className="flex items-center justify-between border-t border-black/10 px-6 py-4">
-          <Link to="/admin/video" className="rounded-xl border border-black/10 px-4 py-2 text-sm hover:bg-black/5">
+          <Link
+            to="/admin/video"
+            className="rounded-xl border border-black/10 px-4 py-2 text-sm hover:bg-black/5"
+          >
             Cancel
           </Link>
           <button
@@ -327,14 +412,23 @@ export default function VideoUpload() {
                 <Youtube className="text-[#e30613]" />
                 <h3 className="font-semibold">Pick from YouTube</h3>
               </div>
-              <button onClick={() => setYtOpen(false)} className="rounded-lg p-1 hover:bg-black/5">
+              <button
+                onClick={() => setYtOpen(false)}
+                className="rounded-lg p-1 hover:bg-black/5"
+              >
                 <Close />
               </button>
             </div>
 
-            <form onSubmit={searchYouTube} className="flex items-center gap-2 px-4 py-3 border-b">
+            <form
+              onSubmit={searchYouTube}
+              className="flex items-center gap-2 px-4 py-3 border-b"
+            >
               <div className="relative flex-1">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
+                />
                 <input
                   value={ytQuery}
                   onChange={(e) => setYtQuery(e.target.value)}
@@ -342,13 +436,18 @@ export default function VideoUpload() {
                   className="w-full rounded-xl border border-black/10 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                 />
               </div>
-              <button type="submit" className="rounded-xl bg-[#e30613] px-3 py-2 text-sm font-medium text-white hover:opacity-95">
+              <button
+                type="submit"
+                className="rounded-xl bg-[#e30613] px-3 py-2 text-sm font-medium text-white hover:opacity-95"
+              >
                 Search
               </button>
             </form>
 
             <div className="max-h-[60vh] overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {ytLoading && <p className="text-sm text-neutral-500">Searching…</p>}
+              {ytLoading && (
+                <p className="text-sm text-neutral-500">Searching…</p>
+              )}
               {!ytLoading &&
                 ytResults.map((v) => (
                   <button
@@ -356,17 +455,28 @@ export default function VideoUpload() {
                     onClick={() => pickYouTube(v.id)}
                     className="text-left rounded-xl border border-black/10 hover:border-[#e30613] hover:bg-[#e30613]/5 overflow-hidden"
                   >
-                    <img src={v.thumb} alt={v.title} className="w-full aspect-video object-cover" />
+                    <img
+                      src={v.thumb}
+                      alt={v.title}
+                      className="w-full aspect-video object-cover"
+                    />
                     <div className="p-2">
-                      <p className="text-sm font-medium line-clamp-2">{v.title}</p>
-                      <p className="text-xs text-neutral-500 line-clamp-1">{v.channel}</p>
+                      <p className="text-sm font-medium line-clamp-2">
+                        {v.title}
+                      </p>
+                      <p className="text-xs text-neutral-500 line-clamp-1">
+                        {v.channel}
+                      </p>
                     </div>
                   </button>
                 ))}
             </div>
 
             <div className="flex justify-end gap-2 border-t px-4 py-3">
-              <button onClick={() => setYtOpen(false)} className="rounded-xl border border-black/10 px-3 py-2 text-sm hover:bg-black/5">
+              <button
+                onClick={() => setYtOpen(false)}
+                className="rounded-xl border border-black/10 px-3 py-2 text-sm hover:bg-black/5"
+              >
                 Close
               </button>
             </div>
