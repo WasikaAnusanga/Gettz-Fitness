@@ -177,61 +177,63 @@ export default function VideoDetailsPage() {
                 </tr>
               )}
 
-              {video.map((vid, index) => (
-                <tr key={vid.videoId || index} className="border-t border-black/10">
-                  <td className="px-3 py-2">{index + 1}</td>
-                  <td className="px-3 py-2">{vid.videoId}</td>
-                  <td className="px-3 py-2">{vid.title}</td>
-                  <td className="px-3 py-2">{vid.duration} sec</td>
-                  <td className="px-3 py-2">{vid.description}</td>
-                  <td className="px-3 py-2">{vid.viewCount}</td>
-                  <td className="px-3 py-2">{vid.category}</td>
-                  <td className="px-3 py-2">
-                    <select
-                      value={vid.isPublished ? "published" : "unlisted"}
-                      onChange={async (e) => {
-                        const newStatus = e.target.value === "published";
-                        try {
-                          await axios.put(
-                            `${import.meta.env.VITE_BACKEND_URL}/api/video/update/${vid.videoId}`,
-                            { ...vid, isPublished: newStatus }
-                          );
-                          toast.success(`Video set to ${newStatus ? "Published" : "Unlisted"}`);
-                          setLoaded(false);
-                        } catch (err) {
-                          toast.error("Failed to update status");
-                        }
-                      }}
-                      className="rounded border px-2 py-1 text-sm"
-                    >
-                      <option value="published">Published</option>
-                      <option value="unlisted">Unlisted</option>
-                    </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() =>
-                          navigate(
-                            `/admin/video/edit/${encodeURIComponent(vid.videoId)}`,
-                            { state: vid }
-                          )
-                        }
-                        className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+              {[...video]
+                .sort((a, b) => (a.title || '').localeCompare(b.title || ''))
+                .map((vid, index) => (
+                  <tr key={vid.videoId || index} className="border-t border-black/10">
+                    <td className="px-3 py-2">{index + 1}</td>
+                    <td className="px-3 py-2">{vid.videoId}</td>
+                    <td className="px-3 py-2">{vid.title}</td>
+                    <td className="px-3 py-2">{vid.duration} sec</td>
+                    <td className="px-3 py-2">{vid.description}</td>
+                    <td className="px-3 py-2">{vid.viewCount}</td>
+                    <td className="px-3 py-2">{vid.category}</td>
+                    <td className="px-3 py-2">
+                      <select
+                        value={vid.isPublished ? "published" : "unlisted"}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value === "published";
+                          try {
+                            await axios.put(
+                              `${import.meta.env.VITE_BACKEND_URL}/api/video/update/${vid.videoId}`,
+                              { ...vid, isPublished: newStatus }
+                            );
+                            toast.success(`Video set to ${newStatus ? "Published" : "Unlisted"}`);
+                            setLoaded(false);
+                          } catch (err) {
+                            toast.error("Failed to update status");
+                          }
+                        }}
+                        className="rounded border px-2 py-1 text-sm"
                       >
-                        Edit
-                      </button>
+                        <option value="published">Published</option>
+                        <option value="unlisted">Unlisted</option>
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/admin/video/edit/${encodeURIComponent(vid.videoId)}`,
+                              { state: vid }
+                            )
+                          }
+                          className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+                        >
+                          Edit
+                        </button>
 
-                      <button
-                        onClick={() => confirmDelete(vid.videoId)}
-                        className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        <button
+                          onClick={() => confirmDelete(vid.videoId)}
+                          className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
