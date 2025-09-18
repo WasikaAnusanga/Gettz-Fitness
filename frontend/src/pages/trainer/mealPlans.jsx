@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, X } from "lucide-react";
+import { Plus, X } from "lucide-react"; // removed Search import
 import axios from "axios";
 import toast from "react-hot-toast";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function MealPlans() {
   // Data
@@ -10,7 +12,7 @@ export default function MealPlans() {
 
   // UI state
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(""); // kept for filtering logic (no visible search UI)
   const [editId, setEditId] = useState(null); // mealPlan_id when editing
 
   // Form (snake_case to match backend)
@@ -77,7 +79,6 @@ export default function MealPlans() {
     try {
       setBusy(true);
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/mealPlan`, payload);
-      
       toast.success("Meal plan added");
       setOpen(false);
       resetForm();
@@ -152,7 +153,7 @@ export default function MealPlans() {
 
   // -------- DELETE ----------
   async function deletePlan(p) {
-    const key = p.mealPlan_id ?? p._id; 
+    const key = p.mealPlan_id ?? p._id;
     if (!key) {
       toast.error("Missing id");
       return;
@@ -160,8 +161,7 @@ export default function MealPlans() {
 
     try {
       setBusy(true);
-      await axios.delete(
-        import.meta.env.VITE_BACKEND_URL+"/api/mealPlan/"+key);
+      await axios.delete(import.meta.env.VITE_BACKEND_URL + "/api/mealPlan/" + key);
       toast.success("Meal plan deleted");
       fetchMealPlans();
     } catch (err) {
@@ -176,7 +176,7 @@ export default function MealPlans() {
     }
   }
 
-  // -------- SEARCH ----------
+  // -------- SEARCH (query kept; no visible UI) ----------
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return plans;
@@ -202,26 +202,73 @@ export default function MealPlans() {
     fetchMealPlans();
   }, []);
 
+  // -------- PDF (exports current filtered list) ----------
+  const handleDownloadPDF = () => {
+    const list = filtered;
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.setTextColor("#e30613"); // red accent like your theme
+    doc.text("Meal Plans Report", 14, 16);
+
+    autoTable(doc, {
+      startY: 25,
+      head: [[
+        "No",
+        "Meal Plan ID",
+        "User ID",
+        "Name",
+        "Description",
+        "Type",
+        "Duration",
+      ]],
+      body: list.map((p, i) => [
+        i + 1,
+        p.mealPlan_id ?? "-",
+        p.user_id ?? "-",
+        p.meal_name ?? "-",
+        p.description ?? "-",
+        p.meal_type ?? "-",
+        p.duration ?? "-",
+      ]),
+      theme: "grid",
+      headStyles: { fillColor: [0, 0, 0] }, // black header like Video.jsx table
+      styles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 10 },   // No
+        1: { cellWidth: 25 },   // Meal Plan ID
+        2: { cellWidth: 22 },   // User ID
+        3: { cellWidth: 40 },   // Name
+        4: { cellWidth: 50 },   // Description
+        5: { cellWidth: 25 },   // Type
+        6: { cellWidth: 25 },   // Duration
+      },
+    });
+
+    doc.save("meal_plans.pdf");
+  };
+
+  // --- UI helpers for Video.jsx look ---
+  const headerCell = "px-3 py-2 text-left";
+  const cell = "px-3 py-2";
+
   return (
     <div className="p-6">
-   
       <div className="mx-auto w-full max-w-screen-2xl">
-  
+        {/* Header */}
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-black">Meal Plans</h1>
           <div className="flex items-center gap-2">
-            
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by ID, user, name, type…"
-                className="w-80 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
-              />
-            </div>
+            {/* Download PDF (green) */}
+            <button
+              type="button"
+              onClick={handleDownloadPDF}
+              className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
+            >
+              Download PDF
+            </button>
 
-           
+            {/* Add */}
             <button
               type="button"
               onClick={() => {
@@ -237,71 +284,82 @@ export default function MealPlans() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
-          <div className="min-w-[1100px]">
-            
-            <div className="grid grid-cols-13 gap-x-8 gap-y-4 border-b border-gray-100 px-6 py-3 text-xs font-semibold text-gray-500">
-              <div className="col-span-2">Meal Plan ID</div>
-              <div className="col-span-2">User ID</div>
-              <div className="col-span-2">Name</div>
-              <div className="col-span-2">Description</div>
-              <div className="col-span-2 pr-0">Type</div>
-              <div className="col-span-1 text-right pr-2 md:pr-4 -ml-2">Duration</div>
-              <div className="col-span-1 text-right pl-5 md:pl-7">Actions</div>
-            </div>
+        {/* Video.jsx-style table */}
+        <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
+          <table className="w-full text-sm">
+            <thead className="bg-black text-white">
+              <tr>
+                <th className={headerCell}>No</th>
+                <th className={headerCell}>Meal Plan ID</th>
+                <th className={headerCell}>User ID</th>
+                <th className={headerCell}>Name</th>
+                <th className={headerCell}>Description</th>
+                <th className={headerCell}>Type</th>
+                <th className={headerCell}>Duration</th>
+                <th className={headerCell}>Actions</th>
+              </tr>
+            </thead>
 
-            {busy ? (
-              <div className="p-6 text-sm text-gray-500">Loading…</div>
-            ) : filtered.length === 0 ? (
-              <div className="p-6 text-sm text-gray-500">No meal plans found</div>
-            ) : (
-              filtered.map((p) => {
-                const key = p._id ?? p.mealPlan_id;
-                return (
-                  <div
-                    key={key}
-                    className="grid grid-cols-13 gap-x-8 gap-y-4 px-6 py-3 text-sm text-gray-800 border-b last:border-none"
-                  >
-                    <div className="col-span-2 font-mono">{p.mealPlan_id ?? "-"}</div>
-                    <div className="col-span-2">{p.user_id ?? "-"}</div>
-                    <div className="col-span-2">{p.meal_name ?? "-"}</div>
-                    <div className="col-span-2 truncate">{p.description ?? "-"}</div>
-                    <div className="col-span-2 pr-0">{p.meal_type ?? "-"}</div>
-                    <div className="col-span-1 text-right whitespace-nowrap pr-2 md:pr-4 -ml-2">
-                      {p.duration ?? "-"}
-                    </div>
-                    <div className="col-span-1 pl-5 md:pl-7 min-w-[140px]">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => startEdit(p)}
-                          className="rounded-lg border border-gray-300 px-3 py-1 text-xs hover:bg-gray-50"
-                        >
-                          Update
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => deletePlan(p)}
-                          className="rounded-lg bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+            <tbody>
+              {busy && (
+                <tr>
+                  <td className={cell} colSpan={8}>
+                    Loading…
+                  </td>
+                </tr>
+              )}
+
+              {!busy && filtered.length === 0 && (
+                <tr>
+                  <td className={cell} colSpan={8}>
+                    No meal plans found
+                  </td>
+                </tr>
+              )}
+
+              {!busy &&
+                filtered.map((p, idx) => {
+                  const key = p._id ?? p.mealPlan_id;
+                  return (
+                    <tr key={key} className="border-t border-black/10">
+                      <td className={cell}>{idx + 1}</td>
+                      <td className={`${cell} font-mono`}>{p.mealPlan_id ?? "-"}</td>
+                      <td className={cell}>{p.user_id ?? "-"}</td>
+                      <td className={cell}>{p.meal_name ?? "-"}</td>
+                      <td className={`${cell} max-w-[320px] truncate`}>{p.description ?? "-"}</td>
+                      <td className={cell}>{p.meal_type ?? "-"}</td>
+                      <td className={cell}>{p.duration ?? "-"}</td>
+                      <td className={cell}>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => startEdit(p)}
+                            className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deletePlan(p)}
+                            className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      
+      {/* Modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
-            
+            {/* Title + close */}
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">
                 {editId ? "Update Meal Plan" : "Add Meal Plan"}
@@ -415,6 +473,7 @@ export default function MealPlans() {
         </div>
       )}
 
+      {/* Top progress bar */}
       <div
         className={`pointer-events-none fixed left-0 top-0 h-0.5 bg-red-600 transition-all ${
           busy ? "w-full" : "w-0"
