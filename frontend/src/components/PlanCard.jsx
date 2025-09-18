@@ -1,12 +1,13 @@
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function PlanCard(props) {
   const plan=props.plan
-  
+  const navigate=useNavigate();
   async function choosePlan(){
     const token = localStorage.getItem("token");
     
@@ -89,7 +90,8 @@ export default function PlanCard(props) {
       <button type="button"
         onClick={() => {
           if (window.confirm("Are you sure you want to choose this plan?")) {
-            choosePlan();
+            navigate("/membership/card",{state:plan})
+            //choosePlan();
           }
         }}
         className={`mt-auto w-full rounded-xl border px-4 py-3 text-sm font-semibold transition

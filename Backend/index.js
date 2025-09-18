@@ -29,6 +29,7 @@ import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js'
 import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
+import webhookRoutes from './routes/webHookRoute.js';
 
 dotenv.config();
 
@@ -49,7 +50,11 @@ cron.schedule("0 0 * * *", async () => {
     console.error("Failed to expire subscriptions:", err);
   }
 });
-
+app.use(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
 
 app.use(bodyParser.json());
 app.use(verifyJWT);

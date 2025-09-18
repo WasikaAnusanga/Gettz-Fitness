@@ -19,6 +19,7 @@ export default function MembershipPlans() {
         .catch((err) => console.log("message:", err));
     }
   }, [loaded]);
+  const token = localStorage.getItem("token");
   function handleDelete(planId) {
     Swal.fire({
       title: "Are you sure?",
@@ -32,7 +33,10 @@ export default function MembershipPlans() {
       if (result.isConfirmed) {
         axios
           .delete(
-            import.meta.env.VITE_BACKEND_URL + "/api/plan/deletePlan/" + planId
+            import.meta.env.VITE_BACKEND_URL + "/api/plan/deletePlan/" + planId,
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+            }
           )
           .then((res) => {
             Swal.fire({
@@ -122,7 +126,7 @@ export default function MembershipPlans() {
                           className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 mr-[5px]"
                           onClick={() =>
                             navigate("/admin/membership/updatePlan", {
-                              state:plan
+                              state: plan,
                             })
                           }
                         >
