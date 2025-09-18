@@ -13,7 +13,9 @@ import PaymentSuccess from './pages/client/paymentSuccess'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import VideoPortal from './pages/client/VideoPortal';
 import VideoDetails from './pages/client/VideoDetails';
-import UserDashboard from './pages/client/userDashboard'
+import UserDashboard from './pages/client/userDashboard';
+import EquipmentManagerLayout from './dashboard/equipmentManagerDashboard';
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -31,6 +33,8 @@ s
           <Route path="/adminLog" element={<AdminLoginForm/>}/>        
           <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
           <Route path="/*" element={<Homepage />} />
+        <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
+
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
