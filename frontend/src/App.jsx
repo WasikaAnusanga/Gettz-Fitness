@@ -15,6 +15,7 @@ import VideoPortal from './pages/client/VideoPortal';
 import VideoDetails from './pages/client/VideoDetails';
 import UserDashboard from './pages/client/userDashboard';
 import EquipmentManagerLayout from './dashboard/equipmentManagerDashboard';
+import TrainerLayout from './dashboard/trainerDashboard'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -25,8 +26,9 @@ function App() {
       <Toaster position='top-right' />
         <Routes path="/*">
 s
-          <Route path="/admin/*" element={<AdminLayout />} />
-          <Route path="/login" element={<LoginPage />} />
+         <Route path="/admin/*" element={<AdminLayout />} />
+          <Route path="/trainerDashboard/*" element={<TrainerLayout/>} />
+        <Route path="/login" element={<LoginPage />} />
           <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
           <Route path="/testing" element={<Testing />} />
           <Route path="/register" element={<SignupPage/>} />
@@ -38,6 +40,7 @@ s
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
+        
 
         </Routes>
 

@@ -5,6 +5,6 @@ import { getMealPlan, addMealPlan, updateMealPlan, deleteMeal } from '../control
 mealPlanRouter.get('/', getMealPlan);
 mealPlanRouter.post('/', addMealPlan);
 mealPlanRouter.put('/:id', updateMealPlan);
-mealPlanRouter.delete('/:id', deleteMeal);
+mealPlanRouter.delete("/:id", deleteMeal);
 
 export default mealPlanRouter;
