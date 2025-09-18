@@ -6,14 +6,16 @@ import MembershipPlans from "./admin/membershipPlans/membershipPlan";
 import AddPlanForm from "./admin/membershipPlans/addPlan";
 import UpdatePlanForm from "./admin/membershipPlans/updatePlan";
 import Homepage from "./homepage";
-import VideoDetailsPage from "../utils/Testing/Video";
-import VideoUpload from "../utils/Testing/VideoUpload";
-import EditVideo from "../utils/Testing/Editvideo";
+import VideoDetailsPage from "../pages/admin/Feature Video/Video";
+import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
+import EditVideo from "../pages/admin/Feature Video/Editvideo";
+import Workshift from "../pages/admin/manageWorkshift"
 
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (user?.role?.toLowerCase() !== "admin") return <Navigate to="/adminLog" replace />;
+  if (user?.role?.toLowerCase() !== "admin")
+    return <Navigate to="/adminLog" replace />;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -24,7 +26,7 @@ export default function AdminLayout() {
           <div className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
             <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
               <h1 className="text-lg font-semibold">Admin Console</h1>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-black">
                 {JSON.parse(localStorage.getItem("user") || "{}")?.firstName || "Admin"}
               </div>
             </div>
@@ -52,6 +54,7 @@ export default function AdminLayout() {
               <Route path="/video" element={<VideoDetailsPage />} />
               <Route path="/video/upload" element={<VideoUpload />} />
               <Route path="/video/edit/:videoId" element={<EditVideo />} />
+              <Route path="/workshift" element={<Workshift/>} />
 
 
               <Route path="*" element={<Navigate to="." replace />} />

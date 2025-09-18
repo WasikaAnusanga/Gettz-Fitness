@@ -3,11 +3,6 @@ const schema = mongoose.Schema;
 
 //purchase schema
 const purchaseSchema = new schema({
-    P_ID:{
-        type: String,
-        required: true,
-        unique: true
-    },
     P_date:{
         type: Date,
         required: true
@@ -20,14 +15,16 @@ const purchaseSchema = new schema({
         type: Number,
         required: true
     },
-    Eq_ID:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Equipment',
-        required : true
+    P_item:{
+        type: String,
+        enum:['Equipment','Supplement','Other'],
+        default:'Other',
+        required:true
     },
-    Sup_ID:{
-
-    }
+    P_note:{ 
+        type: String,
+        default:'No notes'
+    },
 });
 
 const purchase= mongoose.model("purchase",purchaseSchema);

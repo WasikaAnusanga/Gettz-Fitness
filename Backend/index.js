@@ -1,4 +1,3 @@
-// index.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -17,6 +16,9 @@ import leaderboardRouter from './routes/leaderboardRouter.js'
 import challengeRouter from './routes/challengeRouter.js'
 import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
+import supplementRouter from './routes/supplementRoute.js';
+import maintenanceLogsRouter from './routes/maintenanceLogsRoute.js';
+import purchaseRouter from './routes/purchaseRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
@@ -29,6 +31,7 @@ import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js'
 import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
+import sessionRouter from './routes/liveSessionRoute.js';
 import webhookRoutes from './routes/webHookRoute.js';
 
 dotenv.config();
@@ -74,6 +77,9 @@ app.use("/api/mealPlan", mealPlanRouter);
 app.use("/api/employeeSalary", employeeSalaryRouter);
 app.use("/api/employeeSalarayRecords", employeeSalaryRecordsRouter);
 app.use("/api/mealRequest", mealRequestRouter);
+app.use("/api/supplement",supplementRouter);
+app.use("/api/purchase",purchaseRouter);
+app.use("/api/maintenanceLogs",maintenanceLogsRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);
@@ -84,6 +90,7 @@ app.use("/api/pay",paymentRouter);
 app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
 app.use("/api/comfeed", comPostRouter)
+app.use("/api/livesession", sessionRouter)
 
 app.post('/api/auth/google', googleLogin);
 app.listen(3000, () =>{
