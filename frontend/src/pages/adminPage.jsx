@@ -48,9 +48,9 @@ export default function AdminLayout() {
 
               <Route path="/membership" element={<MembershipPlans/>} />
               <Route path="/settings" element={<h1>Settings</h1>} />
-              <Route path="/addPlan" element={<AddPlanForm/>} />
-              <Route path="/updatePlan" element={<UpdatePlanForm/>} />
-              
+              <Route path="/membership/addPlan" element={<AddPlanForm/>} />
+              <Route path="/membership/updatePlan" element={<UpdatePlanForm/>} />
+
               <Route path="/video" element={<VideoDetailsPage />} />
               <Route path="/video/upload" element={<VideoUpload />} />
               <Route path="/video/edit/:videoId" element={<EditVideo />} />

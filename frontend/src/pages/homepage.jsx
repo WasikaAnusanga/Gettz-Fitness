@@ -4,6 +4,8 @@ import ProductPage from "./client/productPage";
 import ProductOverview from "./client/productView";
 import HomeFooter from "../components/homeFooter"
 import MembershipPlan from "./client/membershipPlan";
+import PaymentCard from "./client/payment/paymentCard";
+import ViewSavedCards from "./client/payment/savedCards";
 
 export default function Homepage() {
   return (
@@ -16,6 +18,8 @@ export default function Homepage() {
           <Route path="/overview/:id" element={<ProductOverview />} />
           <Route path="/*" element={<h1 className="p-6 text-xl text-red-600">404 Not Found</h1>} />
           <Route path="/membership" element={<MembershipPlan/>} />
+          <Route path="/savedCards" element={<ViewSavedCards/>} />
+          <Route path="/membership/card" element={<PaymentCard/>} />
         </Routes>
       </div>
       
