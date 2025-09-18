@@ -30,7 +30,8 @@ export const addSupplement= async (req ,res)=>{
             Sup_status,
             Sup_quantity,
             Sup_supplier,
-            IM_ID
+            IM_ID,
+            Sup_image
         }=req.body;
 
         let supplement;
@@ -42,7 +43,8 @@ export const addSupplement= async (req ,res)=>{
                 Sup_status,
                 Sup_quantity,
                 Sup_supplier,
-                IM_ID
+                IM_ID,
+                Sup_image
             });
             await supplement.save();
         }catch(err){
@@ -89,7 +91,8 @@ export const updateSupplement= async (req ,res)=>{
             Sup_status,
             Sup_quantity,
             Sup_supplier,
-            IM_ID
+            IM_ID,
+            Sup_image
         }=req.body
         let supplement;
         try{
@@ -100,7 +103,8 @@ export const updateSupplement= async (req ,res)=>{
                 Sup_status,
                 Sup_quantity,
                 Sup_supplier,
-                IM_ID
+                IM_ID,
+                Sup_image
             },{new:true});
         }catch(err){
             console.log(err);

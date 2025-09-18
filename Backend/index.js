@@ -17,6 +17,7 @@ import challengeRouter from './routes/challengeRouter.js'
 import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
 import supplementRouter from './routes/supplementRoute.js';
+import maintenanceLogsRouter from './routes/maintenanceLogsRoute.js';
 import purchaseRouter from './routes/purchaseRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
@@ -53,6 +54,7 @@ app.use("/api/equipmentManager",equipmentManagerRouter);
 app.use("/api/equipment",equipmentRouter);
 app.use("/api/supplement",supplementRouter);
 app.use("/api/purchase",purchaseRouter);
+app.use("/api/maintenanceLogs",maintenanceLogsRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);

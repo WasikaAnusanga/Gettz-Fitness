@@ -11,6 +11,7 @@ import AdminLoginForm from './pages/admin/adminLogging'
 import Video from './pages/admin/VideoPage';
 import TestingCheckout from './pages/testingCheckout'
 import PaymentSuccess from './pages/client/paymentSuccess'
+import EquipmentManagerLayout from './dashboard/equipmentManagerDashboard';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +30,8 @@ function App() {
         <Route path="/video" element={<Video/>}/>
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
         <Route path="/*" element={<Homepage />} />
+        <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
+
         
 
       </Routes>

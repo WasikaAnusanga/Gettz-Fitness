@@ -32,7 +32,9 @@ const supplementSchema = new schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'equipmentManager',
         required: true
-    }
+    },
+    Sup_image:[],  
+
 });
 
 const supplement= mongoose.model("supplement",supplementSchema);
