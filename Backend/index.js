@@ -16,6 +16,9 @@ import leaderboardRouter from './routes/leaderboardRouter.js'
 import challengeRouter from './routes/challengeRouter.js'
 import comPostRouter from './routes/comPostRouter.js'
 import equipmentRouter from './routes/equipmentRoute.js';
+import supplementRouter from './routes/supplementRoute.js';
+import maintenanceLogsRouter from './routes/maintenanceLogsRoute.js';
+import purchaseRouter from './routes/purchaseRoute.js';
 import authRoutes from './routes/auth.js';
 import videoRouter from './routes/videoRoute.js';
 import paymentRouter from './routes/paymentRoute.js';
@@ -29,6 +32,7 @@ import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
 import sessionRouter from './routes/liveSessionRoute.js';
+import webhookRoutes from './routes/webHookRoute.js';
 import inqRouter from './routes/inquiryRoute.js';
 
 dotenv.config();
@@ -50,7 +54,11 @@ cron.schedule("0 0 * * *", async () => {
     console.error("Failed to expire subscriptions:", err);
   }
 });
-
+app.use(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
 
 app.use(bodyParser.json());
 app.use(verifyJWT);
@@ -70,6 +78,9 @@ app.use("/api/mealPlan", mealPlanRouter);
 app.use("/api/employeeSalary", employeeSalaryRouter);
 app.use("/api/employeeSalarayRecords", employeeSalaryRecordsRouter);
 app.use("/api/mealRequest", mealRequestRouter);
+app.use("/api/supplement",supplementRouter);
+app.use("/api/purchase",purchaseRouter);
+app.use("/api/maintenanceLogs",maintenanceLogsRouter);
 
 app.use("/api/plan",planRouter);
 app.use("/api/sub",subscriptionRouter);

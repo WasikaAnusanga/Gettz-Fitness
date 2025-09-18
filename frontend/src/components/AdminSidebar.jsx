@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut
+  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 
@@ -22,8 +22,10 @@ const navItems = [
   { to: "/admin/equipment", label: "Equipment", icon: Wrench },
   { to: "/admin/supplement", label: "Supplement", icon: Pill },
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
+  { to: "/admin/workshift", label: "Employees", icon: IdCardLanyard},
   { to: "/admin/sesssion", label: "Sessions", icon: Radio },
   { to: "/admin/settings", label: "Settings", icon: Settings },
+  
 ];
 
 export default function AdminSidebar() {

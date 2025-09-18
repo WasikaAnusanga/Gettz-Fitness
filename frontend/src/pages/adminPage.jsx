@@ -9,12 +9,13 @@ import Homepage from "./homepage";
 import VideoDetailsPage from "../pages/admin/Feature Video/Video";
 import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
 import EditVideo from "../pages/admin/Feature Video/Editvideo";
-
+import Workshift from "../pages/admin/manageWorkshift"
 
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (user?.role?.toLowerCase() !== "admin") return <Navigate to="/adminLog" replace />;
+  if (user?.role?.toLowerCase() !== "admin")
+    return <Navigate to="/adminLog" replace />;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -47,12 +48,13 @@ export default function AdminLayout() {
 
               <Route path="/membership" element={<MembershipPlans/>} />
               <Route path="/settings" element={<h1>Settings</h1>} />
-              <Route path="/addPlan" element={<AddPlanForm/>} />
-              <Route path="/updatePlan" element={<UpdatePlanForm/>} />
-              
+              <Route path="/membership/addPlan" element={<AddPlanForm/>} />
+              <Route path="/membership/updatePlan" element={<UpdatePlanForm/>} />
+
               <Route path="/video" element={<VideoDetailsPage />} />
               <Route path="/video/upload" element={<VideoUpload />} />
               <Route path="/video/edit/:videoId" element={<EditVideo />} />
+              <Route path="/workshift" element={<Workshift/>} />
 
 
               <Route path="*" element={<Navigate to="." replace />} />

@@ -20,6 +20,8 @@ const blogPosts = [
   { title: "Home Workout For Busy People", img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80", date: "August 4" },
   { title: "How To Always Stay Motivated", img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80", date: "August 2" },
 ];
+import PaymentCard from "./client/payment/paymentCard";
+import ViewSavedCards from "./client/payment/savedCards";
 
 export default function Homepage() {
   return (
