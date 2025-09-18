@@ -2,8 +2,8 @@ import MembershipPlan from "../model/Membership_Plans_Model.js"
 
 export function addPlan(req,res){
     //check user is an admin
-    req.user="admin";
-    req.user={role:"admin"};
+    // req.user="admin";
+    // req.user={role:"admin"};
     //
     if(req.user==null){
         res.status(401).json({
@@ -22,7 +22,9 @@ export function addPlan(req,res){
             plan_name:req.body.plan_name,
             price:req.body.price,
             description:req.body.description,
-            duration:req.body.duration
+            duration:req.body.duration,
+            popular:req.body.popular,
+            features:req.body.features
         }
         MembershipPlan.find().sort({ _id: -1 }).limit(1).then((output)=>{
             if(output.length==0){
@@ -108,8 +110,10 @@ export function deletePlan(req,res){
         })
     }else if(req.user.role="admin"){
         const planId= req.params.id;
-        MembershipPlan.findOneAndDelete({
-            plan_id:planId
+        MembershipPlan.findOneAndUpdate({
+            plan_id:planId,
+        },{
+            isDisabled:true
         })
         .then(
             ()=>{
