@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, IdCardLanyard
+  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 
@@ -23,12 +23,22 @@ const navItems = [
   { to: "/admin/supplement", label: "Supplement", icon: Pill },
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
   { to: "/admin/workshift", label: "Employees", icon: IdCardLanyard},
+  { to: "/admin/sesssion", label: "Sessions", icon: Radio },
   { to: "/admin/settings", label: "Settings", icon: Settings },
   
 ];
 
 export default function AdminSidebar() {
   const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("user");
+
+    navigate("/adminLog");
+  };
 
   return (
     <aside
@@ -51,53 +61,32 @@ export default function AdminSidebar() {
         </button>
       </div>
 
-      <nav className="px-2 pt-2 space-y-1">
-        {navItems.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeStyle : idleStyle}`
-            }
-          >
-            <Icon className="h-4 w-4" />
-            {open && <span>{label}</span>}
-          </NavLink>
-        ))}
-
-        <div className="mt-3 border-t pt-3">
-          <div className={`px-3 ${open ? "text-xs text-gray-500 mb-1" : "sr-only"}`}>
-            Commerce
-          </div>
-          <NavLink
-            to="/admin/product"
-            className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeStyle : idleStyle}`
-            }
-          >
-            <span className="h-4 w-4 rounded bg-red-600 inline-block" />
-            {open && <span>Products</span>}
-          </NavLink>
-          <NavLink
-            to="/admin/orders"
-            className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeStyle : idleStyle}`
-            }
-          >
-            <span className="h-4 w-4 rounded bg-black inline-block" />
-            {open && <span>Orders</span>}
-          </NavLink>
-          <NavLink
-            to="/admin/addProduct"
-            className={({ isActive }) =>
-              `${linkBase} ${isActive ? activeStyle : idleStyle}`
-            }
-          >
-            <span className="h-4 w-4 rounded bg-red-500 inline-block" />
-            {open && <span>Add Product</span>}
-          </NavLink>
+      
+      <nav className="px-2 pt-2 space-y-1 flex flex-col h-[calc(100%-64px)]">
+        <div className="flex-1 space-y-1">
+          {navItems.map(({ to, label, icon: Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? activeStyle : idleStyle}`
+              }
+            >
+              <Icon className="h-4 w-4" />
+              {open && <span>{label}</span>}
+            </NavLink>
+          ))}
         </div>
+
+        
+        <button
+          onClick={handleLogout}
+          className={`${linkBase} text-red-600 hover:bg-red-100 mb-3`}
+        >
+          <LogOut className="h-4 w-4" />
+          {open && <span>Logout</span>}
+        </button>
       </nav>
     </aside>
   );
