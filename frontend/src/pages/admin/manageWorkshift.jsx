@@ -434,7 +434,6 @@ export default function Salaries() {
                   <input
                     type="date"
                     name="salaryPay_date"
-                    
                     value={form.salaryPay_date}
                     onChange={handleChange}
                     required

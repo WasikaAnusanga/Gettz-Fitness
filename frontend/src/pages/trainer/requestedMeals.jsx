@@ -73,15 +73,17 @@ export default function RequestedMeals() {
 
     autoTable(doc, {
       startY: 25,
-      head: [[
-        "No",
-        "Request ID",
-        "User ID",
-        "Name",
-        "Requested Date",
-        "Weight",
-        "Height",
-      ]],
+      head: [
+        [
+          "No",
+          "Request ID",
+          "User ID",
+          "Name",
+          "Requested Date",
+          "Weight",
+          "Height",
+        ],
+      ],
       body: list.map((r, i) => [
         i + 1,
         String(r.request_id ?? "-"),
@@ -95,13 +97,13 @@ export default function RequestedMeals() {
       headStyles: { fillColor: [0, 0, 0] }, // black header
       styles: { fontSize: 9 },
       columnStyles: {
-        0: { cellWidth: 10 },   // No
-        1: { cellWidth: 25 },   // Request ID
-        2: { cellWidth: 22 },   // User ID
-        3: { cellWidth: 40 },   // Name
-        4: { cellWidth: 28 },   // Date
-        5: { cellWidth: 20 },   // Weight
-        6: { cellWidth: 20 },   // Height
+        0: { cellWidth: 10 }, // No
+        1: { cellWidth: 25 }, // Request ID
+        2: { cellWidth: 22 }, // User ID
+        3: { cellWidth: 40 }, // Name
+        4: { cellWidth: 28 }, // Date
+        5: { cellWidth: 20 }, // Weight
+        6: { cellWidth: 20 }, // Height
       },
     });
 

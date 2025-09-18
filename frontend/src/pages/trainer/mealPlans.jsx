@@ -51,7 +51,9 @@ export default function MealPlans() {
       setPlans(items);
     } catch (err) {
       const msg =
-        err?.response?.data?.message || err?.message || "Failed to load meal plans";
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load meal plans";
       toast.error(msg);
     } finally {
       setBusy(false);
@@ -62,8 +64,15 @@ export default function MealPlans() {
   async function onCreate(e) {
     e.preventDefault();
 
-    if (!form.mealPlan_id || !form.user_id || !form.meal_name || !form.duration) {
-      toast.error("Please fill Meal Plan ID, User ID, Meal Name, and Duration.");
+    if (
+      !form.mealPlan_id ||
+      !form.user_id ||
+      !form.meal_name ||
+      !form.duration
+    ) {
+      toast.error(
+        "Please fill Meal Plan ID, User ID, Meal Name, and Duration."
+      );
       return;
     }
 
@@ -78,7 +87,10 @@ export default function MealPlans() {
 
     try {
       setBusy(true);
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/mealPlan`, payload);
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealPlan`,
+        payload
+      );
       toast.success("Meal plan added");
       setOpen(false);
       resetForm();
@@ -161,7 +173,9 @@ export default function MealPlans() {
 
     try {
       setBusy(true);
-      await axios.delete(import.meta.env.VITE_BACKEND_URL + "/api/mealPlan/" + key);
+      await axios.delete(
+        import.meta.env.VITE_BACKEND_URL + "/api/mealPlan/" + key
+      );
       toast.success("Meal plan deleted");
       fetchMealPlans();
     } catch (err) {
@@ -213,15 +227,17 @@ export default function MealPlans() {
 
     autoTable(doc, {
       startY: 25,
-      head: [[
-        "No",
-        "Meal Plan ID",
-        "User ID",
-        "Name",
-        "Description",
-        "Type",
-        "Duration",
-      ]],
+      head: [
+        [
+          "No",
+          "Meal Plan ID",
+          "User ID",
+          "Name",
+          "Description",
+          "Type",
+          "Duration",
+        ],
+      ],
       body: list.map((p, i) => [
         i + 1,
         p.mealPlan_id ?? "-",
@@ -235,13 +251,13 @@ export default function MealPlans() {
       headStyles: { fillColor: [0, 0, 0] }, // black header like Video.jsx table
       styles: { fontSize: 9 },
       columnStyles: {
-        0: { cellWidth: 10 },   // No
-        1: { cellWidth: 25 },   // Meal Plan ID
-        2: { cellWidth: 22 },   // User ID
-        3: { cellWidth: 40 },   // Name
-        4: { cellWidth: 50 },   // Description
-        5: { cellWidth: 25 },   // Type
-        6: { cellWidth: 25 },   // Duration
+        0: { cellWidth: 10 }, // No
+        1: { cellWidth: 25 }, // Meal Plan ID
+        2: { cellWidth: 22 }, // User ID
+        3: { cellWidth: 40 }, // Name
+        4: { cellWidth: 50 }, // Description
+        5: { cellWidth: 25 }, // Type
+        6: { cellWidth: 25 }, // Duration
       },
     });
 
@@ -323,10 +339,14 @@ export default function MealPlans() {
                   return (
                     <tr key={key} className="border-t border-black/10">
                       <td className={cell}>{idx + 1}</td>
-                      <td className={`${cell} font-mono`}>{p.mealPlan_id ?? "-"}</td>
+                      <td className={`${cell} font-mono`}>
+                        {p.mealPlan_id ?? "-"}
+                      </td>
                       <td className={cell}>{p.user_id ?? "-"}</td>
                       <td className={cell}>{p.meal_name ?? "-"}</td>
-                      <td className={`${cell} max-w-[320px] truncate`}>{p.description ?? "-"}</td>
+                      <td className={`${cell} max-w-[320px] truncate`}>
+                        {p.description ?? "-"}
+                      </td>
                       <td className={cell}>{p.meal_type ?? "-"}</td>
                       <td className={cell}>{p.duration ?? "-"}</td>
                       <td className={cell}>
