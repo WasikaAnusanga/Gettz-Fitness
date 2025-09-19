@@ -108,11 +108,10 @@
   --nf-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
   --nf-radius: 14px;
 
-  --nf-chip-info: #2563eb;        /* blue */
-  --nf-chip-promotional: #16a34a; /* green */
-  --nf-chip-warning: #f59e0b;     /* amber */
-  --nf-chip-alert: #ef4444;       /* red */
-
+  --nf-chip-info: #2563eb;       
+  --nf-chip-promotional: #16a34a; 
+  --nf-chip-warning: #ef4444;     
+  --nf-chip-alert: #f59e0b;       
   --nf-badge: #ef4444;
 }
 

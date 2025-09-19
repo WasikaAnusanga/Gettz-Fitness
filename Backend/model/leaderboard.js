@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import './user.js'
+import generateID from "../utils/idGenerator.js";
 
 const leaderboardSchema = new mongoose.Schema({
   LID: { type : String, required : true, unique : true,

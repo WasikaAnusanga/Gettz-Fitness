@@ -13,6 +13,7 @@
 
 
 import express from "express";
+
 import {
   createPromotionalNotification,
   createNotificationForUser,
@@ -27,9 +28,9 @@ const notificationRouter = express.Router();
 
 notificationRouter.get("/", viewNotifications);
 notificationRouter.get("/mine", getMyNotifications);
-notificationRouter.post("/add", createPromotionalNotification);
+notificationRouter.post("/add",createPromotionalNotification);
 notificationRouter.post("/addOne", createNotificationForUser); 
-notificationRouter.post("/update/:id", updateNotification);
+notificationRouter.put("/update/:id", updateNotification);
 notificationRouter.delete("/delete/:id", deleteNotification);
 notificationRouter.put("/markasread", markAsRead);
 

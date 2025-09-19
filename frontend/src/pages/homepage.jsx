@@ -4,6 +4,7 @@ import ProductPage from "./client/productPage";
 import ProductOverview from "./client/productView";
 import HomeFooter from "../components/homeFooter"
 import MembershipPlan from "./client/membershipPlan";
+import ChatBot from "../components/ChatBot/chatBot"
 
 export default function Homepage() {
   return (
@@ -18,7 +19,7 @@ export default function Homepage() {
           <Route path="/membership" element={<MembershipPlan/>} />
         </Routes>
       </div>
-      
+      <ChatBot/>
       <HomeFooter/>
     </div>
   );

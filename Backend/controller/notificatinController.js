@@ -1,179 +1,10 @@
-// import Notification from '../model/notification.js'; 
-// import UserNotification from '../model/userNotification.js';
-// import { io } from '../index.js';
-// import User from '../model/user.js';
-
-// export function viewNotifications(req, res){
-
-//         Notification.find().then(
-//             (notifi) => {
-//                 res.json(notifi)
-//             }
-//         ).catch(
-//             (error) => {
-//                 console.log(error)
-//                 res.status(500).json({
-//                     message : "Notification loading failed"
-//                 })
-//             }
-//         )
-// }
-
-// export async function createPromotionalNotification(req, res){
-
-//     // if(req.user == null){
-//     //     res.status(403).json({
-//     //         message: "Please login to create promotional announcement"
-//     //     });
-//     //     return;
-//     // }
-
-//     // if(req.user.role != "admin"){
-//     //     res.status(403).json({
-//     //         message: "Login as an admin to create promotional announcement"
-//     //     });
-//     //     return;
-//     // }
-
-//     try {
-
-//         const { title, body, type = 'promotional' } = req.body;
-
-//         if (!title || !body) {
-//             res.status(400).json({ 
-//                 message: 'Please provide title and body.' 
-//             });
-//             return
-//         }
-
-//         const notification = new Notification({
-//             title,
-//             body,
-//             type,
-//             status: 'sent',
-//             deliveryTo: 'all_members',
-//             sentDate: new Date(),
-//             createdBy: req.user.adminId
-//         });
-
-//         await notification.save();
-
-//         const members = await User.find({ role: 'member' });
-
-//         for (const member of members) {
-//             const userNotification = new UserNotification({
-//                 NIC: notification._id,
-//                 user_id: member._id
-//             });
-
-//             await userNotification.save();
-
-//             io.to(member._id.toString()).emit('newNotification', {
-//                 title: notification.title,
-//                 body: notification.body,
-//                 type: notification.type,
-//                 timestamp: notification.sentDate
-//             });
-
-//         }
-
-//         res.status(201).json({ message: 'Notification created and sent to all members successfully', notification });
-
-//     } catch (error) {
-
-//         console.error('Error creating notification for all members:', error);
-//         res.status(500).json({ message: 'Internal server error.', error: error.message });
-
-//     }
-// }
-
-// export function updateNotification(req,res){
-
-//     Notification.findOneAndUpdate({_id : req.params.id}, req.body).then(
-//         (notifi) => {
-//             res.json({
-//                 message : "Notification Updated Successfully",
-//                 notifi
-//             })
-//         }
-//     ).catch(
-//         console.log("Notification Udate Failed")
-//     )
-
-// }
-
-// export function deleteNotification(req, res){
-
-//     Notification.findOneAndDelete({_id : req.params.id}).then(
-//         res.json({
-//             message : "Notification was Deleted"
-//         })
-//     ).catch(
-//         () => {
-//             console.log("Notification deletion failed")
-//         }
-//     )
-
-// }
-
-// export async function markAsRead(req, res) {
-//   try {
-//     const userId = req.user._id; // get logged in user ID from auth middleware
-
-//     // Find all unread user notifications for this user and update isRead to true
-//     await UserNotification.updateMany({ user_id: userId, isRead: false }, { $set: { isRead: true } });
-
-//     res.json({ success: true });
-//   } catch (error) {
-//     console.error("Error marking notifications as read:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// }
-
-// export async function membershipApprovalNotification(adminUserId, targetUserId) {
-//   try {
-   
-//     const notification = new Notification({
-//       title: 'Membership Approved',
-//       body: 'Your membership request has been approved',
-//       type: 'membership',
-//       status: 'sent',
-//       deliveryTo: targetUserId,
-//       sentDate: new Date(),
-//       createdBy: adminUserId
-//     });
-//     await notification.save();
-
-//     const userNotification = new UserNotification({
-//       NIC: notification._id,
-//       user_id: targetUserId
-//     });
-//     await userNotification.save();
-
-//     io.to(targetUserId).emit('membershipNotification', {
-//       title: notification.title,
-//       body: notification.body,
-//       type: notification.type,
-//       timestamp: notification.sentDate
-//     });
-
-//     console.log(`Notification sent to user ${targetUserId}`);
-//   } catch (error) {
-//     console.error('Error sending notification:', error);
-//     throw error; // Rethrow for handling in caller
-//   }
-// }
-
-
-
-
 import mongoose from 'mongoose';
 import Notification from '../model/notification.js';
 import UserNotification from '../model/userNotification.js';
 import User from '../model/user.js';
 
 export function viewNotifications(req, res) {
-  Notification.find()
+  Notification.find().sort({ sentDate: -1 })
     .then((notifi) => res.json(notifi))
     .catch((error) => {
       console.error(error);
@@ -234,59 +65,68 @@ export async function getMyNotifications(req, res) {
   }
 }
 
-
 export async function createPromotionalNotification(req, res) {
   try {
-    const { title, body, type = 'promotional' } = req.body;
+    const { title, body, type = "promotional" } = req.body;
     if (!title || !body) {
-      return res.status(400).json({ message: 'Please provide title and body.' });
+      return res.status(400).json({ message: "Please provide title and body." });
+    }
+
+    // 👇 normalize user id (accepts both .id and ._id)
+    let creatorId = req.user?._id || req.user?.id;
+    if (creatorId) {
+      creatorId = new mongoose.Types.ObjectId(creatorId);
     }
 
     const notification = new Notification({
       title,
       body,
       type,
-      status: 'sent',
-      deliveryTo: 'all_members',
+      status: "sent",
+      deliveryTo: "all_members",
       sentDate: new Date(),
-      createdBy: req.user?._id 
+      createdBy: creatorId, // now always valid
     });
+
     await notification.save();
 
-    const members = await User.find({ role: 'member' });
-    const bulk = members.map(m => ({
-      insertOne: { document: { NIC: notification._id, user_id: m._id, isRead: false } }
+    // rest of your logic …
+    const members = await User.find({ role: "member" });
+    const bulk = members.map((m) => ({
+      insertOne: {
+        document: { NIC: notification._id, user_id: m._id, isRead: false },
+      },
     }));
     if (bulk.length) await UserNotification.bulkWrite(bulk);
 
     res.status(201).json({
-      message: 'Notification created and attached to all members',
+      message: "Notification created and attached to all members",
       notificationId: notification._id,
-      affectedMembers: members.length
+      affectedMembers: members.length,
     });
   } catch (error) {
-    console.error('createPromotionalNotification error:', error);
-    res.status(500).json({ message: 'Internal server error.', error: error.message });
+    console.error("createPromotionalNotification error:", error);
+    res.status(500).json({ message: "Internal server error.", error: error.message });
   }
 }
 
-
 export async function createNotificationForUser(req, res) {
   try {
-    const { title, body, type = 'info', userId } = req.body;
-    if (!title || !body || !userId) {
-      return res.status(400).json({ message: 'title, body, userId are required' });
+    const { title, body, type, userId } = req.body;
+    if (!title || !body || !userId || !type) {
+      return res.status(400).json({ message: 'title, body, userId, and type are required' });
     }
     const targetId = new mongoose.Types.ObjectId(userId);
+    const creatorId = new mongoose.Types.ObjectId(req.user?._id);
 
     const notification = new Notification({
       title,
       body,
       type,
       status: 'sent',
-      deliveryTo: userId,
+      deliveryTo: targetId,
       sentDate: new Date(),
-      createdBy: req.user?._id
+      createdBy: creatorId
     });
     await notification.save();
 
@@ -301,9 +141,23 @@ export async function createNotificationForUser(req, res) {
 
 
 export function updateNotification(req, res) {
-  Notification.findOneAndUpdate({ _id: req.params.id }, req.body)
-    .then((notifi) => res.json({ message: 'Notification Updated Successfully', notifi }))
-    .catch(() => res.status(500).json({ message: 'Notification update failed' }));
+  const id = req.params.id;
+
+  Notification.findOneAndUpdate(
+    { $or: [{ _id: id }, { notificationID: id }] },   // ✅ allow both
+    req.body,
+    { new: true }
+  )
+    .then((notifi) => {
+      if (!notifi) {
+        return res.status(404).json({ message: "Notification not found" });
+      }
+      res.json({ message: "Notification Updated Successfully", notifi });
+    })
+    .catch((err) => {
+      console.error("Notification update failed:", err);
+      res.status(500).json({ message: "Notification update failed" });
+    });
 }
 
 

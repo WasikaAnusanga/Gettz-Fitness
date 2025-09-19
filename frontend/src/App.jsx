@@ -15,6 +15,7 @@ import CommunityFeed from './pages/client/communityPosts';
 import ChallengesPage from './pages/client/challengesPage';
 import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
+import ChatBot from './components/ChatBot/chatBot';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -36,6 +37,7 @@ function App() {
         <Route path="/admin/notifications/new" element={<AddNotification />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
+        <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/*" element={<Homepage />} />
         
 

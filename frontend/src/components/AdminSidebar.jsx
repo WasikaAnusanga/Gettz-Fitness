@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu
+  Wrench, Pill, BadgePercent, Settings, Menu, Megaphone, Trophy 
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 
@@ -22,6 +22,8 @@ const navItems = [
   { to: "/admin/equipment", label: "Equipment", icon: Wrench },
   { to: "/admin/supplement", label: "Supplement", icon: Pill },
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
+  { to: "/admin/competitions", label: "Competitions", icon: Trophy },
+  { to: "/admin/announcements", label: "Announcements", icon: Megaphone},
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

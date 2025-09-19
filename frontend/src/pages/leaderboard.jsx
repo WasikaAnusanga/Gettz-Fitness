@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Header from "../components/header";
+import { Crown, Award, User } from "lucide-react";
 
 const API = "http://localhost:3000/api/leaderboard";
 
@@ -23,17 +25,20 @@ export default function Leaderboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-8 text-center">
-          <h1 className="text-3xl font-extrabold text-red-600">Leaderboard</h1>
-          <p className="mt-1 text-gray-600">
+    <div className="min-h-screen bg-gradient-to-br from-rose-100 via-white to-red-200">
+      <Header/>
+      <header className="mt-15 border-b border-gray-200 bg-transparent">
+        <div className="mx-auto max-w-5xl px-4 py-10 text-center">
+          <h1 className="text-4xl font-extrabold flex items-center justify-center gap-2 bg-gradient-to-r from-[#e30613] to-red-600 text-transparent bg-clip-text">
+            <Crown className="text-yellow-400 drop-shadow" size={36} /> Leaderboard
+          </h1>
+          <p className="mt-2 text-lg text-gray-700 font-medium">
             Track the top performers and climb your way up!
           </p>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto max-w-4xl px-4 py-10">
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[...Array(5)].map((_, i) => (
@@ -44,51 +49,61 @@ export default function Leaderboard() {
             ))}
           </div>
         ) : (
-            <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-red-600">
-                        <tr>
-                        <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-white">
-                            Rank
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-white">
-                            Member
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-white">
-                            Joined
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-white">
-                            Points
-                        </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
-                        {leaders.map((row, idx) => (
-                        <tr
-                            key={row._id}
-                            className={
-                            idx < 3
-                                ? "bg-rose-50 font-semibold"
-                                : "hover:bg-gray-50 transition"
-                            }
-                        >
-                            <td className="px-6 py-4 text-sm text-gray-800">
-                            #{idx + 1}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
+          <div className="overflow-hidden rounded-3xl border border-rose-200 shadow-xl bg-white/90 backdrop-blur">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gradient-to-r from-[#e30613] to-red-600">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white align-middle">Rank</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white align-middle">Member</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white align-middle">Joined</th>
+                  <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-white align-middle">Points</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 bg-white/80">
+                {leaders.map((row, idx) => {
+                  // Medal and color for top 3
+                  let rankIcon = null;
+                  let rowClass = "";
+                  if (idx === 0) {
+                    rankIcon = <Award className="text-yellow-400 inline-block mr-1" size={20} title="1st" />;
+                    rowClass = "bg-yellow-50 font-bold shadow-sm";
+                  } else if (idx === 1) {
+                    rankIcon = <Award className="text-gray-400 inline-block mr-1" size={20} title="2nd" />;
+                    rowClass = "bg-gray-50 font-semibold";
+                  } else if (idx === 2) {
+                    rankIcon = <Award className="text-amber-700 inline-block mr-1" size={20} title="3rd" />;
+                    rowClass = "bg-amber-50 font-semibold";
+                  } else {
+                    rowClass = "hover:bg-rose-50 transition";
+                  }
+                  return (
+                    <tr key={row._id} className={rowClass + " align-middle"} style={{height: '90px'}}>
+                      <td className="px-6 py-4 text-lg text-gray-800 align-middle">
+                        <div className="flex items-center gap-1 h-full">{rankIcon}#{idx + 1}</div>
+                      </td>
+                      <td className="px-6 py-4 text-base text-gray-900 align-middle">
+                        <div className="flex items-center gap-3 h-full">
+                          {/* Avatar circle with initials */}
+                          <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-br from-rose-200 to-red-200 text-xl font-bold text-white shadow">
+                            {row.user_id?.firstName?.[0] || ''}{row.user_id?.lastName?.[0] || ''}
+                          </span>
+                          <span className="font-semibold">
                             {row.user_id?.firstName} {row.user_id?.lastName}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-600">
-                            {new Date(row.user_id?.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 text-right text-sm font-bold text-red-600">
-                            {row.user_id?.point}
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-base text-gray-600 align-middle font-medium">
+                        <div className="h-full flex items-center">{row.user_id?.createdAt ? new Date(row.user_id.createdAt).toLocaleDateString() : "-"}</div>
+                      </td>
+                      <td className="px-6 py-4 text-right text-xl font-extrabold text-[#e30613] align-middle">
+                        <div className="h-full flex items-center justify-end">{row.user_id?.point}</div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </main>
     </div>
