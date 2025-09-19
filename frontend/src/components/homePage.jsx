@@ -5,7 +5,7 @@ import HomeFooter from "../components/homeFooter";
 import { Link } from "react-router-dom";
 
 const heroImages = [
-  "https://images.unsplash.com/photo-1517960413843-0aee8e2d471c?auto=format&fit=crop&w=600&q=80",
+  "https://unsplash.com/photos/person-about-to-lift-the-barbel-WvDYdXDzkhs",
 ];
 const trainers = [
   { name: "Sam Cole", role: "Personal Trainer", img: "https://randomuser.me/api/portraits/men/32.jpg" },
@@ -230,7 +230,7 @@ export default function HomepageComponent() {
           </div>
         </section>
       </main>
-      <HomeFooter />
+      
     </div>
   );
 }

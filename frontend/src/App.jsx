@@ -43,7 +43,7 @@ function App() {
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-          <Route path="/user/dashboard" element={<UserDashboard />} />
+          
           <Route path="/my" element={<testing></testing>}/>
 
           <Route path="/*" element={<Homepage />} />
