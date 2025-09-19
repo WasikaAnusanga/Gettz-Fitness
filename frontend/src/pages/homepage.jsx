@@ -2,7 +2,7 @@ import Header from "../components/header";
 import HomeFooter from "../components/homeFooter";
 import PaymentCard from "./client/payment/paymentCard";
 import ViewSavedCards from "./client/payment/savedCards";
-import HomepageComponent from "../components/homePage";
+import GymLandingPage from "../components/homePage";
 import { Route, Routes } from "react-router-dom";
 import MembershipPlan from "./client/membershipPlan";
 import ChatBot from "../components/ChatBot/chatBot";
@@ -11,11 +11,11 @@ import VideoDetails from "./client/VideoDetails";
 
 export default function Homepage() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white flex flex-col">
+    <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-800 flex flex-col">
       <Header />
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
-          <Route path="/" element={<HomepageComponent />} />
+          <Route path="/" element={<GymLandingPage />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
 
