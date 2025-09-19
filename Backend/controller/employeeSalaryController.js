@@ -92,7 +92,7 @@ export const updateEmployeeSalary = (req, res) => {
 export const deleteEmployeeSalary = (req, res) => {
   req.user = { role: "Admin" };
   if (req.user.role == "Admin") {
-    EmployeeSalary.findByIdAndDelete({ salary_id: req.params.id })
+    EmployeeSalary.findOneAndDelete({ salary_id: req.params.id })
       .then((response) => {
         res.status(200).json({
           message: "Delete Successful",
