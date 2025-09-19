@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import Lorder from "../../components/lorder-animate";
 import { Loader } from "lucide-react";
 import Header from "../../components/header";
-
+import Footer from "../../components/footer";
 
 
 const RAW_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
@@ -54,7 +54,7 @@ export default function VideoPortal() {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="flex-1 w-full pt-0 flex bg-white">
+      <div className="flex-1 w-full pt-16 flex bg-white">
         
         <aside className="hidden md:block w-60 border-r border-gray-200 bg-gray-50 px-4 py-8">
           <h2 className="text-lg font-semibold mb-4">Categories</h2>
@@ -118,7 +118,6 @@ export default function VideoPortal() {
           )}
         </main>
       </div>
-      
     </div>
   );
 }
