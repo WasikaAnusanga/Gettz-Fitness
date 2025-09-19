@@ -1,8 +1,19 @@
 import mongoose from 'mongoose';
-import './admin'
+import './admin.js'
+import generateID from "../utils/idGenerator.js";
 
 const notificationSchema = new mongoose.Schema(
 {
+
+    notificationID: {
+      type: String, 
+      required: true, 
+      unique: true,
+      default : function () {
+      return "NID" + generateID()
+      }
+    },
+
     title: { 
       type: String, 
       required: true 
@@ -32,8 +43,7 @@ const notificationSchema = new mongoose.Schema(
       type: Date 
     },
     createdBy: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Admin', 
+      type: String,
       required: true
     }
 },

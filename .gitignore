@@ -2,3 +2,5 @@ node_modules
 
 
 frontend/react-fontend/
+package-lock.json
+package.json

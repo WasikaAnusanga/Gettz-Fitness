@@ -5,6 +5,7 @@ import ViewSavedCards from "./client/payment/savedCards";
 import HomepageComponent from "../components/homePage";
 import { Route, Routes } from "react-router-dom";
 import MembershipPlan from "./client/membershipPlan";
+import ChatBot from "../components/ChatBot/chatBot"
 
 export default function Homepage() {
   return (
@@ -21,7 +22,7 @@ export default function Homepage() {
           <Route path="/membership/card" element={<PaymentCard/>} />
         </Routes>
       </div>
-      
+      <ChatBot/>
       <HomeFooter/>
     </div>
   );

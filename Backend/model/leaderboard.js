@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import './user.js'
+import generateID from "../utils/idGenerator.js";
 
 const leaderboardSchema = new mongoose.Schema({
   LID: { type : String, required : true, unique : true,
@@ -8,14 +9,8 @@ const leaderboardSchema = new mongoose.Schema({
     }
   },
 
-  points: { 
-    type: Number, 
-    required: true, 
-    default: 0 
-  },
-
   user_id: { 
-    type: Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId,
     ref: 'User', 
     required: true, 
     index: true 
@@ -27,4 +22,4 @@ const leaderboardSchema = new mongoose.Schema({
 
 
 const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
-export default Leaderboard 
+export default Leaderboard;

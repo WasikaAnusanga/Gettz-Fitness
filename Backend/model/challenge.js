@@ -8,7 +8,7 @@ const challengeSchema = new mongoose.Schema({
         required : true,
         unique : true,
         default : function () {
-            return "Chlnge" + generateID()
+            return "Chl" + generateID()
         }
     },
 
@@ -37,12 +37,17 @@ const challengeSchema = new mongoose.Schema({
         type:  Date,
         required :true
     },
+
+    imageUrl: { 
+        type: String 
+    },
+
     admin_id :{
         type: Schema.Types.ObjectId, 
-        ref: 'User', required: true
+        ref: 'Admin', required: true
     },
 
 }, {timestamps: true });
 
-const Challenge = mongoose.model("challenge", challengeSchema);
+const Challenge = mongoose.model("Challenge", challengeSchema);
 export default Challenge;
