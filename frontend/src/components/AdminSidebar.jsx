@@ -15,7 +15,7 @@ const idleStyle =
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/users", label: "Members", icon: Users },
+  { to: "/admin/members", label: "Members", icon: Users },
   { to: "/admin/trainers", label: "Trainers", icon: Dumbbell },
   { to: "/admin/sessions", label: "Sessions", icon: CalendarClock },
   { to: "/admin/video", label: "Video", icon: Video },

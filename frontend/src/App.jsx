@@ -28,14 +28,14 @@ function App() {
 s
          <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/trainerDashboard/*" element={<TrainerLayout/>} />
-        <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
           <Route path="/testing" element={<Testing />} />
           <Route path="/register" element={<SignupPage/>} />
           <Route path="/adminLog" element={<AdminLoginForm/>}/>        
           <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
           <Route path="/*" element={<Homepage />} />
-        <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
+          <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
