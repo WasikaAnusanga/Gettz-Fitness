@@ -32,6 +32,8 @@ import mealRequestRouter from './routes/mealRequestRouter.js';
 
 import { googleLogin } from './controller/userController.js';
 import sessionRouter from './routes/liveSessionRoute.js';
+import webhookRoutes from './routes/webHookRoute.js';
+import inqRouter from './routes/inquiryRoute.js';
 
 dotenv.config();
 
@@ -52,7 +54,11 @@ cron.schedule("0 0 * * *", async () => {
     console.error("Failed to expire subscriptions:", err);
   }
 });
-
+app.use(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
 
 app.use(bodyParser.json());
 app.use(verifyJWT);
@@ -86,6 +92,8 @@ app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
 app.use("/api/comfeed", comPostRouter)
 app.use("/api/livesession", sessionRouter)
+
+app.use("/api/inquiry",inqRouter);
 
 app.post('/api/auth/google', googleLogin);
 app.listen(3000, () =>{
