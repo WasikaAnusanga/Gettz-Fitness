@@ -1,39 +1,34 @@
-import { loadStripe } from "@stripe/stripe-js";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+import Swal from "sweetalert2";
 
 export default function PlanCard(props) {
-  const plan=props.plan
-  const navigate=useNavigate();
-  async function choosePlan(){
-    const token = localStorage.getItem("token");
-    
-    try {
-      console.log("choose plan runs")
-      const res = await axios .post(
-        import.meta.env.VITE_BACKEND_URL+"/api/pay/createPayment/"+plan.plan_id,{},{
-                headers:{
-                    "Authorization": "Bearer "+token
-                }
-            }
-      );
-      
+  const plan = props.plan;
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-      const session = res.data; // { id: "cs_..." }
-      const stripe = await stripePromise;
-      const { error } = await stripe.redirectToCheckout({ sessionId: session.id });
-      if (error) console.error("Stripe redirect error:", error.message);
-    } catch (err) {
-      toast.error("You already have a plan");
+  function choosePlan(plan) {
+    if (token == null) {
+      toast.error("You Have to login first");
+      navigate("/login");
+      return
     }
+    console.log("Choose plans runs");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Are you sure you want to choose this plan?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Choose it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/membership/card", { state: { plan: plan } });
+        
+      }
+    });
   }
-
-
-
-
   return (
     <article
       className={`relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm transition
@@ -85,14 +80,10 @@ export default function PlanCard(props) {
         ))}
       </ul>
 
-    
-
-      <button type="button"
+      <button
+        type="button"
         onClick={() => {
-          if (window.confirm("Are you sure you want to choose this plan?")) {
-            navigate("/membership/card",{state:plan})
-            //choosePlan();
-          }
+          choosePlan(plan);
         }}
         className={`mt-auto w-full rounded-xl border px-4 py-3 text-sm font-semibold transition
           ${
@@ -101,7 +92,7 @@ export default function PlanCard(props) {
               : "border-black/15 text-black hover:bg-red-600 hover:text-white hover:border-red-600"
           }`}
       >
-        Choose 
+        Choose
       </button>
     </article>
   );
