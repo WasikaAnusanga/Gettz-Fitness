@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowLeft, Heart, Eye, AlertTriangle } from "lucide-react";
 import Header from "../../components/header";
-import Footer from "../../components/footer";
+
 
 const RAW_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const API_BASE = RAW_BASE.replace(/\/+$/, "");
@@ -245,7 +245,7 @@ export default function VideoDetails() {
           </>
         )}
       </main>
-      <Footer />
+      
     </div>
   );
 }

@@ -16,6 +16,12 @@ import MemberRegistration from "../pages/admin/sideBarLinks/MemberRegistration";
 import MemberList from "../pages/admin/sideBarLinks/MemberList";
 import AdminDashboard from "../dashboard/adminDashboard"
 
+import AnnouncementDetailsPage from "./admin/announcements/announcements";
+import AnnouncementAdd from "./admin/announcements/addAnnouncements";
+import EditAnnouncement from "./admin/announcements/updateAnnouncements";
+import CompetitionDetailsPage from "./admin/competitions/competitions";
+import AddCompetition from "./admin/competitions/addCompetition";
+import UpdateCompetition from "./admin/competitions/updateCompetition";
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -52,6 +58,12 @@ export default function AdminLayout() {
               <Route path="/supplement" element={<h1>Supplement</h1>} />
 
               <Route path="/membership" element={<MembershipPlans/>} />
+              <Route path="/announcements" element={<AnnouncementDetailsPage />} />
+              <Route path="/announcement/upload" element={<AnnouncementAdd />} />
+              <Route path="/announcement/edit/:annId" element={<EditAnnouncement />} />
+              <Route path="/competitions" element={<CompetitionDetailsPage />} />
+              <Route path="/competition/add" element={<AddCompetition />} />
+              <Route path="/competition/update/:compId" element={<UpdateCompetition />} />
               <Route path="/settings" element={<h1>Settings</h1>} />
               <Route path="/membership/addPlan" element={<AddPlanForm/>} />
               <Route path="/membership/updatePlan" element={<UpdatePlanForm/>} />

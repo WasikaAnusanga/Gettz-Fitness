@@ -29,10 +29,12 @@ import mealPlanRouter from './routes/mealPlanRoute.js';
 import employeeSalaryRouter from './routes/employeeSalaryRoute.js';
 import employeeSalaryRecordsRouter from './routes/employeeSalaryRecordsRoute.js';
 import mealRequestRouter from './routes/mealRequestRouter.js';
+import notificationRouter from './routes/notificationRouter.js';
 
 import { googleLogin } from './controller/userController.js';
 import sessionRouter from './routes/liveSessionRoute.js';
 import webhookRoutes from './routes/webHookRoute.js';
+import cardRouter from './routes/cardRouter.js';
 import inqRouter from './routes/inquiryRoute.js';
 
 dotenv.config();
@@ -92,10 +94,31 @@ app.use("/api/leaderboard", leaderboardRouter)
 app.use("/api/challenge", challengeRouter)
 app.use("/api/comfeed", comPostRouter)
 app.use("/api/livesession", sessionRouter)
+app.use("/api/card",cardRouter);
 
 app.use("/api/inquiry",inqRouter);
+
+app.use('/api/notification',notificationRouter)
 
 app.post('/api/auth/google', googleLogin);
 app.listen(3000, () =>{
   console.log('Server is running on port 3000');
 })
+
+
+app.post("/chatbot", async (req, res) => {
+  try {
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + process.env.GOOGLE_API_KEY,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(req.body),
+      }
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});

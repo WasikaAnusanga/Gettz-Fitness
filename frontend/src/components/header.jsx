@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 
 import GymLogo from "../assets/GymLogo.jpg";
 import DefaultAvatar from "../assets/default-avatar.png";
+import NotificationBell from "./notificationBell/NotificationBell"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -90,6 +91,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
+               <NotificationBell/>
               <img
                 src={avatarSrc}
                 alt={displayName || "User"}
