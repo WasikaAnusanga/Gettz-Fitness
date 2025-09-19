@@ -1,6 +1,34 @@
-// components/PlanCard.jsx
-/* eslint-disable react/prop-types */
-export default function PlanCard({ plan }) {
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
+export default function PlanCard(props) {
+  const plan = props.plan;
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  function choosePlan(plan) {
+    if (token == null) {
+      toast.error("You Have to login first");
+      navigate("/login");
+      return
+    }
+    console.log("Choose plans runs");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Are you sure you want to choose this plan?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Choose it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/membership/card", { state: { plan: plan } });
+        
+      }
+    });
+  }
   return (
     <article
       className={`relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm transition
@@ -18,8 +46,8 @@ export default function PlanCard({ plan }) {
       )}
 
       <header className="mb-4">
-        <h3 className="text-xl font-semibold">{plan.name}</h3>
-        <p className="mt-1 text-sm text-black/70">{plan.blurb}</p>
+        <h3 className="text-xl font-semibold">{plan.plan_name}</h3>
+        <p className="mt-1 text-sm text-black/70">{plan.description}</p>
       </header>
 
       <div className="mb-4">
@@ -53,7 +81,10 @@ export default function PlanCard({ plan }) {
       </ul>
 
       <button
-        onClick={() => alert(`Selected: ${plan.name}`)}
+        type="button"
+        onClick={() => {
+          choosePlan(plan);
+        }}
         className={`mt-auto w-full rounded-xl border px-4 py-3 text-sm font-semibold transition
           ${
             plan.popular
@@ -61,7 +92,7 @@ export default function PlanCard({ plan }) {
               : "border-black/15 text-black hover:bg-red-600 hover:text-white hover:border-red-600"
           }`}
       >
-        {plan.cta}
+        Choose
       </button>
     </article>
   );

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import meadiaUpload from "../../utils/mediaUpload";
+import meadiaUpload from "../../../utils/mediaUpload";
 import {
   Save,
   ArrowLeft,
@@ -33,7 +33,18 @@ function getAxiosError(err) {
 const parseList = (s) => (s || "").split(",").map((t) => t.trim()).filter(Boolean);
 const joinList  = (arr) => (Array.isArray(arr) ? arr.join(", ") : "");
 
+
 export default function EditVideo() {
+  const CATEGORIES = [
+    "Strength",
+    "Cardio",
+    "Mobility",
+    "Yoga",
+    "HIIT",
+    "Warm-up",
+    "Cooldown",
+    "Technique",
+  ];
   const { videoId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,9 +54,11 @@ export default function EditVideo() {
   const [tags, setTags] = useState("");
   const [duration, setDuration] = useState(0);
   const [isPublished, setIsPublished] = useState(true);
+  const [category, setCategory] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [videoFile, setVideoFile] = useState(null);
   const [preview, setPreview] = useState("");
+  const [workOutStep, setWorkOutStep] = useState([""]);
 
   const [loading, setLoading] = useState(false);
   const [loadingVideo, setLoadingVideo] = useState(true);
@@ -91,13 +104,15 @@ export default function EditVideo() {
         }
         if (cancelled) return;
 
-        setTitle(data?.title || "");
-        setDescription(data?.description || "");
-        setAltNames(joinList(data?.altNames));
-        setTags(joinList(data?.tags));
-        setDuration(Number(data?.duration) || 0);
-        setVideoUrl(data?.videoUrl || "");
-        setIsPublished(Boolean(data?.isPublished));
+    setTitle(data?.title || "");
+    setDescription(data?.description || "");
+    setAltNames(joinList(data?.altNames));
+    setTags(joinList(data?.tags));
+    setDuration(Number(data?.duration) || 0);
+    setVideoUrl(data?.videoUrl || "");
+    setIsPublished(Boolean(data?.isPublished));
+    setCategory(data?.category || "");
+    setWorkOutStep(Array.isArray(data?.workOutStep) && data.workOutStep.length > 0 ? data.workOutStep : [""]);
       } catch (err) {
         toast.error(`Failed to load video: ${getAxiosError(err)}`);
         navigate("/admin/video");
@@ -109,13 +124,15 @@ export default function EditVideo() {
     const s = location.state;
     if (s && typeof s === "object") {
 
-      setTitle(s.title || "");
-      setDescription(s.description || "");
-      setAltNames(joinList(s.altNames));
-      setTags(joinList(s.tags));
-      setDuration(Number(s.duration) || 0);
-      setVideoUrl(s.videoUrl || "");
-      setIsPublished(Boolean(s.isPublished));
+    setTitle(s.title || "");
+    setDescription(s.description || "");
+    setAltNames(joinList(s.altNames));
+    setTags(joinList(s.tags));
+    setDuration(Number(s.duration) || 0);
+    setVideoUrl(s.videoUrl || "");
+    setIsPublished(Boolean(s.isPublished));
+    setCategory(s.category || "");
+    setWorkOutStep(Array.isArray(s.workOutStep) && s.workOutStep.length > 0 ? s.workOutStep : [""]);
       setLoadingVideo(false);
     } else {
       hydrateFromApi();
@@ -127,8 +144,9 @@ export default function EditVideo() {
   }, [location.state, videoId, navigate]);
 
   async function handleSave() {
-    if (!title.trim()) return toast.error("Title is required");
-    if (!description.trim()) return toast.error("Description is required");
+  if (!title.trim()) return toast.error("Title is required");
+  if (!description.trim()) return toast.error("Description is required");
+  if (!category) return toast.error("Please pick a category");
 
     try {
       setLoading(true);
@@ -148,6 +166,8 @@ export default function EditVideo() {
         duration: Number(duration) || 0,
         videoUrl: finalVideoUrl,
         isPublished,
+        category,
+        workOutStep: workOutStep.filter(Boolean),
       };
 
       const token = localStorage.getItem("token") || localStorage.getItem("jwt");
@@ -222,6 +242,19 @@ export default function EditVideo() {
               <p className="text-xs text-neutral-500">ID: {videoId}</p>
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Category</label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+            >
+              <option value="">Select category</option>
+              {CATEGORIES.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
           <Link
             to="/admin/video"
             className="inline-flex items-center gap-1 text-sm text-[#e30613] hover:underline"
@@ -235,6 +268,40 @@ export default function EditVideo() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
 
           <div className="lg:col-span-1 space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Workout Steps</label>
+              {workOutStep.map((step, idx) => (
+                <div key={idx} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={step}
+                    onChange={e => {
+                      const arr = [...workOutStep];
+                      arr[idx] = e.target.value;
+                      setWorkOutStep(arr);
+                    }}
+                    placeholder={`Step ${idx + 1}`}
+                    className="flex-1 rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setWorkOutStep(workOutStep.filter((_, i) => i !== idx))}
+                    className="rounded bg-gray-100 px-2 text-gray-500 hover:bg-red-100"
+                    disabled={workOutStep.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setWorkOutStep([...workOutStep, ""])}
+                className="mt-1 rounded bg-[#e30613] px-3 py-1 text-white text-xs hover:opacity-90"
+              >
+                + Add Step
+              </button>
+              <p className="mt-1 text-xs text-neutral-500">Add each step of the workout (optional).</p>
+            </div>
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
               <input

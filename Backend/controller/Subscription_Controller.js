@@ -4,7 +4,7 @@ import Subscription from "../model/Subscription_Model.js";
 
 export function addSubscription(req,res){
     
-    
+    console.log("Add Subscription runs")
 
     if(req.user==null){
         res.status(401).json({
@@ -46,16 +46,16 @@ export function addSubscription(req,res){
                     
                     Subscription.findOne({user_id:req.user._id}).then((sub)=>{
                     if(sub!=null){
-                        if(sub.status=="pending"|| sub.status=="active"){
+                        if( sub.status=="active"){
                             res.status(400).json({message:"You Have already selected a plan"})
-                        }else if(sub.status=="canceled"){
+                        }else if(sub.status=="pending"||sub.status=="canceled"){
                             Subscription.updateOne(sub,SubscriptionData).then(()=>{
                                 res.status(200).json({
                                     message:"Subscription Updated"
                                 })
                             }).catch(
-                                ()=>{
-                                    res.status(500).json({message:"Error Occured when saving Subscription"})
+                                (err)=>{
+                                    res.status(500).json({message:"Error Occured when saving Subscription"+err})
                                 }
                             )
                             

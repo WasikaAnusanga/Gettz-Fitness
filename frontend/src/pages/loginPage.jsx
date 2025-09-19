@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Link } from "lucide-react";
-import loginBg from "../assets/loging.jpg"; 
-import GymLogo from "../assets/GymLogo.jpg"; 
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import loginBg from "../assets/loging.jpg";
+import GymLogo from "../assets/GymLogo.jpg";
 import axios from "axios";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,40 +29,29 @@ export default function LoginPage() {
     if (!validate()) return;
 
     setLoading(true);
-    console.log("Email :", form.email);
-    console.log("Password :", form.password);
-
-    axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
         email: form.email,
         password: form.password,
-      })
-      .then((response) => {
-        if (response.data.message === "Login successful") {
-          console.log("Login Success", response.data);
-          toast.success("Login Success");
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-
-          const user = response.data.user;
-          if (user.role === "admin") {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
-          setLoading(false);
-        } else {
-          toast.error(response.data.message || "Login Failed");
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Login error", err);
-        toast.error("Something went wrong");
-        setLoading(false);
       });
 
-    console.log("Login button clicked");
+      if (response.data.message === "Login successful") {
+        toast.success("Login Success");
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        const user = response.data.user;
+        if (user.role === "admin") navigate("/admin");
+        else navigate("/");
+      } else {
+        toast.error(response.data.message || "Login Failed");
+      }
+    } catch (err) {
+      console.error("Login error", err);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onChange = (e) => {
@@ -69,13 +59,39 @@ export default function LoginPage() {
     setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
   };
 
+
+  const handleGoogle = async (response) => {
+    try {
+      setLoading(true);
+      const { credential } = response; 
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google`, { credential });
+
+      if (res.data?.token && res.data?.user) {
+        toast.success("Login Success");
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
+        const user = res.data.user;
+        if (user.role === "admin") navigate("/admin");
+        else navigate("/");
+      } else {
+        toast.error(res.data?.message || "Google login failed");
+      }
+    } catch (err) {
+      console.error("Google login error", err);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-white text-black grid grid-cols-1 lg:grid-cols-2">
       <div className="relative hidden lg:flex items-center justify-center overflow-hidden">
         <img src={loginBg} alt="Gym Background" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="relative z-10 text-center text-white bg-black/40 p-10 rounded-3xl">
+        <div className="relative z-10 text-center text-white bg-black/40 p-10 rounded-3xl backdrop-blur-xs">
           <img src={GymLogo} alt="Gettz Fitness Logo" className="mx-auto h-20 mb-6 rounded-full shadow-lg" />
-          <h1 className="text-4xl font-bold tracking-tight">Gettz Health & Fitness</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Gettz Health &amp; Fitness</h1>
           <p className="mt-4 text-lg opacity-90">Stronger. Fitter. Better.</p>
           <ul className="mt-6 space-y-3 text-left text-sm opacity-90">
             <li>✔ Personalized workout plans</li>
@@ -100,11 +116,16 @@ export default function LoginPage() {
 
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-lg">
             <form onSubmit={onSubmit} className="space-y-5">
+             
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium">Email</label>
-                <div className={`group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
-                  errors.email ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
-                }`}>
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email
+                </label>
+                <div
+                  className={`group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                    errors.email ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                  }`}
+                >
                   <Mail className="mr-2 h-4 w-4 text-gray-400" aria-hidden />
                   <input
                     id="email"
@@ -121,11 +142,16 @@ export default function LoginPage() {
                 {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
               </div>
 
+             
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-medium">Password</label>
-                <div className={`group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
-                  errors.password ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
-                }`}>
+                <label htmlFor="password" className="block text-sm font-medium">
+                  Password
+                </label>
+                <div
+                  className={`group relative flex items-center rounded-xl border px-3 py-2 focus-within:ring-2 ${
+                    errors.password ? "border-red-500 focus-within:ring-red-300" : "border-gray-300 focus-within:ring-red-200"
+                  }`}
+                >
                   <Lock className="mr-2 h-4 w-4 text-gray-400" aria-hidden />
                   <input
                     id="password"
@@ -149,6 +175,7 @@ export default function LoginPage() {
                 {errors.password && <p className="text-xs text-red-500">{errors.password}</p>}
               </div>
 
+           
               <div className="flex items-center justify-between">
                 <label className="inline-flex select-none items-center gap-2 text-sm">
                   <input
@@ -165,6 +192,7 @@ export default function LoginPage() {
                 </a>
               </div>
 
+              
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 disabled={loading}
@@ -182,15 +210,49 @@ export default function LoginPage() {
                 <span>{loading ? "Signing in…" : "Sign in"}</span>
               </motion.button>
 
-             <button type="button"                 
+          
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-white px-2 text-gray-400">or</span>
+                </div>
+              </div>
+
+          
+              <div className="w-full">
+                <div className="w-full flex justify-center">
+                  <div className="w-full flex flex-col items-center">
+                    <GoogleLogin
+                      onSuccess={handleGoogle}
+                      onError={() => toast.error("Google login failed")}
+                      useOneTap
+                  
+                      theme="outline"
+                      text="signin_with"
+                      shape="pill"
+                      size="large"
+                      width="100%"
+                    />
+                  </div>
+                </div>
+              </div>
+
+           
+              <button
+                type="button"
                 onClick={() => navigate("/register")}
-                className="w-full mt-3 rounded-xl border border-gray-300 py-2.5 text-sm font-medium hover:bg-gray-50">Create an account
+                className="w-full mt-3 rounded-xl border border-gray-300 py-2.5 text-sm font-medium hover:bg-gray-50"
+              >
+                Create an account
               </button>
             </form>
           </div>
 
           <p className="mt-6 text-center text-[11px] text-gray-500">
-            By continuing, you agree to our <a className="underline" href="#">Terms</a> and <a className="underline" href="#">Privacy Policy</a>.
+            By continuing, you agree to our <a className="underline" href="#">Terms</a> and{" "}
+            <a className="underline" href="#">Privacy Policy</a>.
           </p>
         </div>
       </motion.section>

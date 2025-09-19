@@ -18,7 +18,7 @@ const mealRequestSchema = new Schema({
     },
 
     request_date:{
-        trype: String,
+        type: String,
     },
 
     weight:{

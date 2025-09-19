@@ -23,6 +23,11 @@ const videoSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  category:{
+    type: String,
+    required: true
+  }
+  ,
   duration: {
     type: Number, 
     required: true
@@ -31,13 +36,17 @@ const videoSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  viewCount: {
-    type: Number,
-    default: 0
+  workOutStep:{
+    type:[String],
+    default:[]
   },
-  likeCount: {
-    type: Number,
-    default: 0
+  viewCount: {
+     type: Number, 
+     default: 0
+     },
+  likeCount: { 
+    type: Number, 
+    default: 0 
   },
   comments: [
     {
@@ -46,11 +55,6 @@ const videoSchema = new mongoose.Schema({
       createdAt: { type: Date, default: Date.now }
     }
   ],
-  uploadedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "admin",
-    required: true
-  },
   isPublished: {
     type: Boolean,
     default: true
@@ -62,7 +66,8 @@ const videoSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }]
 })
 videoSchema.pre("save",async function(next){
   if(this.isNew){

@@ -3,11 +3,6 @@ const schema = mongoose.Schema;
 
 //supplement schema
 const supplementSchema = new schema({
-    Sup_ID:{
-        type:String,
-        required: true,
-        unique: true
-    },
     Sup_name:{
         type:String,
         required:true
@@ -35,9 +30,11 @@ const supplementSchema = new schema({
     },
     IM_ID:{
         type: mongoose.Schema.Types.ObjectId,
-        reg: 'equipmentManager',
+        ref: 'equipmentManager',
         required: true
-    }
+    },
+    Sup_image:[],  
+
 });
 
 const supplement= mongoose.model("supplement",supplementSchema);
