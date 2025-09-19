@@ -85,7 +85,7 @@ trainerSchema.pre("save",async function(next){
             { $inc: { seq: 1 } },
             { new: true, upsert: true }
         );
-        this.trainerId = `trainer ${counter.seq}`;
+        this.trainerId = `TRN0${counter.seq}`;
     }
     next();
 })

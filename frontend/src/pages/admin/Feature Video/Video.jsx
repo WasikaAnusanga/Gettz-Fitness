@@ -95,7 +95,7 @@ export default function VideoDetailsPage() {
     autoTable(doc, {
       startY: 35,
       head: [[
-        'No', 'Video ID', 'Title', 'Duration', 'Views', 'Likes', 'Category', 'Status'
+        'No', 'Video ID', 'Title', 'Duration', 'Views', 'Category', 'Status'
       ]],
       body: video.map((vid, idx) => [
         idx + 1,
@@ -103,7 +103,6 @@ export default function VideoDetailsPage() {
         vid.title,
         vid.duration,
         vid.viewCount,
-        vid.likeCount,
         vid.category,
         vid.isPublished ? 'Published' : 'Unlisted',
       ]),
