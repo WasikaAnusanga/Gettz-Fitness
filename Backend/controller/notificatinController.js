@@ -91,7 +91,7 @@ export async function createPromotionalNotification(req, res) {
     await notification.save();
 
     // rest of your logic …
-    const members = await User.find({ role: "member" });
+    const members = await User.find({ role: "user" });
     const bulk = members.map((m) => ({
       insertOne: {
         document: { NIC: notification._id, user_id: m._id, isRead: false },

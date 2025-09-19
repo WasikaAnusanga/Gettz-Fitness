@@ -46,8 +46,6 @@ function App() {
             element={<PaymentSuccess></PaymentSuccess>}
           />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
-          <Route path="/videos" element={<VideoPortal />} />
-          <Route path="/videos/:videoId" element={<VideoDetails />} />
           <Route path="/community" element={<CommunityFeed/>}/>
           <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/admin/notifications/new" element={<AddNotification />} />
