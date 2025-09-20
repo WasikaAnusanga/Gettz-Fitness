@@ -1,40 +1,35 @@
-export default function Dashboard() {
+export default function AboutUs() {
   return (
-    <div className="bg-white text-[#111] min-h-screen">
+    <div className="bg-white text-[#111] min-h-screen pb-10">
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-5 py-20 md:py-28 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-              <center>About Us</center>
-            </h1>
-            <h1 className="mt-6 text-4xl md:text-3xl font-bold">
-              Tailored training & strategies for your{" "}
-              <span className="text-[#FF0000]">fitness growth</span>
-            </h1>
-            <p className="mt-3 text-gray-700 max-w-xl">
-              Personalized coaching tailored to your goals, smart nutrition
-              aligned with your lifestyle, and data-backed progress plans with
-              weekly check-ins and habit tracking—crafted to help you move
-              better, build real strength, improve mobility, accelerate fat
-              loss, and boost energy so you can train confidently, recover
-              faster, and feel amazing every single day.
-            </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-red-600/20">
-            <img
-              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1600&auto=format&fit=crop"
-              alt="Athletes training at the gym"
-              className="w-full h-[360px] object-cover"
-            />
-          </div>
+      <section className="relative overflow-hidden mt-[-60px]">
+        <div className="max-w-7xl mx-auto px-5 py-20 md:py-28  items-center">
+          <center>
+            <div>
+              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
+                About Us
+              </h1>
+              <h1 className="mt-6 text-4xl md:text-3xl font-bold">
+                Tailored training & strategies for your{" "}
+                <span className="text-[#FF0000]">fitness growth</span>
+              </h1>
+              <p className="mt-3 text-gray-700 max-w-xl">
+                Personalized coaching tailored to your goals, smart nutrition
+                aligned with your lifestyle, and data-backed progress plans with
+                weekly check-ins and habit tracking—crafted to help you move
+                better, build real strength, improve mobility, accelerate fat
+                loss, and boost energy so you can train confidently, recover
+                faster, and feel amazing every single day.
+              </p>
+            </div>
+          </center>
         </div>
       </section>
 
       {/* ===== MISSION / VISION (two colored cards) ===== */}
       <section
         id="about"
-        className="max-w-7xl mx-auto px-5 grid md:grid-cols-2 gap-6"
+        className="max-w-7xl mx-auto px-5 grid md:grid-cols-2 gap-6 mt-[-60px]"
       >
         <div className="rounded-2xl p-6 md:p-8 bg-white border border-red-600/20 shadow-sm">
           <h3 className="text-xl font-bold">Mission</h3>

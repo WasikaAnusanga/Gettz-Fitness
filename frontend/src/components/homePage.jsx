@@ -1,236 +1,410 @@
-
-import React from "react";
-import Header from "../components/header";
-import HomeFooter from "../components/homeFooter";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Dumbbell, Bolt, HeartPulse, Flame, Trophy, Play, ChevronRight, ArrowRight, Clock, ShieldCheck, Star, Facebook, Instagram, Twitter, Youtube, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const heroImages = [
-  "https://unsplash.com/photos/person-about-to-lift-the-barbel-WvDYdXDzkhs",
-];
-const trainers = [
-  { name: "Sam Cole", role: "Personal Trainer", img: "https://randomuser.me/api/portraits/men/32.jpg" },
-  { name: "Michael Harris", role: "Personal Trainer", img: "https://randomuser.me/api/portraits/men/45.jpg" },
-  { name: "John Anderson", role: "Personal Trainer", img: "https://randomuser.me/api/portraits/men/65.jpg" },
-  { name: "Tom Blake", role: "Personal Trainer", img: "https://randomuser.me/api/portraits/men/76.jpg" },
-];
-const blogPosts = [
-  { title: "5 Essential Exercises For Building Muscle", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80", date: "August 14" },
-  { title: "The Ultimate Guide to a Balanced Diet", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80", date: "August 11" },
-  { title: "The Benefits of HIIT Training", img: "https://images.unsplash.com/photo-1517960413843-0aee8e2d471c?auto=format&fit=crop&w=400&q=80", date: "August 8" },
-  { title: "Home Workout For Busy People", img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80", date: "August 4" },
-  { title: "How To Always Stay Motivated", img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80", date: "August 2" },
-];
 
+export default function GymLandingPage() {
+  const [email, setEmail] = useState("");
 
-export default function HomepageComponent() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white flex flex-col">
-      <Header />
-      <main className="flex-1">
-        {/* HERO SECTION */}
-        <section className="relative flex flex-col md:flex-row items-center justify-between px-8 pt-24 pb-10 max-w-7xl mx-auto">
-          <div className="flex-1 flex flex-col gap-6 z-10 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight drop-shadow-lg">
-              Achive Your <span className="text-red-500">FITNESS GOALS</span><br />With FitMaker
-            </h1>
-            <p className="text-lg text-gray-200 max-w-xl backdrop-blur-md bg-white/10 rounded-xl p-4 shadow-lg">
-              Join the Premier Community and Transform Your Fitness Journey. Our Expert Coaches and Personalized Programs Are Designed to Help You Achieve Your Goals, Build Confidence, and Exceed Your Expectations. Ready to Make a Change?
-            </p>
-            <div className="flex gap-4 mt-2">
-              <Link to="/register" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold text-white shadow-lg transition-transform hover:scale-105">Start Your Journey</Link>
-              <Link to="/programs" className="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold text-white border border-gray-600 transition-transform hover:scale-105">Explore Programs</Link>
-            </div>
-            <div className="flex gap-6 mt-8 text-center">
-              <div className="transition-transform hover:scale-110">
-                <div className="text-2xl font-bold text-red-400">+80</div>
-                <div className="text-xs text-gray-300">Coaches</div>
-              </div>
-              <div className="transition-transform hover:scale-110">
-                <div className="text-2xl font-bold text-red-400">+1300</div>
-                <div className="text-xs text-gray-300">Positive Reviews</div>
-              </div>
-              <div className="transition-transform hover:scale-110">
-                <div className="text-2xl font-bold text-red-400">+1000</div>
-                <div className="text-xs text-gray-300">Reliable Members</div>
-              </div>
-              <div className="transition-transform hover:scale-110">
-                <div className="text-2xl font-bold text-red-400">+1500</div>
-                <div className="text-xs text-gray-300">Total Users</div>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 flex justify-center items-center relative mt-10 md:mt-0 animate-fade-in">
-            <div className="rounded-full w-80 h-80 bg-gradient-to-br from-red-600/80 to-orange-400/60 shadow-2xl flex items-center justify-center relative">
-              <img src={heroImages[0]} alt="Fitness Hero" className="rounded-full w-72 h-72 object-cover border-4 border-white/30 shadow-xl" />
-            </div>
-          </div>
-        </section>
-
-        {/* STATS SECTION */}
-        <section className="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-6 py-8 px-4">
-          <div className="flex-1 min-w-[180px] text-center">
-            <div className="text-3xl font-bold text-red-500">96%</div>
-            <div className="text-sm text-gray-300">Client Satisfaction</div>
-          </div>
-          <div className="flex-1 min-w-[180px] text-center">
-            <div className="text-3xl font-bold text-red-500">+5</div>
-            <div className="text-sm text-gray-300">Years of Experience</div>
-          </div>
-          <div className="flex-1 min-w-[180px] text-center">
-            <div className="text-3xl font-bold text-red-500">+800</div>
-            <div className="text-sm text-gray-300">Active Members</div>
-          </div>
-          <div className="flex-1 min-w-[180px] text-center">
-            <div className="text-3xl font-bold text-red-500">24/7</div>
-            <div className="text-sm text-gray-300">Support Available</div>
-          </div>
-        </section>
-
-        {/* SERVICES SECTION */}
-        <section className="max-w-7xl mx-auto py-10 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Our <span className="text-red-500">Services</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              {
-                title: "Losing Weight",
-                img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80",
-                desc: "Get a custom plan to lose weight safely and effectively with our expert trainers.",
-                link: "/services/weight-loss",
-                color: "from-red-700/80 to-gray-900"
-              },
-              {
-                title: "Building Muscle",
-                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-                desc: "Personalized muscle-building programs and nutrition guidance for all levels.",
-                link: "/services/muscle-building",
-                color: "from-orange-700/80 to-gray-900"
-              },
-              {
-                title: "Training in Home",
-                img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
-                desc: "Flexible home workout plans and virtual coaching to fit your busy schedule.",
-                link: "/services/home-training",
-                color: "from-yellow-700/80 to-gray-900"
-              },
-              {
-                title: "Gym Plan",
-                img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-                desc: "Access to all gym facilities, group classes, and expert support for your goals.",
-                link: "/services/gym-plan",
-                color: "from-blue-700/80 to-gray-900"
-              }
-            ].map((s, i) => (
-              <div
-                key={i}
-                className={`bg-gradient-to-br ${s.color} rounded-xl p-6 shadow-lg flex flex-col items-center glass-card transition-transform hover:scale-105 hover:shadow-2xl`}
-                style={{ backdropFilter: 'blur(8px)', background: 'rgba(30,30,40,0.7)' }}
-              >
-                <img src={s.img} alt={s.title} className="w-32 h-32 object-cover rounded-lg mb-4 shadow-lg" />
-                <h3 className="text-xl font-bold mb-2">{s.title}</h3>
-                <p className="text-gray-300 text-sm mb-4 text-center">{s.desc}</p>
-                <Link to={s.link} className="text-red-400 hover:underline">Learn More</Link>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* PLANS SECTION */}
-        <section className="max-w-7xl mx-auto py-10 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Our <span className="text-red-500">Plans</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-yellow-900/80 to-gray-900 rounded-xl p-8 shadow-lg flex flex-col items-center border-2 border-yellow-500">
-              <h3 className="text-xl font-bold mb-2">PRO PLAN</h3>
-              <ul className="text-gray-200 text-sm mb-6 list-disc list-inside">
-                <li>All Access to Gym & Virtual</li>
-                <li>Personalized Diet & Workout</li>
-                <li>Weekly Progress Tracking</li>
-                <li>1-on-1 Coaching</li>
-                <li>Using Cutting-edge Science</li>
-              </ul>
-              <div className="text-2xl font-bold mb-2">99$ <span className="text-sm font-normal">/ month</span></div>
-              <button className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold text-white shadow-lg transition">Choose This Plan</button>
-            </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-gray-900 rounded-xl p-8 shadow-lg flex flex-col items-center border-2 border-red-500 scale-105">
-              <h3 className="text-xl font-bold mb-2">CUSTOM PLAN</h3>
-              <ul className="text-gray-200 text-sm mb-6 list-disc list-inside">
-                <li>Auto Tailored Fitness Routine</li>
-                <li>Exclusive Exercise Videos</li>
-                <li>Nutrition & Supplement Guide</li>
-                <li>Direct Trainer Access</li>
-                <li>Progress Analytics</li>
-              </ul>
-              <div className="text-2xl font-bold mb-2">149$ <span className="text-sm font-normal">/ month</span></div>
-              <button className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold text-white shadow-lg transition">Choose This Plan</button>
-            </div>
-            <div className="bg-gradient-to-br from-orange-900/80 to-gray-900 rounded-xl p-8 shadow-lg flex flex-col items-center border-2 border-orange-500">
-              <h3 className="text-xl font-bold mb-2">BEGINNER PLAN</h3>
-              <ul className="text-gray-200 text-sm mb-6 list-disc list-inside">
-                <li>Personal Plan With Our Beginner Pack</li>
-                <li>Group Classes & Community</li>
-                <li>Access to All Gym Facilities</li>
-                <li>Weekly Check-ins</li>
-                <li>Trainer Support</li>
-              </ul>
-              <div className="text-2xl font-bold mb-2">49$ <span className="text-sm font-normal">/ month</span></div>
-              <button className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold text-white shadow-lg transition">Choose This Plan</button>
-            </div>
-          </div>
-        </section>
-
-        {/* TESTIMONIALS SECTION */}
-        <section className="max-w-5xl mx-auto py-10 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">What Our <span className="text-red-500">Customers Say</span></h2>
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="Customer" className="w-32 h-32 rounded-full object-cover border-4 border-red-600 shadow-lg" />
-            <div className="bg-gray-900 rounded-xl p-6 shadow-lg flex-1">
-              <div className="text-lg font-semibold text-red-400 mb-2">Steven Howard</div>
-              <p className="text-gray-200 text-sm mb-2">"FitMaker has changed my life! The trainers are amazing, and the community is so supportive. I've never felt better or more motivated to reach my goals."</p>
-              <div className="text-xs text-gray-400">Pro Athlete</div>
-            </div>
-          </div>
-        </section>
-
-        {/* TRAINERS SECTION */}
-        <section className="max-w-7xl mx-auto py-10 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Meet Our <span className="text-red-500">Trainers</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {trainers.map((t, i) => (
-              <div
-                key={i}
-                className="bg-gray-900 rounded-xl p-6 shadow-lg flex flex-col items-center transition-transform hover:scale-105 hover:shadow-2xl glass-card"
-                style={{ backdropFilter: 'blur(8px)', background: 'rgba(30,30,40,0.7)' }}
-              >
-                <img src={t.img} alt={t.name} className="w-32 h-32 object-cover rounded-full border-4 border-red-600 mb-4 shadow-lg" />
-                <div className="text-lg font-bold mb-1">{t.name}</div>
-                <div className="text-sm text-gray-400 mb-2">{t.role}</div>
-                <Link to="/trainers" className="text-red-400 hover:underline">Learn More</Link>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* BLOG POSTS SECTION */}
-        <section className="max-w-7xl mx-auto py-10 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white">Fitmaker <span className="text-red-500">Blog Posts</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogPosts.map((b, i) => (
-              <div
-                key={i}
-                className="bg-gray-900 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-2xl glass-card"
-                style={{ backdropFilter: 'blur(8px)', background: 'rgba(30,30,40,0.7)' }}
-              >
-                <img src={b.img} alt={b.title} className="w-full h-48 object-cover" />
-                <div className="p-4 flex flex-col gap-2">
-                  <div className="text-sm text-gray-400">{b.date}</div>
-                  <div className="text-lg font-bold text-white">{b.title}</div>
-                  <Link to="/blog" className="text-red-400 hover:underline">Read More</Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-      
+    <div className="min-h-screen bg-neutral-50 text-neutral-900">
+      <Hero email={email} setEmail={setEmail} />
+      <TrustBar />
+      <FeatureGrid />
+      <VideoTeaser />
+      <Classes />
+      <Stats />
+      <Trainers />
+      <Pricing />
+      <Testimonials />
+      <Cta />
     </div>
   );
 }
+
+function Container({ className = "", children }) {
+  return (
+    <div className={`mx-auto w-full max-w-7xl px-4 md:px-6 ${className}`}>{children}</div>
+  );
+}
+
+function Hero({ email, setEmail }) {
+  return (
+    <section className="relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 h-[32rem] w-[32rem] rounded-full bg-gradient-to-tr from-rose-300 to-amber-200 blur-3xl opacity-40" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-gradient-to-tr from-indigo-300 to-cyan-200 blur-3xl opacity-40" />
+
+      <Container className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center py-16 md:py-24">
+        <div>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl/tight md:text-6xl/tight font-extrabold"
+          >
+            Train harder. <span className="bg-gradient-to-r from-neutral-900 to-neutral-500 bg-clip-text text-transparent">Recover faster.</span> Live stronger.
+          </motion.h1>
+          <p className="mt-4 max-w-xl text-neutral-600 md:text-lg">
+            Premium equipment, elite coaching, and data-driven programs. Everything you need to hit your next PR.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <a
+              href="#pricing"
+              className="inline-flex items-center justify-center rounded-2xl bg-neutral-900 px-5 py-3 text-white font-semibold hover:bg-black"
+            >
+              Start free week <ArrowRight className="ml-2 h-4 w-4" />
+            </a>
+            <a
+              href="#features"
+              className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-5 py-3 font-semibold hover:shadow"
+            >
+              Explore features
+            </a>
+          </div>
+
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="mt-6 flex w-full max-w-md items-center gap-2 rounded-2xl border border-black/10 bg-white p-2"
+          >
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="h-11 flex-1 rounded-xl px-3 outline-none"
+            />
+            <button className="h-11 shrink-0 rounded-xl bg-neutral-900 px-4 text-white font-semibold hover:bg-black">
+              Get updates
+            </button>
+          </form>
+
+          <div className="mt-6 grid grid-cols-3 gap-6 max-w-lg text-sm">
+            <div className="flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> No contracts</div>
+            <div className="flex items-center gap-2"><Clock className="h-5 w-5" /> 24/7 access</div>
+            <div className="flex items-center gap-2"><Star className="h-5 w-5" /> 1k+ 5-star reviews</div>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.05 }}
+          className="relative"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1920&auto=format&fit=crop"
+            alt="Athlete lifting barbell"
+            className="w-full rounded-3xl shadow-2xl border border-black/10"
+          />
+          <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl border border-black/5 p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-neutral-900 text-white grid place-items-center"><Bolt className="h-5 w-5" /></div>
+            <div>
+              <p className="text-sm font-semibold">Power Program</p>
+              <p className="text-xs text-neutral-500">12-week strength phase</p>
+            </div>
+          </div>
+        </motion.div>
+      </Container>
+    </section>
+  );
+}
+
+function TrustBar() {
+  return (
+    <section className="py-6 border-y border-black/5 bg-white">
+      <Container className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70 text-sm">
+        <span>AS FEATURED IN</span>
+        <div className="flex items-center gap-6">
+          <span className="font-semibold">Men's Health</span>
+          <span className="font-semibold">Runner's World</span>
+          <span className="font-semibold">FitLife</span>
+          <span className="font-semibold">Well+Good</span>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function FeatureGrid() {
+  const items = [
+    { icon: <HeartPulse className="h-6 w-6" />, title: "Smart Coaching", desc: "Personalized plans adapted to your data and progress." },
+    { icon: <Flame className="h-6 w-6" />, title: "Metabolic Tracking", desc: "Monitor calories, HR zones, and recovery in real time." },
+    { icon: <Dumbbell className="h-6 w-6" />, title: "Elite Equipment", desc: "Platform racks, calibrated plates, assault runners & more." },
+    { icon: <Trophy className="h-6 w-6" />, title: "Community & Events", desc: "Weekly comps, workshops, and member challenges." },
+  ];
+
+  return (
+    <section id="features" className="py-16 md:py-24">
+      <Container>
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold">Everything you need to win</h2>
+          <p className="mt-3 text-neutral-600">We blend science, software, and sweat to deliver results that stick.</p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {items.map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm hover:shadow"
+            >
+              <div className="h-10 w-10 rounded-xl bg-neutral-900 text-white grid place-items-center">{f.icon}</div>
+              <h3 className="mt-4 font-bold text-lg">{f.title}</h3>
+              <p className="mt-2 text-sm text-neutral-600">{f.desc}</p>
+              <a href="#" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold">Learn more <ArrowRight className="h-4 w-4"/></a>
+            </motion.div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function VideoTeaser() {
+  return (
+    <section id="video" className="py-12">
+      <Container>
+        <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-neutral-900 text-white">
+          <img
+            src="https://images.unsplash.com/photo-1546483875-ad9014c88eba?q=80&w=1920&auto=format&fit=crop"
+            alt="Gym ambience"
+            className="absolute inset-0 h-full w-full object-cover opacity-60"
+          />
+          <div className="relative p-8 md:p-14">
+            <div className="max-w-xl">
+              <h3 className="text-2xl md:text-3xl font-extrabold">Tour the club in 60 seconds</h3>
+              <p className="mt-2 text-neutral-200">Go behind the scenes and see why athletes switch to PulseFit.</p>
+              <Link to ="/videos" target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-neutral-900">
+                <Play className="h-4 w-4" /> Watch video
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Classes() {
+  const items = [
+    {
+      title: "Strength & Conditioning",
+      img: "https://cdn4.sportngin.com/attachments/photo/9705/7262/MVA_7-24-15-1044_large.jpg",
+      desc: "Compound lifts + accessory work for raw power.",
+    },
+    {
+      title: "HIIT & MetCon",
+      img: "https://www.pmotionhealth.com/wp-content/uploads/2024/02/Benefits-and-Risks-of-Metcon-Workouts-1024x585.jpg",
+      desc: "Intervals that torch fat and build capacity.",
+    },
+    {
+      title: "Mobility & Recovery",
+      img: "https://images.unsplash.com/photo-1552196563-55cd4e45efb3?q=80&w=1920&auto=format&fit=crop",
+      desc: "Move better, reduce pain, and bulletproof joints.",
+    },
+  ];
+
+  return (
+    <section id="classes" className="py-16 md:py-24">
+      <Container>
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold">Coached classes, real results</h2>
+          <p className="mt-3 text-neutral-600">Pick your path or mix and match. New blocks start monthly.</p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {items.map((c, i) => (
+            <motion.article key={i} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.05 }} className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white">
+              <img src={c.img} alt={c.title} className="h-56 w-full object-cover transition group-hover:scale-105" />
+              <div className="p-5">
+                <h3 className="font-bold text-lg">{c.title}</h3>
+                <p className="mt-1 text-sm text-neutral-600">{c.desc}</p>
+                <a href="#" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold">View schedule <ArrowRight className="h-4 w-4"/></a>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Stats() {
+  const stats = [
+    { label: "Sq / DL / BP PRs", value: "420 / 520 / 315" },
+    { label: "Avg. time to goal", value: "8.5 weeks" },
+    { label: "Member community", value: "12,000+" },
+    { label: "Locations", value: "6 worldwide" },
+  ];
+  return (
+    <section className="py-12">
+      <Container>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 rounded-3xl border border-black/10 bg-white p-6 md:p-10">
+          {stats.map((s, i) => (
+            <div key={i} className="text-center">
+              <div className="text-2xl md:text-3xl font-extrabold">{s.value}</div>
+              <div className="mt-1 text-xs md:text-sm text-neutral-600">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Trainers() {
+  const people = [
+    {
+      name: "Ava Morgan",
+      role: "Strength Coach",
+      img: "https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      name: "Leo Carter",
+      role: "Performance Specialist",
+      img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      name: "Maya Khan",
+      role: "Mobility Expert",
+      img: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=1200&auto=format&fit=crop",
+    },
+  ];
+
+  return (
+    <section id="trainers" className="py-16 md:py-24">
+      <Container>
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold">Meet the coaches</h2>
+          <p className="mt-3 text-neutral-600">Certified pros who program with purpose and coach with care.</p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {people.map((p, i) => (
+            <motion.figure key={i} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.05 }} className="overflow-hidden rounded-3xl border border-black/10 bg-white">
+              <img src={p.img} alt={p.name} className="h-72 w-full object-cover" />
+              <figcaption className="p-5">
+                <div className="font-bold">{p.name}</div>
+                <div className="text-sm text-neutral-600">{p.role}</div>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Pricing() {
+  const tiers = [
+    {
+      name: "Starter",
+      price: 29,
+      desc: "Gym access + open floor",
+      perks: ["24/7 key access", "Locker + showers", "App tracking"],
+    },
+    {
+      name: "Performance",
+      price: 59,
+      desc: "Everything in Starter + classes",
+      perks: ["Unlimited classes", "Coached sessions", "Monthly check-ins"],
+      featured: true,
+    },
+    {
+      name: "Elite",
+      price: 99,
+      desc: "1:1 coaching + programming",
+      perks: ["Weekly 1:1", "Custom program", "Priority booking"],
+    },
+  ];
+
+  return (
+    <section id="pricing" className="py-16 md:py-24">
+      <Container>
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold">Memberships for every goal</h2>
+          <p className="mt-3 text-neutral-600">Start with a free week. Cancel anytime.</p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {tiers.map((t, i) => (
+            <motion.div key={t.name} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.05 }} className={`rounded-3xl border bg-white p-6 md:p-8 ${t.featured ? "border-neutral-900 shadow-xl" : "border-black/10 shadow-sm"}`}>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-xl font-extrabold">{t.name}</h3>
+                {t.featured && (<span className="rounded-full border border-neutral-900 px-2 py-0.5 text-xs">Most popular</span>)}
+              </div>
+              <div className="mt-3 text-4xl font-extrabold">
+                ${t.price}<span className="text-sm font-semibold text-neutral-500">/mo</span>
+              </div>
+              <p className="mt-2 text-sm text-neutral-600">{t.desc}</p>
+              <ul className="mt-4 space-y-2 text-sm">
+                {t.perks.map((p) => (
+                  <li key={p} className="flex items-center gap-2"><Check className="h-4 w-4" /> {p}</li>
+                ))}
+              </ul>
+              <a href="#" className={`mt-6 inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold ${t.featured ? "bg-neutral-900 text-white hover:bg-black" : "border border-black/10 hover:shadow"}`}>
+                Choose {t.name}
+              </a>
+            </motion.div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Testimonials() {
+  const quotes = [
+    {
+      body: "I added 60lbs to my deadlift in 10 weeks. The programming is gold.",
+      name: "Sam R.",
+    },
+    {
+      body: "Coaches actually care. I feel stronger and pain-free for the first time.",
+      name: "Priya D.",
+    },
+    {
+      body: "The vibe is immaculate. Community keeps me consistent.",
+      name: "Luca M.",
+    },
+  ];
+  return (
+    <section className="py-16">
+      <Container>
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold">Members love us</h2>
+          <p className="mt-3 text-neutral-600">Real stories from our community.</p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {quotes.map((q, i) => (
+            <motion.blockquote key={i} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.05 }} className="rounded-3xl border border-black/10 bg-white p-6">
+              <p className="text-neutral-700">“{q.body}”</p>
+              <footer className="mt-4 text-sm font-semibold">{q.name}</footer>
+            </motion.blockquote>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Cta() {
+  return (
+    <section className="relative py-16 md:py-24">
+      <Container>
+        <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-neutral-900 text-white p-8 md:p-14">
+          <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1920&auto=format&fit=crop" alt="Weights rack" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <div className="relative max-w-xl">
+            <h3 className="text-2xl md:text-3xl font-extrabold">Ready to transform?</h3>
+            <p className="mt-2 text-neutral-200">Book a free consult and get a personalized plan.</p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <a href="#pricing" className="inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 font-semibold text-neutral-900">Start free week</a>
+              <a href="#" className="inline-flex items-center justify-center rounded-2xl border border-white/30 px-5 py-3 font-semibold">Talk to a coach</a>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+

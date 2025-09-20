@@ -47,15 +47,15 @@ export default function Navbar() {
 
   const displayName = useMemo(() => {
     if (!user) return "Guest";
-    if (user.firstName || user.lastName) {
-      return [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+    if (user.firstName) {
+      return [user.firstName].filter(Boolean).join(" ").trim();
     }
     if (user.name && typeof user.name === "string") return user.name;
     if (user.email && typeof user.email === "string") return user.email.split("@")[0];
     return "Member";
   }, [user]);
 
-  // Use GymLogo as fallback, then default avatar if broken
+
   const avatarSrc = useMemo(() => {
     if (user?.avatar && typeof user.avatar === "string" && user.avatar.startsWith("http")) return user.avatar;
     if (user?.profilePicture && typeof user.profilePicture === "string" && user.profilePicture.startsWith("http")) return user.profilePicture;
@@ -81,11 +81,11 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           <NavLink to="/" className={linkClasses}>Home</NavLink>
-          <NavLink to="/about" className={linkClasses}>About</NavLink>
+          <NavLink to="/aboutUs" className={linkClasses}>About</NavLink>
           <NavLink to="/membership" className={linkClasses}>Membership</NavLink>
           <NavLink to="/trainers" className={linkClasses}>Trainers</NavLink>
           <NavLink to="/videos" className={linkClasses}>Video portal</NavLink>
-          <NavLink to="/contact" className={linkClasses}>Contact</NavLink>
+          <NavLink to="/contactUs" className={linkClasses}>Contact</NavLink>
         </div>
 
         <div className="hidden md:flex items-center gap-4">
@@ -133,11 +133,11 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="flex flex-col px-6 py-4 space-y-3">
             <NavLink to="/" onClick={() => setOpen(false)} className={linkClasses}>Home</NavLink>
-            <NavLink to="/about" onClick={() => setOpen(false)} className={linkClasses}>About</NavLink>
+            <NavLink to="/aboutUs" onClick={() => setOpen(false)} className={linkClasses}>About</NavLink>
             <NavLink to="/membership" onClick={() => setOpen(false)} className={linkClasses}>Membership</NavLink>
             <NavLink to="/trainers" onClick={() => setOpen(false)} className={linkClasses}>Trainers</NavLink>
             <NavLink to="/videos" onClick={() => setOpen(false)} className={linkClasses}>Video Portal</NavLink>
-            <NavLink to="/contact" onClick={() => setOpen(false)} className={linkClasses}>Contact</NavLink>
+            <NavLink to="/contactUs" onClick={() => setOpen(false)} className={linkClasses}>Contact</NavLink>
 
             {user ? (
               <>

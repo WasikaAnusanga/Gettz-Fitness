@@ -10,6 +10,11 @@ import VideoDetailsPage from "../pages/admin/Feature Video/Video";
 import VideoUpload from "../pages/admin/Feature Video/VideoUpload";
 import EditVideo from "../pages/admin/Feature Video/Editvideo";
 import Workshift from "../pages/admin/manageWorkshift"
+import ViewTrainers from "../pages/admin/sideBarLinks/viewTrainers";
+import TrainerRegistration from "../pages/admin/sideBarLinks/addTrainer";
+import MemberRegistration from "../pages/admin/sideBarLinks/MemberRegistration";
+import MemberList from "../pages/admin/sideBarLinks/MemberList";
+import AdminDashboard from "../dashboard/adminDashboard"
 
 import AnnouncementDetailsPage from "./admin/announcements/announcements";
 import AnnouncementAdd from "./admin/announcements/addAnnouncements";
@@ -40,14 +45,14 @@ export default function AdminLayout() {
 
           <div className="mx-auto max-w-7xl px-4 py-6">
             <Routes>
-              <Route index element={<Homepage />} />
+              <Route index element={<AdminDashboard />} />
 
-              <Route path="/users" element={<h1>Users</h1>} />
+              <Route path="/members" element={<MemberList/>} />
               <Route path="/product" element={<h1>Product</h1>} />
               <Route path="/orders" element={<h1>Orders</h1>} />
               <Route path="/addProduct" element={<h1>Add Product</h1>} />
               <Route path="/editProduct" element={<h1>Edit Product</h1>} />
-              <Route path="/trainers" element={<h1>Trainers</h1>} />
+              <Route path="/trainers" element={<ViewTrainers/>} />
               <Route path="/sessions" element={<h1>Sessions</h1>} />
               <Route path="/equipment" element={<h1>Equipment</h1>} />
               <Route path="/supplement" element={<h1>Supplement</h1>} />
@@ -67,6 +72,8 @@ export default function AdminLayout() {
               <Route path="/video/upload" element={<VideoUpload />} />
               <Route path="/video/edit/:videoId" element={<EditVideo />} />
               <Route path="/workshift" element={<Workshift/>} />
+              <Route path="/trainers/register" element={<TrainerRegistration/>} />
+              <Route path="/members/register" element={<MemberRegistration/>} />
 
 
               <Route path="*" element={<Navigate to="." replace />} />
