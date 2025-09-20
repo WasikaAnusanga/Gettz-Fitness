@@ -17,7 +17,7 @@ export default function Homepage() {
       <Header />
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
-          <Route path="/" element={<HomepageComponent/>}/>
+          <Route path="/" element={<GymLandingPage/>}/>
           
           
           <Route path="/*" element={<h1 className="p-6 text-xl text-red-600">404 Not Found</h1>} />
@@ -29,13 +29,6 @@ export default function Homepage() {
           <Route path="/" element={<GymLandingPage />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
-          <Route
-            path="/*"
-            element={
-              <h1 className="p-6 text-xl text-red-600">404 Not Found</h1>
-            }
-          />
           <Route path="/membership" element={<MembershipPlan />} />
           <Route path="/membership/savedCards" element={<ViewSavedCards />} />
           <Route path="/membership/card" element={<PaymentCard />} />
