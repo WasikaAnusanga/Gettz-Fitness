@@ -5,6 +5,8 @@ import ViewSavedCards from "./client/payment/savedCards";
 import HomepageComponent from "../components/homePage";
 import { Route, Routes } from "react-router-dom";
 import MembershipPlan from "./client/membershipPlan";
+import AboutUs from "./aboutUs";
+import ContactUs from "./contactUs";
 
 export default function Homepage() {
   return (
@@ -19,6 +21,8 @@ export default function Homepage() {
           <Route path="/membership" element={<MembershipPlan/>} />
           <Route path="/membership/savedCards" element={<ViewSavedCards/>} />
           <Route path="/membership/card" element={<PaymentCard/>} />
+          <Route path="/aboutUs" element={<AboutUs/>} />
+          <Route path="/contactUs" element={<ContactUs/>} />
         </Routes>
       </div>
       
