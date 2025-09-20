@@ -10,6 +10,7 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
+import HomepageComponent from "../components/homePage"
 
 export default function Homepage() {
   return (
