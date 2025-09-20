@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard, Megaphone, Trophy 
+  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard, Megaphone, Trophy ,MessageSquareDot
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import Swal from "sweetalert2";
@@ -25,6 +25,7 @@ const navItems = [
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
   { to: "/admin/workshift", label: "Employees", icon: IdCardLanyard},
   { to: "/admin/sesssion", label: "Sessions", icon: Radio },
+  { to: "/admin/inquiry", label: "Inquiry", icon: MessageSquareDot },
   { to: "/admin/competitions", label: "Competitions", icon: Trophy },
   { to: "/admin/announcements", label: "Announcements", icon: Megaphone},
   { to: "/admin/settings", label: "Settings", icon: Settings },

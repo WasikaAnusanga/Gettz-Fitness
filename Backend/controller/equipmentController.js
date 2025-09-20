@@ -26,6 +26,7 @@ export const addEquipment= async (req ,res)=>{
 
     if(req.user.role=="Equipment Manager"){
         const {
+            Eq_code,
             Eq_name,
             Eq_type,
             Eq_status,
@@ -38,6 +39,7 @@ export const addEquipment= async (req ,res)=>{
         
         try{
             equipment= new Equipment({
+                Eq_code,
                 Eq_name,
                 Eq_type,
                 Eq_status,
@@ -67,7 +69,7 @@ export const getById= async (req, res)=>{
     const id=req.params.id;
     let equipment;
     try{
-        equipment= await Equipment.findById(id);
+        equipment= await Equipment.findOne({Eq_code: id});
     }catch(err){
         console.log(err);
     }
@@ -95,7 +97,7 @@ export const updateEquipment= async(req ,res)=>{
         }=req.body;
         let equipment;
         try{
-            equipment= await Equipment.findByIdAndUpdate(id,{
+            equipment= await Equipment.findOneAndUpdate({Eq_code:id},{
                 Eq_name,
                 Eq_type,
                 Eq_status,
@@ -126,7 +128,7 @@ export const deleteEquipment= async (req, res)=>{
         const id=req.params.id;
         let equipment;
         try{
-            equipment= await Equipment.findByIdAndDelete(id);
+            equipment= await Equipment.findOneAndDelete({Eq_code:id});
         }catch(err){
             console.log(err);
         }

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import VideoCard from "../../components/VideoCard";
@@ -11,7 +10,6 @@ import Footer from "../../components/footer";
 
 const RAW_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_BASE = RAW_BASE.replace(/\/+$/, "");
-
 
 
 export default function VideoPortal() {
@@ -54,31 +52,27 @@ export default function VideoPortal() {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="flex-1 w-full pt-16 flex bg-white">
-        
-        <aside className="hidden md:block w-60 border-r border-gray-200 bg-gray-50 px-4 py-8">
-          <h2 className="text-lg font-semibold mb-4">Categories</h2>
-          <ul className="space-y-2">
-            <li>
-              <button
-                className={`w-full text-left px-3 py-2 rounded-lg transition font-medium ${selectedCategory === "all" ? "bg-red-500 text-white" : "hover:bg-gray-200 text-gray-700"}`}
-                onClick={() => setSelectedCategory("all")}
-              >
-                All
-              </button>
-            </li>
-            {categories.map((cat) => (
-              <li key={cat}>
-                <button
-                  className={`w-full text-left px-3 py-2 rounded-lg transition font-medium ${selectedCategory === cat ? "bg-red-500 text-white" : "hover:bg-gray-200 text-gray-700"}`}
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
+      {/* Category Bar */}
+      <div className="w-full bg-white border-b border-gray-200 px-4 pt-6 pb-2 sticky top-0 z-10">
+        <div className="flex flex-wrap gap-2 md:gap-4 overflow-x-auto">
+          <button
+            className={`px-4 py-2 rounded-full font-medium transition whitespace-nowrap ${selectedCategory === "all" ? "bg-red-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+            onClick={() => setSelectedCategory("all")}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`px-4 py-2 rounded-full font-medium transition whitespace-nowrap ${selectedCategory === cat ? "bg-red-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 w-full flex bg-white">
         
         <main className="flex-1 mx-auto max-w-6xl px-4 py-8">
           <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">

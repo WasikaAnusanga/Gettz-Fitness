@@ -21,6 +21,7 @@ import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
 
+
 function App() {
   const [count, setCount] = useState(0);
 
@@ -49,6 +50,11 @@ function App() {
           <Route path="/my" element={<testing></testing>} />
 
           <Route path="/*" element={<Homepage />} />
+          <Route path="/eq_manager/*" element={<EquipmentManagerLayout />} />
+
+          <Route path="/videos" element={<VideoPortal />} />
+          <Route path="/videos/:videoId" element={<VideoDetails />} />
+
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

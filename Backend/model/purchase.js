@@ -3,6 +3,12 @@ const schema = mongoose.Schema;
 
 //purchase schema
 const purchaseSchema = new schema({
+    P_code:{
+        type:String,
+        unique:true,
+        required:true,
+        trim:true
+    },
     P_date:{
         type: Date,
         required: true

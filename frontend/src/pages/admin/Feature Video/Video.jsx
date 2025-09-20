@@ -152,9 +152,9 @@ export default function VideoDetailsPage() {
       </div>
 
       {loaded ? (
-        <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-black text-white">
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
+            <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+              <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
               <tr>
                 <th className="px-3 py-2 text-left">No</th>
                 <th className="px-3 py-2 text-left">Video ID</th>
@@ -177,7 +177,6 @@ export default function VideoDetailsPage() {
               )}
 
               {[...video]
-                .sort((a, b) => (a.title || '').localeCompare(b.title || ''))
                 .map((vid, index) => (
                   <tr key={vid.videoId || index} className="border-t border-black/10">
                     <td className="px-3 py-2">{index + 1}</td>

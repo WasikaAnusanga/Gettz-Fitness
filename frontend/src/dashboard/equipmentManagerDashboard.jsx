@@ -1,71 +1,19 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import EquipmentManagerSidebar from "../components/equipmentManagerSidebar.jsx";
+import EquipmentDetailsPage from "../pages/eq_manager/equipment/eq_view.jsx";
+import EquipmentAddPage from "../pages/eq_manager/equipment/eq_addForm.jsx";
+import EquipmentEditPage from "../pages/eq_manager/equipment/eq_editForm.jsx";
+import MaintenanceLogsPage from "../pages/eq_manager/maintenance/maintain_view.jsx";
+import MaintenanceLogsAddPage from "../pages/eq_manager/maintenance/maintain_addForm.jsx";
+import PurchaseListPage from "../pages/eq_manager/purchases/purchase_view.jsx";
+import PurchaseAddPage from "../pages/eq_manager/purchases/purchase_addForm.jsx";
+import PurchaseEditPage from "../pages/eq_manager/purchases/purchase_editForm.jsx";
+import SupplementsViewPage from "../pages/eq_manager/supplement/supplement_view.jsx";
+import SupplementAddForm from "../pages/eq_manager/supplement/supplement_addForm.jsx";
+import SupplementEditPage from "../pages/eq_manager/supplement/supplement_editForm.jsx";
 
-//dummy data
-// You can replace these placeholders with real pages later:
-const EquipmentHome = () => (
-  <div className="space-y-6">
-    <h2 className="text-xl font-semibold">Overview</h2>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="rounded-2xl border bg-white p-4">
-        <div className="text-sm text-gray-500">Active Equipment</div>
-        <div className="text-3xl font-bold mt-1">128</div>
-      </div>
-      <div className="rounded-2xl border bg-white p-4">
-        <div className="text-sm text-gray-500">Items Needing Service</div>
-        <div className="text-3xl font-bold mt-1">7</div>
-      </div>
-      <div className="rounded-2xl border bg-white p-4">
-        <div className="text-sm text-gray-500">Supplements Low Stock</div>
-        <div className="text-3xl font-bold mt-1">4</div>
-      </div>
-    </div>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div className="rounded-2xl border bg-white p-4">
-        <h3 className="font-semibold mb-2">Upcoming Maintenance</h3>
-        <ul className="text-sm text-gray-700 space-y-2">
-          <li className="flex justify-between">
-            <span>Treadmill #3 – Belt alignment</span>
-            <span className="text-gray-500">Sep 2</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Rowing Machine #2 – Chain lube</span>
-            <span className="text-gray-500">Sep 4</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Smith Machine – Cable check</span>
-            <span className="text-gray-500">Sep 6</span>
-          </li>
-        </ul>
-      </div>
-      <div className="rounded-2xl border bg-white p-4">
-        <h3 className="font-semibold mb-2">Recent Orders</h3>
-        <ul className="text-sm text-gray-700 space-y-2">
-          <li className="flex justify-between">
-            <span>Whey Isolate 5lb (x12)</span>
-            <span className="text-gray-500">Delivered</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Rubber Plates 10kg (x20)</span>
-            <span className="text-gray-500">Shipped</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Resistance Bands Set (x15)</span>
-            <span className="text-gray-500">Processing</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-);
-
-//give the correct paths and components later
-const EquipmentPage = () => <h1>Equipment</h1>;
-const SupplementsPage = () => <h1>Supplements</h1>;
-const MaintenancePage = () => <h1>Maintenance Logs</h1>;
-const PurchasesPage = () => <h1>Purchases</h1>;
 const OrdersPage = () => <h1>Orders</h1>;
 
 export default function EquipmentManagerLayout() {
@@ -96,14 +44,21 @@ export default function EquipmentManagerLayout() {
           <div className="mx-auto max-w-7xl px-4 py-6">
             <Routes>
               {/* Index (Overview) */}
-              <Route index element={<EquipmentHome />} />
+              <Route index element={<h1>homepage</h1>} />
 
               {/* Matches the nav items you requested */}
-              <Route path="/equipment" element={<EquipmentPage />} />
-              <Route path="/supplements" element={<SupplementsPage />} />
-              <Route path="/maintenance" element={<MaintenancePage />} />
-              <Route path="/purchases" element={<PurchasesPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="equipment" element={<EquipmentDetailsPage />} />
+              <Route path="equipment/add" element={<EquipmentAddPage />} />
+              <Route path="equipment/edit/:code" element={<EquipmentEditPage />} />
+              <Route path="supplements" element={<SupplementsViewPage />} />
+              <Route path="supplements/add" element={<SupplementAddForm />} />
+              <Route path="supplements/edit/:code" element={<SupplementEditPage />} />
+              <Route path="maintenance" element={<MaintenanceLogsPage />} />
+              <Route path="maintenance/add" element={<MaintenanceLogsAddPage />} />
+              <Route path="purchases" element={<PurchaseListPage />} />
+              <Route path="purchases/add" element={<PurchaseAddPage />} />
+              <Route path="purchases/edit/:code" element={<PurchaseEditPage />} />
+              <Route path="orders" element={<OrdersPage />} />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="." replace />} />

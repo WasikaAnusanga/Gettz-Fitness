@@ -16,12 +16,12 @@ const idleStyle =
   //change the path directions accordingly
   //dummy paths are here for now
 const navItems = [
-  { to: "/equip-manager", label: "Dashboard", icon: LayoutDashboard}, 
-  { to: "/equip-manager/equipment", label: "Equipment", icon: Dumbbell },
-  { to: "/equip-manager/supplements", label: "Supplements", icon: Pill },
-  { to: "/equip-manager/maintenance", label: "Maintenance Logs", icon: ClipboardList },
-  { to: "/equip-manager/purchases", label: "Purchases", icon: BiPurchaseTag },
-  { to: "/equip-manager/orders", label: "Orders", icon: ShoppingCart },
+  { to: "/eq_manager", label: "Dashboard", icon: LayoutDashboard}, 
+  { to: "/eq_manager/equipment", label: "Equipment", icon: Dumbbell },
+  { to: "/eq_manager/supplements", label: "Supplements", icon: Pill },
+  { to: "/eq_manager/maintenance", label: "Maintenance Logs", icon: ClipboardList },
+  { to: "/eq_manager/purchases", label: "Purchases", icon: BiPurchaseTag },
+  { to: "/eq_manager/orders", label: "Orders", icon: ShoppingCart },
 ];
 
 export default function EquipmentManagerSidebar() {
@@ -57,7 +57,7 @@ export default function EquipmentManagerSidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === "/equip-manager"}
+            end={to === "/eq_manager"}
             className={({ isActive }) =>
               `${linkBase} ${isActive ? activeStyle : idleStyle}`
             }
