@@ -24,6 +24,7 @@ export const addSupplement= async (req ,res)=>{
     req.user={role:"Equipment Manager"};
     if(req.user.role=="Equipment Manager"){
         const{
+            Sup_code,
             Sup_name,
             Sup_type,
             Sup_price,
@@ -37,6 +38,7 @@ export const addSupplement= async (req ,res)=>{
         let supplement;
         try{
             supplement= new Supplement({
+                Sup_code,
                 Sup_name,
                 Sup_type,
                 Sup_price,
@@ -67,7 +69,7 @@ export const getSupplementById= async (req ,res)=>{
     const id=req.params.id;
     let supplement;
     try{
-        supplement=await Supplement.findById(id);
+        supplement=await Supplement.findOne({Sup_code: id});
     }catch(err){
         console.log(err);
     }
@@ -96,7 +98,7 @@ export const updateSupplement= async (req ,res)=>{
         }=req.body
         let supplement;
         try{
-            supplement= await Supplement.findByIdAndUpdate(id,{
+            supplement= await Supplement.findOneAndUpdate({Sup_code:id},{
                 Sup_name,
                 Sup_type,
                 Sup_price,
@@ -129,7 +131,7 @@ export const deleteSupplement= async (req ,res)=>{
         const id=req.params.id;
         let supplement;
         try{
-            supplement= await Supplement.findByIdAndDelete(id);
+            supplement= await Supplement.findOneAndDelete({Sup_code:id});
         }catch(err){
             console.log(err);
         }

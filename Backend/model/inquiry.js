@@ -21,6 +21,13 @@ const inquirySchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    email:{
+        type: String,
+        required: true,
+        lowercase: true,
+        match: [/.+\@.+\..+/, 'Please fill a valid email address']
+
+    },
     inquiry_status:{
         type: String,
         enum: ['Open', 'In Progress', 'Resolved', 'Closed'],

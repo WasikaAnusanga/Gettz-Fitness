@@ -3,6 +3,12 @@ const schema = mongoose.Schema;
 
 //equipment schema
 const EquipmentSchema = new schema({
+    Eq_code:{
+        type:String,
+        unique:true,
+        required:true,
+        trim:true
+    },
     Eq_name:{
         type:String,
         required:true

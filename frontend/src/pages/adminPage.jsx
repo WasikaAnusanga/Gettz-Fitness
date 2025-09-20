@@ -22,6 +22,8 @@ import EditAnnouncement from "./admin/announcements/updateAnnouncements";
 import CompetitionDetailsPage from "./admin/competitions/competitions";
 import AddCompetition from "./admin/competitions/addCompetition";
 import UpdateCompetition from "./admin/competitions/updateCompetition";
+import Inquiry from "./admin/sideBarLinks/Inquiry";
+import AdminProfile from "../pages/admin/sideBarLinks/adminProfile";
 
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -64,7 +66,7 @@ export default function AdminLayout() {
               <Route path="/competitions" element={<CompetitionDetailsPage />} />
               <Route path="/competition/add" element={<AddCompetition />} />
               <Route path="/competition/update/:compId" element={<UpdateCompetition />} />
-              <Route path="/settings" element={<h1>Settings</h1>} />
+              <Route path="/settings" element={<AdminProfile/>} />
               <Route path="/membership/addPlan" element={<AddPlanForm/>} />
               <Route path="/membership/updatePlan" element={<UpdatePlanForm/>} />
 
@@ -74,8 +76,10 @@ export default function AdminLayout() {
               <Route path="/workshift" element={<Workshift/>} />
               <Route path="/trainers/register" element={<TrainerRegistration/>} />
               <Route path="/members/register" element={<MemberRegistration/>} />
+              <Route path="/inquiry" element={<Inquiry/>} />              <Route path="/trainers/register" element={<TrainerRegistration/>} />
+              <Route path="/members/register" element={<MemberRegistration/>} />
 
-
+              
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
           </div>
