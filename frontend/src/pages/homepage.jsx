@@ -5,6 +5,8 @@ import ViewSavedCards from "./client/payment/savedCards";
 import GymLandingPage from "../components/homePage";
 import { Route, Routes } from "react-router-dom";
 import MembershipPlan from "./client/membershipPlan";
+import AboutUs from "./aboutUs";
+import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
@@ -15,6 +17,15 @@ export default function Homepage() {
       <Header />
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
+          <Route path="/" element={<HomepageComponent/>}/>
+          
+          
+          <Route path="/*" element={<h1 className="p-6 text-xl text-red-600">404 Not Found</h1>} />
+          <Route path="/membership" element={<MembershipPlan/>} />
+          <Route path="/membership/savedCards" element={<ViewSavedCards/>} />
+          <Route path="/membership/card" element={<PaymentCard/>} />
+          <Route path="/aboutUs" element={<AboutUs/>} />
+          <Route path="/contactUs" element={<ContactUs/>} />
           <Route path="/" element={<GymLandingPage />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
