@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, HandPlatter, Menu, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  HandPlatter,
+  Menu,
+  LogOut,
+  CreditCard,
+} from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
+import Swal from "sweetalert2";
 
 const linkBase =
   "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all";
@@ -22,11 +29,33 @@ const navItems = [
     label: "Request Meal",
     icon: HandPlatter,
   },
+  {
+    to: "/userDashboard/manageCards",
+    label: "Credit Cards",
+    icon: CreditCard,
+  },
 ];
 
 export default function UserSidebar() {
   const [open, setOpen] = useState(true);
-
+  const navigate = useNavigate();
+  function logout() {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    });
+  }
   return (
     <aside
       className={`${
@@ -86,14 +115,13 @@ export default function UserSidebar() {
 
       {/* Bottom section (card + logout) */}
       <div className="px-3 space-y-3">
-       
-
         {/* Logout */}
         <button
           className={`flex items-center gap-2 w-full text-sm text-gray-600 hover:text-red-600 hover:bg-white rounded-lg px-2 py-2 ${
             open ? "justify-start" : "justify-center"
           }`}
           title={!open ? "Logout" : undefined}
+          onClick={logout}
         >
           <LogOut className="h-4 w-4" />
           {open && <span>Logout</span>}

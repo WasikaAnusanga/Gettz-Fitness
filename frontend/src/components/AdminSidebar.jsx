@@ -5,6 +5,7 @@ import {
   Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard, Megaphone, Trophy ,MessageSquareDot
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
+import Swal from "sweetalert2";
 
 const linkBase =
   "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all";
@@ -36,11 +37,23 @@ export default function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-
-    localStorage.removeItem("token"); 
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token"); 
     localStorage.removeItem("user");
 
     navigate("/adminLog");
+      }
+    });
+    
   };
 
   return (
