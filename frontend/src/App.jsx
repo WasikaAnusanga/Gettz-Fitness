@@ -9,7 +9,6 @@ import SignupPage from "./pages/Signup";
 import Homepage from "./pages/homepage";
 import AdminLoginForm from "./pages/admin/adminLogging";
 import TestingCheckout from "./pages/testingCheckout";
-import PaymentSuccess from "./pages/client/paymentSuccess";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import VideoPortal from "./pages/client/VideoPortal";
 import VideoDetails from "./pages/client/VideoDetails";
@@ -41,10 +40,6 @@ function App() {
           <Route path="/testing" element={<Testing />} />
           <Route path="/register" element={<SignupPage />} />
           <Route path="/adminLog" element={<AdminLoginForm />} />
-          <Route
-            path="/payment-success"
-            element={<PaymentSuccess></PaymentSuccess>}
-          />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
           <Route path="/community" element={<CommunityFeed/>}/>
           <Route path="/challenges" element={<ChallengesPage />} />

@@ -7,7 +7,6 @@ function verifyJWT(req,res,next){
     if(header != null){
         const token = header.replace("Bearer ","")
         jwt.verify(token,process.env.JWT_KEY,(err,decoded)=>{
-            console.log(decoded);
             if(decoded !=null){
                 req.user = decoded;
             }

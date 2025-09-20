@@ -43,18 +43,21 @@ export async function createPayment(req, res) {
               quantity: 1,
             },
           ],
-          success_url: `http://localhost:5173/payment-success?session_id={session.id}`,
-          cancel_url: "http://localhost:5173/cart?cancel=true",
+          success_url: `http://localhost:5173/membership/paymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: "http://localhost:5173/membership/paymentFailed",
           metadata: {
             userId: req.user._id,
             planId: req.params.id,
           },
         });
+
+        const subInfo = await Subscription.findOne({ user_id: req.user._id });
         const paymentData = {
           payment_id: 0,
           user_id: req.user._id,
           amount: plan.price,
-          session_id:session.id
+          session_id: session.id,
+          subscription_id: subInfo._id,
         };
         const lastPayment = await Payment.find().sort({ _id: -1 }).limit(1);
 
@@ -70,37 +73,36 @@ export async function createPayment(req, res) {
 
         res.json({ id: session.id });
       } catch (err) {
-        console.log("err1:"+err);
+        console.log("err1:" + err);
         return res.status(500).json({ message: err.response.data.message });
       }
     }
   } catch (err) {
-    console.log("err2:"+err);
+    console.log("err2:" + err);
     return res.json({ message: "payment failed" });
   }
 }
 
-export async function verifyPayment(req, res) {
-  // const paymentId = req.params.id;
-  // const sub = await Subscription.findOne({ user_id: req.user._id });
-  // const payment = await Payment.findOne({ payment_id: paymentId });
+export async function fetchPayment(req, res) {
+  const session_id = req.params.id;
+  try {
+    const payment = await Payment.findOne({ session_id }).populate({
+      path: "subscription_id",
+      populate: {
+        path: "plan_id", // the field inside Subscription model
+      }
+    });
 
-  // sub.status = "active";
-  // await sub.save();
+    res.status(200).json(payment);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
 
-  // if (payment) {
-  //   payment.status = "paid";
-  //   payment.paid_at = new Date();
-  // }
-  // await payment.save();
-
-  // // const token = req.headers["authorization"];
-
-  // // await axios.put("http://localhost:3000/api/plan/updatePlan/"+req.params.id,{auto_renew:req.body.auto_renew},{
-  // //   headers:{
-  // //     "Authorization": token
-  // //   }
-  // // })
-
-  res.status(200).json({ message: "Payment Successfull" });
+  // Subscription.find({user_id:req.user._id,status:{$in: ["active", "pending"] }}).populate("plan_id")
+  //   .then((sub)=>{
+  //       res.status(200).json(sub)
+  //   })
+  //   .catch((err)=>{
+  //       res.status(500).json({message:"Server Error when finding the subscription "+err})
+  //   })
 }
