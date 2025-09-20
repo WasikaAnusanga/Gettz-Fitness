@@ -90,7 +90,6 @@ export async function createPromotionalNotification(req, res) {
 
     await notification.save();
 
-    // rest of your logic …
     const members = await User.find({ role: "user" });
     const bulk = members.map((m) => ({
       insertOne: {
