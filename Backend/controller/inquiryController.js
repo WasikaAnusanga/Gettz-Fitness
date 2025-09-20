@@ -1,18 +1,18 @@
 import Inquiry from "../model/inquiry.js";
 
+
 export function createInquiry(req, res) {
   const inquiry = new Inquiry(req.body);
   inquiry
     .save()
     .then(() => {
-      res.status(201).json({
-        message: "Successfully created!",
-      });
+      res.status(201).json({ message: "Successfully created!" });
     })
-    .catch((err) => ({
-      message: "Unsuccessfull!",
-    }));
+    .catch((err) => {
+      res.status(500).json({ message: "Unsuccessful!", error: err.message });
+    });
 }
+
 
 
 export function getAllInquiry(req, res) {

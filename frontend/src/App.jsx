@@ -22,6 +22,7 @@ import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
 
+
 function App() {
   const [count, setCount] = useState(0);
 
