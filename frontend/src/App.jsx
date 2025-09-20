@@ -16,6 +16,11 @@ import VideoDetails from "./pages/client/VideoDetails";
 import EquipmentManagerLayout from "./dashboard/equipmentManagerDashboard";
 import TrainerLayout from "./dashboard/trainerDashboard";
 import UserLayout from "./dashboard/userDashboard";
+import CommunityFeed from './pages/client/communityPosts';
+import ChallengesPage from './pages/client/challengesPage';
+import AddNotification from './pages/AddNotification';
+import Leaderboard from './pages/leaderboard';
+import ChatBot from './components/ChatBot/chatBot';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -28,7 +33,7 @@ function App() {
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/trainerDashboard/*" element={<TrainerLayout />} />
           <Route path="/userDashboard/*" element={<UserLayout />} />
-          <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
           <Route
             path="/checkout"
             element={<TestingCheckout></TestingCheckout>}
@@ -41,10 +46,12 @@ function App() {
             element={<PaymentSuccess></PaymentSuccess>}
           />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
-          <Route path="/videos" element={<VideoPortal />} />
-          <Route path="/videos/:videoId" element={<VideoDetails />} />
-          
-          <Route path="/my" element={<testing></testing>}/>
+          <Route path="/community" element={<CommunityFeed/>}/>
+          <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/admin/notifications/new" element={<AddNotification />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/chatbot" element={<ChatBot />} />
+          <Route path="/my" element={<testing></testing>} />
 
           <Route path="/*" element={<Homepage />} />
         </Routes>

@@ -118,7 +118,6 @@ export default function VideoPortal() {
           )}
         </main>
       </div>
-      <Footer />
     </div>
   );
 }

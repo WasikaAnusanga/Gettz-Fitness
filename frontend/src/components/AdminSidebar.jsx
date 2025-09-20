@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard
+  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard, Megaphone, Trophy 
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 
@@ -15,7 +15,7 @@ const idleStyle =
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/users", label: "Members", icon: Users },
+  { to: "/admin/members", label: "Members", icon: Users },
   { to: "/admin/trainers", label: "Trainers", icon: Dumbbell },
   { to: "/admin/sessions", label: "Sessions", icon: CalendarClock },
   { to: "/admin/video", label: "Video", icon: Video },
@@ -24,6 +24,8 @@ const navItems = [
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
   { to: "/admin/workshift", label: "Employees", icon: IdCardLanyard},
   { to: "/admin/sesssion", label: "Sessions", icon: Radio },
+  { to: "/admin/competitions", label: "Competitions", icon: Trophy },
+  { to: "/admin/announcements", label: "Announcements", icon: Megaphone},
   { to: "/admin/settings", label: "Settings", icon: Settings },
   
 ];

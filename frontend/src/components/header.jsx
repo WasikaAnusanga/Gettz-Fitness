@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 
 import GymLogo from "../assets/GymLogo.jpg";
 import DefaultAvatar from "../assets/default-avatar.png";
+import NotificationBell from "./notificationBell/NotificationBell"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -46,15 +47,15 @@ export default function Navbar() {
 
   const displayName = useMemo(() => {
     if (!user) return "Guest";
-    if (user.firstName || user.lastName) {
-      return [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+    if (user.firstName) {
+      return [user.firstName].filter(Boolean).join(" ").trim();
     }
     if (user.name && typeof user.name === "string") return user.name;
     if (user.email && typeof user.email === "string") return user.email.split("@")[0];
     return "Member";
   }, [user]);
 
-  // Use GymLogo as fallback, then default avatar if broken
+
   const avatarSrc = useMemo(() => {
     if (user?.avatar && typeof user.avatar === "string" && user.avatar.startsWith("http")) return user.avatar;
     if (user?.profilePicture && typeof user.profilePicture === "string" && user.profilePicture.startsWith("http")) return user.profilePicture;
@@ -90,6 +91,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
+               <NotificationBell/>
               <img
                 src={avatarSrc}
                 alt={displayName || "User"}
