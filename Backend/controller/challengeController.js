@@ -266,3 +266,35 @@ export async function completeUserChallenge(req, res) {
     return res.status(500).json({ message: "Internal server error", error: e.message });
   }
 }
+
+// Get all user challenge participations with challenge and user info (for trainer approval UI)
+export async function getAllUserChallengeParticipations(req, res) {
+  try {
+    // Only allow trainers or admins
+    if (!req.user || (req.user.role !== "trainer" && req.user.role !== "admin")) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    // Find all user challenge participations and populate challenge and user info
+    const participations = await UserChallenge.find()
+      .populate("CID")
+      .populate("user_id");
+
+    // Map to desired structure
+    const result = participations.map((p) => ({
+      _id: p._id,
+      userChallengeId: p._id,
+      challengeID: p.CID?.challengeID,
+      title: p.CID?.title,
+      points: p.CID?.points,
+      userID: p.user_id?._id,
+      userName: p.user_id ? `${p.user_id.firstName} ${p.user_id.lastName}` : "",
+      completed: p.completed,
+    }));
+
+    res.json(result);
+  } catch (e) {
+    console.error("getAllUserChallengeParticipations error:", e);
+    res.status(500).json({ message: "Internal server error", error: e.message });
+  }
+}
