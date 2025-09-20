@@ -10,6 +10,7 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
+import HomepageComponent from "../components/homePage"
 
 export default function Homepage() {
   return (
@@ -29,13 +30,6 @@ export default function Homepage() {
           <Route path="/" element={<GymLandingPage />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
-          <Route
-            path="/*"
-            element={
-              <h1 className="p-6 text-xl text-red-600">404 Not Found</h1>
-            }
-          />
           <Route path="/membership" element={<MembershipPlan />} />
           <Route path="/membership/savedCards" element={<ViewSavedCards />} />
           <Route path="/membership/card" element={<PaymentCard />} />
