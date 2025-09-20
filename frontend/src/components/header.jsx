@@ -132,7 +132,7 @@ export default function Navbar() {
         {/* Center links (desktop) */}
         <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
           {navLinks.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClasses} end>
+            <NavLink key={l.to} to={l.to} className={linkClasses} end={l.to === "/"} >
               {l.label}
             </NavLink>
           ))}
@@ -187,7 +187,7 @@ export default function Navbar() {
                 to={l.to}
                 onClick={() => setOpen(false)}
                 className={linkClasses}
-                end
+                end={l.to === "/"} 
               >
                 {l.label}
               </NavLink>
