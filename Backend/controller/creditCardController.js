@@ -11,6 +11,7 @@ export function addCard(req, res) {
     });
   } else {
     const body = {
+      user_id: req.user._id,
       card_id: null,
       card_name: req.body.card_name,
       card_number: req.body.card_number,
@@ -34,13 +35,13 @@ export function addCard(req, res) {
               .save()
               .then(() => {
                 res.status(200).json({
-                  message: "Plan added Successfully",
+                  message: "Card added Successfully",
                 });
               })
               .catch((err) => {
                 console.log(err);
                 res.status(500).json({
-                  message: "Plan added Failed",
+                  message: "Card added Failed",
                 });
               });
           })
@@ -49,15 +50,15 @@ export function addCard(req, res) {
               message: "DataBase Problem",
             });
           });
-      }else{
-        res.status(200).json({message:"Same card"})
+      } else {
+        res.status(200).json({ message: "Same card" });
       }
     });
   }
 }
 export function getCards(req, res) {
   CreditCard.find({
-    // user_id:req.user._id
+    user_id: req.user._id,
   })
     .then((cards) => {
       res.status(200).json(cards);
@@ -68,73 +69,56 @@ export function getCards(req, res) {
 }
 
 export function updateCard(req, res) {
-  //check user is an admin
+  console.log("card updates runs");
 
-  //
   if (req.user == null) {
     res.status(401).json({
       message: "You need to Login First",
     });
-  } else if (req.user.role != "admin") {
+  } else if (req.user.role != "member" && req.user.role != "user") {
     res.status(401).json({
-      message: "You are needed Administrative access",
+      message: "You are needed to login as user",
     });
-  } else if ((req.user.role = "admin")) {
-    const planId = req.params.id;
-    MembershipPlan.findOneAndUpdate(
+  } else {
+    const cardId = req.params.id;
+    console.log(req.body);
+    CreditCard.findOneAndUpdate(
       {
-        plan_id: planId,
+        user_id: req.user._id,
+        card_id: cardId,
       },
       req.body
     )
       .then(() => {
-        res.status(200).json({ message: "Plan Update successful." });
+        res.status(200).json({ message: "Card Update successful." });
       })
-      .catch(() => {
-        res.status(500).json({ message: "Plan Update Failed." });
+      .catch((err) => {
+        res.status(500).json({ message: "Card Update Failed." });
       });
   }
 }
 
-export function deletePlan(req, res) {
+export function deleteCard(req, res) {
   if (req.user == null) {
     res.status(401).json({
       message: "You need to Login First",
     });
-  } else if (req.user.role != "admin") {
+  } else if (req.user.role != "member" && req.user.role != "user") {
     res.status(401).json({
-      message: "You are needed Administrative access",
+      message: "You are needed to login as user",
     });
-  } else if ((req.user.role = "admin")) {
-    const planId = req.params.id;
-    MembershipPlan.findOneAndUpdate(
-      {
-        plan_id: planId,
-      },
-      {
-        isDisabled: true,
-      }
-    )
+  } else {
+    const cardId = req.params.id;
+    console.log(cardId);
+    CreditCard.findOneAndDelete({
+      user_id: req.user._id,
+      card_id: cardId,
+    })
       .then(() => {
-        res.status(200).json({ message: "Plan deleted successful." });
+        res.status(200).json({ message: "Card deleted successful." });
       })
       .catch(() => {
-        res.status(500).json({ message: "Plan deletion Failed." });
+        res.status(500).json({ message: "Card deletion Failed." });
       });
   }
-}
-
-export function getSelectedPlan(req, res) {
-  const planId = req.params.id;
-  MembershipPlan.findOne({
-    plan_id: planId,
-  })
-    .then((plan) => {
-      if (plan != null) {
-        res.status(200).json(plan);
-      } else res.status(400).json({ message: "Product Not found" });
-    })
-    .catch(() => {
-      res.status(500).json({ message: "Database Error" });
-    });
 }

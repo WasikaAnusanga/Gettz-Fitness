@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const cardSchema = new mongoose.Schema({
-//   user_id: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "User",
-//     required: true,
-//   },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   card_id: {
     type: Number,
     required: true,
