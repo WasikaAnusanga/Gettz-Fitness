@@ -2,7 +2,7 @@ export default function AboutUs() {
   return (
     <div className="bg-white text-[#111] min-h-screen pb-10">
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden mt-[-60px]">
         <div className="max-w-7xl mx-auto px-5 py-20 md:py-28  items-center">
           <center>
             <div>

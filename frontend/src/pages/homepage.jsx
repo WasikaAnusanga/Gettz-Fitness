@@ -18,7 +18,7 @@ export default function Homepage() {
       <Header />
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
-          <Route path="/" element={<HomepageComponent/>}/>
+          <Route path="/" element={<GymLandingPage/>}/>
           
           
           <Route path="/*" element={<h1 className="p-6 text-xl text-red-600">404 Not Found</h1>} />
