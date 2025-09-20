@@ -11,7 +11,7 @@ export const getAllMaintenanceLogs= async (req, res)=>{
             return res.status(404).json({message:"Maintenance logs not found"});
         }
         //display
-        return res.status(200).json({message:"Found",maintenanceLogs});
+        return res.status(200).json({ message: "Found", logs: maintenanceLogs });
     }catch(err){
         console.log(err);
         return res.status(500).json({message:"Server error",error: err.message});
