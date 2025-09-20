@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 
 import GymLogo from "../assets/GymLogo.jpg";
 import DefaultAvatar from "../assets/default-avatar.png";
-import NotificationBell from "./notificationBell/NotificationBell"
+import NotificationBell from "./notificationBell/NotificationBell";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,6 @@ export default function Navbar() {
     setUser(readUser());
   }, [location.pathname]);
 
-
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === "user" || e.key === "token") setUser(readUser());
@@ -43,119 +42,166 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  
-
   const displayName = useMemo(() => {
     if (!user) return "Guest";
-    if (user.firstName) {
+    if (user.firstName)
       return [user.firstName].filter(Boolean).join(" ").trim();
-    }
     if (user.name && typeof user.name === "string") return user.name;
-    if (user.email && typeof user.email === "string") return user.email.split("@")[0];
+    if (user.email && typeof user.email === "string")
+      return user.email.split("@")[0];
     return "Member";
   }, [user]);
 
-
   const avatarSrc = useMemo(() => {
-    if (user?.avatar && typeof user.avatar === "string" && user.avatar.startsWith("http")) return user.avatar;
-    if (user?.profilePicture && typeof user.profilePicture === "string" && user.profilePicture.startsWith("http")) return user.profilePicture;
-    if (user?.profilePicture && typeof user.profilePicture === "string") return user.profilePicture;
+    if (
+      user?.avatar &&
+      typeof user.avatar === "string" &&
+      user.avatar.startsWith("http")
+    )
+      return user.avatar;
+    if (
+      user?.profilePicture &&
+      typeof user.profilePicture === "string" &&
+      user.profilePicture.startsWith("http")
+    )
+      return user.profilePicture;
+    if (user?.profilePicture && typeof user.profilePicture === "string")
+      return user.profilePicture;
     if (user?.avatar && typeof user.avatar === "string") return user.avatar;
     return DefaultAvatar;
   }, [user]);
 
+  // Centralized links (keeps desktop + mobile in sync)
+  const navLinks = useMemo(
+    () => [
+      { to: "/", label: "Home" },
+      { to: "/aboutUs", label: "About" },
+      { to: "/membership", label: "Membership" },
+      { to: "/trainers", label: "Trainers" },
+      { to: "/videos", label: "Videos" },
+      { to: "/contactUs", label: "Contact" },
+      { to: "/mealPlan", label: "Meals" },
+      { to: "/store", label: "Store" },
+      { to: "/achievements", label: "Achievements" },
+    ],
+    []
+  );
+
+  // Consistent link style for active/inactive
   const linkClasses = ({ isActive }) =>
-    `relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
+    [
+      "relative px-4 py-2 rounded-lg text-sm font-semibold",
+      "transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]",
+      "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
       isActive
-        ? "text-white bg-gradient-to-r from-red-500 to-orange-500 shadow-lg shadow-orange-200"
-        : "text-gray-700 hover:text-red-600 hover:bg-gray-100/80 hover:shadow-sm "
-    }`;
+        ? "text-white shadow-lg shadow-orange-200 bg-gradient-to-r from-red-500 to-orange-500"
+        : "text-gray-700 hover:text-white hover:shadow-lg hover:shadow-orange-200 hover:bg-gradient-to-r hover:from-red-500 hover:to-orange-500",
+    ].join(" ");
+
+  const primaryBtn =
+    "px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500";
+  const ghostBtn =
+    "px-4 py-2 text-gray-700 hover:text-red-600 underline-offset-2 hover:underline transition focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded";
 
   return (
     <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
       <div className="mx-auto flex items-center justify-between px-6 py-3">
+        {/* Logo / Brand */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={GymLogo} alt="Gettz Fitness" className="h-10 w-10 rounded-full" />
+          <img
+            src={GymLogo}
+            alt="Gettz Fitness"
+            className="h-10 w-10 rounded-full object-cover"
+          />
           <span className="text-xl font-bold text-red-600">Gettz Fitness</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          <NavLink to="/" className={linkClasses}>Home</NavLink>
-          <NavLink to="/aboutUs" className={linkClasses}>About</NavLink>
-          <NavLink to="/membership" className={linkClasses}>Membership</NavLink>
-          <NavLink to="/trainers" className={linkClasses}>Trainers</NavLink>
-          <NavLink to="/videos" className={linkClasses}>Video portal</NavLink>
-          <NavLink to="/contactUs" className={linkClasses}>Contact</NavLink>
+        {/* Center links (desktop) */}
+        <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+          {navLinks.map((l) => (
+            <NavLink key={l.to} to={l.to} className={linkClasses} end>
+              {l.label}
+            </NavLink>
+          ))}
         </div>
 
+        {/* Right actions */}
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
-               <NotificationBell/>
+              <NotificationBell />
               <img
                 src={avatarSrc}
                 alt={displayName || "User"}
                 className="h-8 w-8 rounded-full object-cover border"
-                onError={e => { e.target.onerror = null; e.target.src = DefaultAvatar; }}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DefaultAvatar;
+                }}
               />
-              <Link
-                to="/user/dashboard"
-                className="font-medium text-gray-700 hover:text-red-600 underline-offset-2 hover:underline transition"
-              >
+              <Link to="/user/dashboard" className={ghostBtn}>
                 {displayName}
               </Link>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-white bg-red-600 rounded-lg shadow hover:bg-red-700 transition"
-              >
+              <button onClick={handleLogout} className={primaryBtn}>
                 Logout
               </button>
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-            >
+            <Link to="/login" className={primaryBtn}>
               Login
             </Link>
           )}
         </div>
 
+        {/* Mobile toggle */}
         <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-gray-700 focus:outline-none"
+          onClick={() => setOpen((v) => !v)}
+          className="md:hidden text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
+          aria-label="Toggle menu"
+          aria-expanded={open}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
+      {/* Mobile drawer */}
       {open && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="flex flex-col px-6 py-4 space-y-3">
-            <NavLink to="/" onClick={() => setOpen(false)} className={linkClasses}>Home</NavLink>
-            <NavLink to="/aboutUs" onClick={() => setOpen(false)} className={linkClasses}>About</NavLink>
-            <NavLink to="/membership" onClick={() => setOpen(false)} className={linkClasses}>Membership</NavLink>
-            <NavLink to="/trainers" onClick={() => setOpen(false)} className={linkClasses}>Trainers</NavLink>
-            <NavLink to="/videos" onClick={() => setOpen(false)} className={linkClasses}>Video Portal</NavLink>
-            <NavLink to="/contactUs" onClick={() => setOpen(false)} className={linkClasses}>Contact</NavLink>
+            {navLinks.map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                onClick={() => setOpen(false)}
+                className={linkClasses}
+                end
+              >
+                {l.label}
+              </NavLink>
+            ))}
 
             {user ? (
               <>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pt-2">
                   <img
                     src={avatarSrc}
                     alt={displayName || "User"}
                     className="h-8 w-8 rounded-full object-cover border"
-                    onError={e => { e.target.onerror = null; e.target.src = DefaultAvatar; }}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = DefaultAvatar;
+                    }}
                   />
-                  <span className="font-medium text-gray-700">{displayName}</span>
+                  <span className="font-medium text-gray-700">
+                    {displayName}
+                  </span>
                 </div>
                 <button
                   onClick={() => {
                     setOpen(false);
                     handleLogout();
                   }}
-                  className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+                  className={primaryBtn}
                 >
                   Logout
                 </button>
@@ -164,7 +210,7 @@ export default function Navbar() {
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                className={primaryBtn}
               >
                 Login
               </Link>
