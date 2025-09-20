@@ -59,7 +59,6 @@ function App() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-          <Route path="/user/dashboard" element={<UserDashboard />} />
 
         </Routes>
       </BrowserRouter>
