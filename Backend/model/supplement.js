@@ -3,6 +3,12 @@ const schema = mongoose.Schema;
 
 //supplement schema
 const supplementSchema = new schema({
+    Sup_code:{
+        type:String,
+        unique:true,
+        required:true,
+        trim:true
+    },
     Sup_name:{
         type:String,
         required:true

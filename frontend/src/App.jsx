@@ -24,7 +24,6 @@ function App() {
       <BrowserRouter>
       <Toaster position='top-right' />
         <Routes path="/*">
-s
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/checkout" element={<TestingCheckout></TestingCheckout>}/>
@@ -33,7 +32,7 @@ s
           <Route path="/adminLog" element={<AdminLoginForm/>}/>        
           <Route path="/payment-success" element={<PaymentSuccess></PaymentSuccess>}/>
           <Route path="/*" element={<Homepage />} />
-        <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
+          <Route path="/eq_manager/*" element={<EquipmentManagerLayout />} />
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
