@@ -4,10 +4,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import {
   Users,
-  Dumbbell,
   Video as VideoIcon,
   CalendarCheck,
   Wallet,
+  Mail,
 } from "lucide-react";
 import Loader from "../components/lorder-animate";
 
@@ -27,7 +27,7 @@ import {
 
 const ENDPOINTS = {
   members: "/api/user",       
-  equipment: "/api/equipment", 
+  // equipment: "/api/equipment", 
   videos: "/api/video",
   attendance: "/api/employeeSalary",
   salaries: "/api/employeeSalary",
@@ -37,7 +37,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   const [members, setMembers] = useState([]);
-  const [equipment, setEquipment] = useState([]);
+  // const [equipment, setEquipment] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
   const [videos, setVideos] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [salaries, setSalaries] = useState([]);
@@ -68,13 +69,13 @@ export default function AdminDashboard() {
 
       const [
         resMembers,
-        resEquipment,
+  // resEquipment,
         resVideos,
         resAttendance,
         resSalaries,
       ] = await Promise.all([
         axios.get(`${base}${ENDPOINTS.members}`, { headers }),
-        axios.get(`${base}${ENDPOINTS.equipment}`, { headers }).catch(() => ({ data: [] })), // equipment might be open
+  // axios.get(`${base}${ENDPOINTS.equipment}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.videos}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.attendance}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.salaries}`, { headers }).catch(() => ({ data: [] })),
@@ -84,7 +85,11 @@ export default function AdminDashboard() {
       setMembers(
         rawUsers.filter((u) => String(u.role || "").toLowerCase() === "user")
       );
-      setEquipment(extractArray(resEquipment.data));
+      // setEquipment(extractArray(resEquipment.data));
+      // Fetch inquiries
+      axios.get(`${base}/api/inquiry/viewAll`, { headers })
+        .then((res) => setInquiries(Array.isArray(res.data) ? res.data : []))
+        .catch(() => setInquiries([]));
       setVideos(extractArray(resVideos.data));
       setAttendance(extractArray(resAttendance.data));
       setSalaries(extractArray(resSalaries.data));
@@ -108,12 +113,13 @@ export default function AdminDashboard() {
   const totals = useMemo(
     () => ({
       members: members.length,
-      equipment: equipment.length,
+  // equipment: equipment.length,
+  inquiries: inquiries.length,
       videos: videos.length,
       attendance: attendance.length,
       salaries: salaries.length,
     }),
-    [members, equipment, videos, attendance, salaries]
+  [members, inquiries, videos, attendance, salaries]
   );
 
   const tryParseDate = (item) => {
@@ -159,10 +165,8 @@ export default function AdminDashboard() {
 
   const seriesMembers = useMemo(() => buildSeries(members), [members]);
   const seriesVideos = useMemo(() => buildSeries(videos), [videos]);
-  const seriesAttendance = useMemo(
-    () => buildSeries(attendance),
-    [attendance]
-  );
+  const seriesAttendance = useMemo(() => buildSeries(attendance), [attendance]);
+  const seriesInquiries = useMemo(() => buildSeries(inquiries), [inquiries]);
 
   const mergedTrend = useMemo(() => {
     const keys = lastNMonthsKeys(6);
@@ -170,18 +174,20 @@ export default function AdminDashboard() {
     seriesMembers.forEach((p) => (m[p.month].members = p.count));
     seriesVideos.forEach((p) => (m[p.month].videos = p.count));
     seriesAttendance.forEach((p) => (m[p.month].attendance = p.count));
+    seriesInquiries.forEach((p) => (m[p.month].inquiries = p.count));
     return keys.map((k) => ({
       month: k,
       members: m[k].members || 0,
       videos: m[k].videos || 0,
       attendance: m[k].attendance || 0,
+      inquiries: m[k].inquiries || 0,
     }));
-  }, [seriesMembers, seriesVideos, seriesAttendance]);
+  }, [seriesMembers, seriesVideos, seriesAttendance, seriesInquiries]);
 
   const barData = useMemo(
     () => [
       { name: "Members", value: totals.members },
-      { name: "Equipment", value: totals.equipment },
+      { name: "Inquiries", value: totals.inquiries },
       { name: "Videos", value: totals.videos },
       { name: "Attendance", value: totals.attendance },
       { name: "Salaries", value: totals.salaries },
@@ -215,7 +221,7 @@ export default function AdminDashboard() {
           {/* Stat grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
             <StatCard icon={Users} label="Members" value={totals.members} accent="bg-rose-600" />
-            <StatCard icon={Dumbbell} label="Equipment" value={totals.equipment} accent="bg-blue-600" />
+            <StatCard icon={Mail} label="Inquiries" value={totals.inquiries} accent="bg-blue-600" />
             <StatCard icon={VideoIcon} label="Videos" value={totals.videos} accent="bg-emerald-600" />
             <StatCard icon={CalendarCheck} label="Attendance" value={totals.attendance} accent="bg-amber-600" />
             <StatCard icon={Wallet} label="Salaries" value={totals.salaries} accent="bg-indigo-600" />
@@ -254,6 +260,7 @@ export default function AdminDashboard() {
                     <Line type="monotone" dataKey="members" />
                     <Line type="monotone" dataKey="videos" />
                     <Line type="monotone" dataKey="attendance" />
+                    <Line type="monotone" dataKey="inquiries" stroke="#2563eb" />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

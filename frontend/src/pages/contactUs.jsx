@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
+// src/pages/ContactUs.jsx
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function ContactUs() {
+   const navigate = useNavigate();
+  const API_BASE =
+    (import.meta?.env && import.meta.env.VITE_BACKEND_URL) ||
+    (window.location.port === "5173" ? "http://localhost:3000" : window.location.origin);
+
   const [form, setForm] = useState({
-    inquiry_id: "",
+    email: "",
     inquiry_type: "General",
     inquiry_message: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
-  const [serverMsg, setServerMsg] = useState(null); // { type: 'success'|'error', text: string }
-
-  // Prefill a 6-digit inquiry_id (editable by user)
-  useEffect(() => {
-    if (!form.inquiry_id) {
-      const suggested = Math.floor(100000 + Math.random() * 900000);
-      setForm((f) => ({ ...f, inquiry_id: String(suggested) }));
-    }
-  }, []);
+  const [serverMsg, setServerMsg] = useState(null);
 
   const maxChars = 500;
   const charsLeft = maxChars - form.inquiry_message.length;
@@ -24,12 +25,6 @@ export default function ContactUs() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "inquiry_message" && value.length > maxChars) return;
-    // only allow digits for inquiry_id
-    if (name === "inquiry_id") {
-      const digits = value.replace(/\D/g, "");
-      setForm((f) => ({ ...f, [name]: digits }));
-      return;
-    }
     setForm((f) => ({ ...f, [name]: value }));
   };
 
@@ -37,56 +32,63 @@ export default function ContactUs() {
     e.preventDefault();
     setServerMsg(null);
 
-    // Basic validation for required fields in the model
-    if (!form.inquiry_id || !form.inquiry_type || !form.inquiry_message.trim()) {
+    if (!form.email.trim() || !form.inquiry_type || !form.inquiry_message.trim()) {
       setServerMsg({
         type: "error",
-        text: "Please provide an Inquiry ID, select a type, and enter your message.",
+        text: "Please provide your Email, select a type, and enter your message.",
       });
       return;
     }
 
-    // Build payload to match the model exactly
+    const inquiry_id = Math.floor(100000 + Math.random() * 900000);
     const payload = {
-      inquiry_id: Number(form.inquiry_id),
+      inquiry_id,
+      email: form.email.trim().toLowerCase(),
       inquiry_type: form.inquiry_type,
       inquiry_message: form.inquiry_message.trim(),
-      // inquiry_date, inquiry_status, inquiry_response are handled by backend defaults
     };
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // include cookies for auth/session
-        body: JSON.stringify(payload),
+      const token = localStorage.getItem("token"); // get JWT
+      console.log("Token:", token);
+      console.log("Payload:", payload);
+
+      const { data } = await axios.post(`${API_BASE}/api/inquiry/submit`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
       });
 
-      if (res.status === 201) {
-        const data = await res.json().catch(() => ({}));
-        setServerMsg({
-          type: "success",
-          text: data?.message || "Inquiry submitted successfully.",
-        });
-        // reset but keep a fresh id
-        const suggested = Math.floor(100000 + Math.random() * 900000);
-        setForm({ inquiry_id: String(suggested), inquiry_type: "General", inquiry_message: "" });
-      } else if (res.status === 400) {
-        const data = await res.json().catch(() => ({}));
-        setServerMsg({ type: "error", text: data?.message || "Please log in to submit an inquiry." });
-      } else {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || `Request failed with status ${res.status}`);
-      }
+      toast.success("Inquiry submitted successfully");
+      setServerMsg({
+        type: "success",
+        text: data?.message || "Inquiry submitted successfully.",
+      });
+
+      setForm((f) => ({
+        email: f.email,
+        inquiry_type: "General",
+        inquiry_message: "",
+      }));
+
+      navigate("/"); // optional redirect after submit
     } catch (err) {
-      setServerMsg({ type: "error", text: err.message || "Something went wrong. Please try again." });
+      toast.error("An error occurred while submitting the inquiry.");
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong. Please try again.";
+      setServerMsg({ type: "error", text: msg });
+      console.error(err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // FAQ items (unchanged)
+
+  // FAQ items
   const faqs = [
     { q: "How do I start a membership?", a: "Choose a plan online or visit our front desk. We’ll do a quick 1:1 intake, discuss goals, and activate your access the same day." },
     { q: "Do you offer a free trial?", a: "Yes! New members can book a free 3–7 day trial depending on availability. It includes classes, open gym, and a coach consult." },
@@ -153,7 +155,7 @@ export default function ContactUs() {
             </div>
           </div>
 
-          {/* ===== Right: Form Card (matches inquiry.js) ===== */}
+          {/* ===== Right: Form Card ===== */}
           <div
             id="contact-form"
             className="bg-white rounded-2xl shadow-xl border border-red-600/20 p-6 md:p-8 scroll-mt-24 md:scroll-mt-32"
@@ -177,24 +179,22 @@ export default function ContactUs() {
             )}
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              {/* inquiry_id */}
+              {/* email */}
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Inquiry ID <span className="text-red-600">*</span>
+                  Email <span className="text-red-600">*</span>
                 </label>
                 <input
-                  type="number"
-                  inputMode="numeric"
-                  name="inquiry_id"
-                  value={form.inquiry_id}
+                  type="email"
+                  name="email"
+                  value={form.email}
                   onChange={handleChange}
-                  placeholder="e.g., 123456"
+                  placeholder="you@example.com"
                   className="w-full rounded-lg border border-red-600/30 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF0000]"
                   required
-                  min={1}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Must be unique. Prefilled for convenience—edit if needed.
+                  We’ll use this to update you about your inquiry.
                 </p>
               </div>
 
@@ -295,7 +295,7 @@ export default function ContactUs() {
               </div>
               <div className="mt-4">
                 <a
-                  href="https://maps.google.com/?q=48,%20Esplanade%20Road,%20Matara,%20Sri%20Lanka"
+                  href=""
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center rounded-lg bg-[#FF0000] px-5 py-3 text-white font-semibold hover:opacity-90"

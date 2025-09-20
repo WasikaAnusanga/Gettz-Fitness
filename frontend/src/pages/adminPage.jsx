@@ -22,7 +22,7 @@ import EditAnnouncement from "./admin/announcements/updateAnnouncements";
 import CompetitionDetailsPage from "./admin/competitions/competitions";
 import AddCompetition from "./admin/competitions/addCompetition";
 import UpdateCompetition from "./admin/competitions/updateCompetition";
-
+import Inquiry from "./admin/sideBarLinks/Inquiry";
 export default function AdminLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   if (user?.role?.toLowerCase() !== "admin")
@@ -74,7 +74,7 @@ export default function AdminLayout() {
               <Route path="/workshift" element={<Workshift/>} />
               <Route path="/trainers/register" element={<TrainerRegistration/>} />
               <Route path="/members/register" element={<MemberRegistration/>} />
-
+              <Route path="/inquiry" element={<Inquiry/>} />
 
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
