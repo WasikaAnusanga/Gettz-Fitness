@@ -1,12 +1,17 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
+
 const mealPlanSchema = new Schema({
 
     mealPlan_id:{
         type: Number,
-        unique: true,
         required: true,
+        unique: true,
+    },
+
+    user_id:{
+        type:Number,
     },
 
     meal_name:{
@@ -26,7 +31,6 @@ const mealPlanSchema = new Schema({
     },
 
 });
-
 
 const meal= mongoose.model("mealPlan",mealPlanSchema);
 export default meal;

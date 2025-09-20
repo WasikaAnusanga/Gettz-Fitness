@@ -26,8 +26,14 @@ export async  function registerTrainer(req,res){
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
         password: hashedPassword,
-        profilePicture: req.body.profilePicture || 'default-profile.jpg',
-        role: req.body.role || 'trainer'
+        profilePicture: req.body.profilePicture,
+        role: req.body.role || 'trainer',
+        certifications: req.body.certifications || [],
+        experienceYears: Number(req.body.experienceYears) || 0,
+        specialization: req.body.specialization || "General Fitness",
+        rating: Number(req.body.rating) || 0,
+        isActive: req.body.isActive !== undefined ? req.body.isActive : true,
+        isDisabled: req.body.isDisabled !== undefined ? req.body.isDisabled : false,
     });
     try{
         await trainer.save();

@@ -59,8 +59,7 @@ export function addPlan(req,res){
 
 export function updatePlan(req,res){
     //check user is an admin
-    req.user="admin";
-    req.user={role:"admin"};
+    
     //
     if(req.user==null){
         res.status(401).json({
@@ -99,7 +98,7 @@ export function getPlans(req,res){
 }
 
 export function deletePlan(req,res){
-    req.user={role:"admin"};
+    
     if(req.user==null){
         res.status(401).json({
             message:"You need to Login First"

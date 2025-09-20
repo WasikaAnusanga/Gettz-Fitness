@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut
+  Wrench, Pill, BadgePercent, Settings, Menu, Radio, LogOut, IdCardLanyard, Megaphone, Trophy ,MessageSquareDot
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
+import Swal from "sweetalert2";
 
 const linkBase =
   "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all";
@@ -15,15 +16,20 @@ const idleStyle =
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/users", label: "Members", icon: Users },
+  { to: "/admin/members", label: "Members", icon: Users },
   { to: "/admin/trainers", label: "Trainers", icon: Dumbbell },
   { to: "/admin/sessions", label: "Sessions", icon: CalendarClock },
   { to: "/admin/video", label: "Video", icon: Video },
   { to: "/admin/equipment", label: "Equipment", icon: Wrench },
   { to: "/admin/supplement", label: "Supplement", icon: Pill },
   { to: "/admin/membership", label: "Membership", icon: BadgePercent },
+  { to: "/admin/workshift", label: "Employees", icon: IdCardLanyard},
   { to: "/admin/sesssion", label: "Sessions", icon: Radio },
+  { to: "/admin/inquiry", label: "Inquiry", icon: MessageSquareDot },
+  { to: "/admin/competitions", label: "Competitions", icon: Trophy },
+  { to: "/admin/announcements", label: "Announcements", icon: Megaphone},
   { to: "/admin/settings", label: "Settings", icon: Settings },
+  
 ];
 
 export default function AdminSidebar() {
@@ -31,11 +37,23 @@ export default function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-
-    localStorage.removeItem("token"); 
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token"); 
     localStorage.removeItem("user");
 
     navigate("/adminLog");
+      }
+    });
+    
   };
 
   return (

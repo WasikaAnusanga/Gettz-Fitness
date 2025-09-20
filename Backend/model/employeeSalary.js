@@ -1,31 +1,45 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const employeeSalarySchema = new Schema ({
+const employeeSalarySchema = new Schema({
+  salary_id: {
+    type: Number,
+    unique: true,
+    required: true,
+  },
 
-    salary_id:{
-        type: Number,
-        unique: true,
-        required: true,
-    },
+  base_salary: {
+    type: String,
+  },
 
-    base_salary:{
-        type: String
-    },
+  salaryPay_method: {
+    type: String,
+  },
 
-    salaryPay_method:{
-        type: String
-    },
+  salaryPay_date: {
+    type: String,
+  },
 
-    salaryPay_date:{
-        type: String
-    },
+  overtime_pay: {
+    type: String,
+  },
 
-    overtime_pay:{
-        type: String,
-    },
+  workshift_schedule: {
+    type: String,
+  },
 
+  attendance_count: {
+    type: Number,
+  },
+
+  leave_count: {
+    type: Number,
+  },
+
+  performance_notes: {
+    type: String,
+  },
 });
 
-const salary = mongoose.model("employeeSalary",employeeSalarySchema);
+const salary = mongoose.model("employeeSalary", employeeSalarySchema);
 export default salary;
