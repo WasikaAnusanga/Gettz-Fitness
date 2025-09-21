@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { ClipboardList, ArrowLeft, Calendar, DollarSign, Tag, Hash } from "lucide-react";
+import { ClipboardList, ArrowLeft, Calendar, Layers, Tag, Hash, Banknote } from "lucide-react";
 
 function getAxiosError(err) {
     const data = err?.response?.data;
@@ -188,16 +188,16 @@ export default function PurchaseEditPage() {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">
-                                Cost <span className="text-red-600">*</span>
+                                Cost LKR<span className="text-red-600">*</span>
                             </label>
                             <div className="relative">
-                                <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                <Banknote size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                                 <input
                                     type="number"
                                     min="0"
                                     step="0.01"
                                     value={P_cost}
-                                    onChange={(e) => setCost(e.target.value)}
+                                    onChange={(e) => setCost(e.target.value < 0) ? 0 : e.target.value}
                                     className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                 />
                             </div>
@@ -207,16 +207,16 @@ export default function PurchaseEditPage() {
                             <label className="block text-sm font-medium mb-1">
                                 Quantity <span className="text-red-600">*</span>
                             </label>
+                            <div className="relative">
+                                <Layers size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                             <input
                                 type="number"
                                 min="0"
                                 value={P_quantiy}
-                                onChange={(e) => setQty(e.target.value)}
-                                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                                onChange={(e) => setQty(e.target.value < 0) ? 0 : e.target.value}
+                                className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                             />
-                            <p className="mt-1 text-[11px] text-neutral-500">
-                                Field is <code>P_quantiy</code> (matches backend).
-                            </p>
+                            </div>
                         </div>
 
                         <div>
