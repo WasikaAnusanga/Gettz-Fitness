@@ -7,9 +7,9 @@ import { createNotificationForUser } from "./notificatinController.js";
 
 export async function viewChallenges(req, res) {
   try {
-    if (!req.user) {
-      return res.status(403).json({ message: "Please login to view challenges" });
-    }
+    // if (!req.user) {
+    //   return res.status(403).json({ message: "Please login to view challenges" });
+    // }
 
     // if (req.user.role !== "member" && req.user.role !== "admin") {
     //   return res.status(403).json({ message: "Login as a member to view challenges" });
@@ -143,8 +143,9 @@ export function updateChallenge(req, res){
 export async function joinChallenge(req, res) {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const userData= await User.findById(req.user._id);
     
-    if (req.user.role !== "member"){
+    if (userData.role !== "member"){
         return res.status(403).json(
             { 
                 message: "Members only" 
@@ -185,9 +186,9 @@ export async function joinChallenge(req, res) {
 
 export async function myJoinedChallenges(req, res) {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // if (!req.user) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
 
     const userId = typeof req.user._id === "string"
       ? new mongoose.Types.ObjectId(req.user._id)

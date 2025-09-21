@@ -16,7 +16,7 @@ export default function PaymentSuccess() {
   const [paymentAllData,setPaymentAllData]= useState(null);
   const userData = JSON.parse(localStorage.getItem("user"));
   const fullName= userData.firstName +" "+userData.lastName
-
+  
   useEffect(() => {
     if (!loaded) {
       axios

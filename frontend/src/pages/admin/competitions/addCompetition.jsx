@@ -20,13 +20,19 @@ export default function CompetitionAdd() {
   function getTodayStr() {
     const today = new Date();
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
   }
 
   async function handleSubmit() {
-    if (!title.trim() || !description.trim() || !points || !startDate || !endDate) {
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !points ||
+      !startDate ||
+      !endDate
+    ) {
       return toast.error("All fields are required");
     }
 
@@ -71,7 +77,9 @@ export default function CompetitionAdd() {
     } catch (err) {
       console.error(err);
       toast.error(
-        err?.response?.data?.message || err?.message || "Failed to create competition"
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to create competition"
       );
     } finally {
       setLoading(false);
@@ -81,7 +89,6 @@ export default function CompetitionAdd() {
   return (
     <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
       <div className="w-full max-w-3xl rounded-2xl border border-black/10 bg-white shadow-lg overflow-hidden">
-        
         {/* Header */}
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-4">
           <div className="flex items-center gap-2">
@@ -95,7 +102,10 @@ export default function CompetitionAdd() {
               </p>
             </div>
           </div>
-          <Link to="/admin/competitions" className="text-sm text-[#e30613] hover:underline">
+          <Link
+            to="/admin/competitions"
+            className="text-sm text-[#e30613] hover:underline"
+          >
             View all
           </Link>
         </div>
@@ -113,7 +123,9 @@ export default function CompetitionAdd() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
+            <label className="block text-sm font-medium mb-1">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -125,18 +137,22 @@ export default function CompetitionAdd() {
 
           <div>
             <label className="block text-sm font-medium mb-1">Points</label>
+            
             <input
               type="number"
               value={points}
-              onChange={(e) => setPoints(e.target.value)}
+              onChange={(e) => setPoints((e.target.value < 0) ? 0 : e.target.value)}
               placeholder="100"
               className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm"
+              
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Start Date</label>
+              <label className="block text-sm font-medium mb-1">
+                Start Date
+              </label>
               <input
                 type="date"
                 value={startDate}
@@ -160,7 +176,9 @@ export default function CompetitionAdd() {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium mb-1">Competition Image</label>
+            <label className="block text-sm font-medium mb-1">
+              Competition Image
+            </label>
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-black/20 p-6 text-center hover:bg-black/5">
               <UploadCloud className="mb-2 text-[#e30613]" />
               <span className="text-sm">Click to upload</span>
@@ -179,7 +197,11 @@ export default function CompetitionAdd() {
             </label>
             {preview && (
               <div className="mt-3 w-full rounded-xl border border-black/10 overflow-hidden">
-                <img src={preview} alt="Preview" className="w-full h-48 object-cover" />
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full h-48 object-cover"
+                />
               </div>
             )}
           </div>

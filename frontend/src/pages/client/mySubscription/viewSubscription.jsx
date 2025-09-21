@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { generateReceiptPDF } from "../../../utils/paymentReciept";
 import {
   Crown,
   CalendarDays,
@@ -11,7 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../../../components/loader-animate2";
-
 
 export default function ViewSubscription() {
   const [loaded, setLoaded] = useState(false);
@@ -196,11 +196,11 @@ export default function ViewSubscription() {
               </h3>
               <p className="mt-1 text-sm text-slate-500 mb-8">
                 Your recent payments for Gettz Fitness.
-              </p >
+              </p>
 
               {/*For No bills*/}
               {payment.length == 0 && (
-               <div className="rounded-2xl border border-dashed border-slate-300 bg-white shadow-sm p-10 text-center">
+                <div className="rounded-2xl border border-dashed border-slate-300 bg-white shadow-sm p-10 text-center">
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
                     <X className="h-5 w-5 text-red-600" />
                   </div>
@@ -208,12 +208,12 @@ export default function ViewSubscription() {
                     No Billing History
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    You don’t have any past payments yet. Once you subscribe to a plan, your receipts will appear here.
+                    You don’t have any past payments yet. Once you subscribe to
+                    a plan, your receipts will appear here.
                   </p>
-                 
                 </div>
               )}
-              
+
               <div className="mt-4 space-y-3">
                 {payment.map((payment, index) => {
                   return (
