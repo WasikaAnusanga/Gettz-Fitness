@@ -21,7 +21,7 @@ const idleStyle =
 const navItems = [
   {
     to: "/userDashboard/dashboard",
-    label: "Dashboard",
+    label: "Profile",
     icon: LayoutDashboard,
     end: true,
   },

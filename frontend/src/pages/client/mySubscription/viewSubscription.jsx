@@ -6,20 +6,20 @@ import {
   BadgeCheck,
   BadgeX,
   AlertCircle,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../../../components/loader-animate2";
-import { generateReceiptPDF } from "../../../utils/paymentReciept";
+
 
 export default function ViewSubscription() {
   const [loaded, setLoaded] = useState(false);
   const [subscription, setSubscription] = useState([]);
   const [payment, setPayment] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user"));
-  const fullName= userData.firstName +" "+userData.lastName
+  const fullName = userData.firstName + " " + userData.lastName;
 
-  
   useEffect(() => {
     if (!loaded) {
       const token = localStorage.getItem("token");
@@ -175,7 +175,6 @@ export default function ViewSubscription() {
 
                       {/* Right actions */}
                       <div className="flex shrink-0 flex-col items-end gap-2">
-                        
                         <button
                           onClick={() => {
                             handleCancelSubscription();
@@ -195,10 +194,26 @@ export default function ViewSubscription() {
               <h3 className="text-lg font-semibold text-slate-900">
                 Billing History
               </h3>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 mb-8">
                 Your recent payments for Gettz Fitness.
-              </p>
+              </p >
 
+              {/*For No bills*/}
+              {payment.length == 0 && (
+               <div className="rounded-2xl border border-dashed border-slate-300 bg-white shadow-sm p-10 text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
+                    <X className="h-5 w-5 text-red-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    No Billing History
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    You don’t have any past payments yet. Once you subscribe to a plan, your receipts will appear here.
+                  </p>
+                 
+                </div>
+              )}
+              
               <div className="mt-4 space-y-3">
                 {payment.map((payment, index) => {
                   return (
@@ -232,7 +247,7 @@ export default function ViewSubscription() {
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-medium ring-1
                                         ${
-                                        payment.status === "pending"
+                                          payment.status === "pending"
                                             ? "bg-amber-50 text-amber-700 ring-amber-200/70"
                                             : payment.status === "failed"
                                             ? "bg-rose-50 text-rose-700 ring-rose-200/70"
@@ -245,7 +260,9 @@ export default function ViewSubscription() {
                         {/* Download button after payment is successful */}
                         {payment.status === "paid" && (
                           <button
-                            onClick={() => generateReceiptPDF(payment,fullName)}
+                            onClick={() =>
+                              generateReceiptPDF(payment, fullName)
+                            }
                             className="cursor-pointer rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-xs text-red-700 hover:bg-red-100 transition"
                           >
                             Download

@@ -4,3 +4,5 @@ node_modules
 frontend/react-fontend/
 package-lock.json
 package.json
+Backend/package-lock.json
+Backend/package-lock.json
