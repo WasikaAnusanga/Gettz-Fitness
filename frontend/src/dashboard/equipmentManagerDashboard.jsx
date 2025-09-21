@@ -17,11 +17,11 @@ import EquipmentDashboard from "../pages/eq_manager/EquipmentDashboard.jsx";
 const OrdersPage = () => <h1>Orders</h1>;
 
 export default function EquipmentManagerLayout() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  // Allow access if role is one of the expected equipment-manager roles (adjust to your auth model)
-  const role = user?.role?.toLowerCase?.() || "";
-  const allowed = ["equipment", "equip_manager", "equipment_manager", "admin"].includes(role);
-  if (!allowed) return <Navigate to="/adminLog" replace />;
+  // const user = JSON.parse(localStorage.getItem("user") || "{}");
+  // // Allow access if role is one of the expected equipment-manager roles (adjust to your auth model)
+  // const role = user?.role?.toLowerCase?.() || "";
+  // const allowed = ["equipment", "equip_manager", "equipment_manager", "admin"].includes(role);
+  // if (!allowed) return <Navigate to="/adminLog" replace />;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">

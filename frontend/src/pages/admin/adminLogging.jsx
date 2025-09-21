@@ -42,8 +42,10 @@ export default function AdminLoginPage() {
       const roleKey = (user.role || "").replace(/\s+/g, "").toLowerCase();
       if (roleKey === "admin") {
         navigate("/admin", { replace: true });
-      } else if (roleKey === "Equipment Manager") {
+      } else if (roleKey === "equipmentmanager") {
         navigate("/eq_manager", { replace: true });
+      }else if (roleKey === "trainer") {
+        navigate("/trainerDashboard", { replace: true });
       }
     } catch (err) {
       setError(err?.response?.data?.message || err?.message || "Login failed");

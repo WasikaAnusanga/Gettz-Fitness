@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate,Link } from "react-router-dom";
 import {
   LayoutDashboard,
   HandPlatter,
@@ -7,6 +7,7 @@ import {
   LogOut,
   CreditCard,
   FileText,
+  
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import Swal from "sweetalert2";
@@ -77,18 +78,21 @@ export default function UserSidebar() {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-red-400/5 to-transparent" />
         <div className="flex items-center justify-between px-3 py-3 relative">
-          <div className="flex items-center gap-2">
-            <img
-              src={GymLogo}
-              alt="Gettz"
-              className="h-9 w-9 rounded-full ring-2 ring-red-500/20 object-cover"
-            />
+          
+           <Link to="/"><div className="flex items-center gap-2">
+           
+              <img
+                src={GymLogo}
+                alt="Gettz"
+                className="h-9 w-9 rounded-full ring-2 ring-red-500/20 object-cover"
+              />
+            
             {open && (
               <span className="text-base font-extrabold tracking-tight text-red-700">
                 Gettz User
               </span>
             )}
-          </div>
+          </div></Link>
           <button
             onClick={() => setOpen((s) => !s)}
             className="rounded-lg p-2 text-gray-600 hover:bg-white/70"
@@ -128,7 +132,7 @@ export default function UserSidebar() {
       <div className="px-3 space-y-3">
         {/* Logout */}
         <button
-          className={`flex items-center gap-2 w-full text-sm text-gray-600 hover:text-red-600 hover:bg-white rounded-lg px-2 py-2 ${
+          className={`mb-10 flex items-center gap-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 shadow-sm transition-colors ${
             open ? "justify-start" : "justify-center"
           }`}
           title={!open ? "Logout" : undefined}
