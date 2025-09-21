@@ -10,7 +10,7 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
-
+import MealPlan from "./mealPlan";
 
 export default function Homepage() {
   return (
@@ -28,8 +28,7 @@ export default function Homepage() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
-          
+          <Route path="/mealPlan" element={<MealPlan />} />
 
           <Route
             path="/*"
