@@ -22,10 +22,16 @@ export default function RequestMeals() {
   });
 
   async function fetchRequests() {
+    const token = localStorage.getItem("token");
     try {
       setBusy(true);
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/mealRequest`
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealRequest/getOneMeal`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       const items = Array.isArray(data?.response) ? data.response : [];
       setRequests(items);

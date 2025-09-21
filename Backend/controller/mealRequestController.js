@@ -17,11 +17,33 @@ export const getMealRequest = (req, res) => {
     }
 };
 
+export const getOneMealRequest = (req, res) => {
+   const user = req.user._id;
+    if(req.user.role == "user"){
+        MealRequest.find({user_id: user})
+            .then(response => {
+                console.log(response+"hello");
+                res.json({response})
+            })
+            .catch(error => {
+                res.json({error: error})
+            })
+    }else{
+        res.status(401).json({
+            message: "You need User authorization..."
+        });
+    }
+};
+
+
+
+
 export const addMealRequest = (req, res) => {
-    req.user={role: "User"};
-    if(req.user.role == "User"){
+    console.log(req.user._id);
+    const user = req.user._id;
+    if(req.user.role == "user"){ //role should be member
         const mealrequest = new MealRequest({
-            user_id: req.body.user_id,
+            user_id: user,
             user_name: req.body.user_name,
             request_date: req.body.request_date,
             weight: req.body.weight,
@@ -33,10 +55,12 @@ export const addMealRequest = (req, res) => {
         });
         mealrequest.save()
             .then(response => {
-                res.json({response})
+                console.log(response);
+                res.status(200).json({response})
             })
             .catch(error => {
-                res.json({error: error})
+                res.status(500).json({error: error})
+                console.log(error);
             })
     }else{
         res.status(401).json({
