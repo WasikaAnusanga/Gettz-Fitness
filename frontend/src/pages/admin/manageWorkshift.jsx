@@ -6,15 +6,12 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function Salaries() {
-  // Data
   const [items, setItems] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  // UI
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
 
-  // Form — use BACKEND field names
   const [form, setForm] = useState({
     salary_id: "",
     base_salary: "",
@@ -40,12 +37,6 @@ export default function Salaries() {
       performance_notes: "",
     });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
-  // -------- FETCH ----------
   async function fetchSalaries() {
     try {
       setBusy(true);
@@ -69,7 +60,6 @@ export default function Salaries() {
     fetchSalaries();
   }, []);
 
-  // -------- CREATE ----------
   async function onCreate(e) {
     e.preventDefault();
     if (
@@ -118,7 +108,6 @@ export default function Salaries() {
     }
   }
 
-  // -------- EDIT ----------
   function startEdit(p) {
     setEditId(p.salary_id);
     setForm({
@@ -179,7 +168,6 @@ export default function Salaries() {
     }
   }
 
-  // -------- DELETE ----------
   async function deleteSalary(p) {
     const key = p.salary_id;
     if (!key && key !== 0) {
@@ -204,7 +192,6 @@ export default function Salaries() {
     }
   }
 
-  // -------- PDF ----------
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -245,7 +232,6 @@ export default function Salaries() {
     doc.save("employee_salaries.pdf");
   };
 
-  // Money formatter
   const money = (n) => {
     if (n === null || n === undefined || n === "") return "-";
     const num = Number(n);
@@ -256,7 +242,6 @@ export default function Salaries() {
   return (
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
-        {/* Header */}
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-black">Salaries</h1>
           <div className="flex items-center gap-2">
@@ -282,12 +267,10 @@ export default function Salaries() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-black text-white">
               <tr>
-                <th className="px-3 py-2 text-left">No</th>
                 <th className="px-3 py-2 text-left">Salary ID</th>
                 <th className="px-3 py-2 text-left">Base Salary</th>
                 <th className="px-3 py-2 text-left">Pay Method</th>
@@ -322,12 +305,11 @@ export default function Salaries() {
                 </tr>
               )}
               {!busy &&
-                items.map((p, idx) => (
+                items.map((p) => (
                   <tr
                     key={p._id ?? p.salary_id}
                     className="border-t border-black/10"
                   >
-                    <td className="px-3 py-2">{idx + 1}</td>
                     <td className="px-3 py-2 font-mono">
                       {p.salary_id ?? "-"}
                     </td>
@@ -348,14 +330,14 @@ export default function Salaries() {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => startEdit(p)}
                           className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+                          onClick={() => startEdit(p)}
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteSalary(p)}
                           className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
+                          onClick={() => deleteSalary(p)}
                         >
                           Delete
                         </button>
@@ -368,14 +350,18 @@ export default function Salaries() {
         </div>
       </div>
 
-      {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                {editId ? "Update Salary" : "Add Salary"}
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4">
+          <div className="w-full max-w-3xl rounded-xl bg-white shadow-xl">
+            <div className="flex items-center justify-between rounded-t-xl border-b px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-black">
+                  {editId ? "Update Salary" : "Add Salary"}
+                </h2>
+                <p className="text-xs text-gray-500">
+                  Keep it short & accurate.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => {
@@ -389,129 +375,169 @@ export default function Salaries() {
               </button>
             </div>
 
-            <form onSubmit={editId ? onUpdate : onCreate} className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Salary ID *</span>
-                  <input
-                    name="salary_id"
-                    placeholder="ex: 001"
-                    value={form.salary_id}
-                    onChange={handleChange}
-                    required
-                    disabled={!!editId}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 disabled:bg-gray-100"
-                  />
-                </label>
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Base Salary *</span>
+            <form
+              onSubmit={editId ? onUpdate : onCreate}
+              className="space-y-6 p-6"
+            >
+              {/* Two-column section */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Base Salary *
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Gross monthly amount before extras.
+                  </p>
                   <input
                     type="number"
                     name="base_salary"
                     placeholder="LKR"
                     value={form.base_salary}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, base_salary: e.target.value })
+                    }
                     required
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
-                </label>
-              </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Pay Method *</span>
-                  <input
-                    name="salaryPay_method"
-                    placeholder="Cash or card payment"
-                    value={form.salaryPay_method}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Pay Date *</span>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Pay Date *
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Calendar date this salary is paid.
+                  </p>
                   <input
                     type="date"
                     name="salaryPay_date"
                     value={form.salaryPay_date}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, salaryPay_date: e.target.value })
+                    }
                     required
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
-                </label>
-              </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Pay Method *
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    How the employee is paid (cash, bank transfer, etc.).
+                  </p>
+                  <input
+                    name="salaryPay_method"
+                    placeholder="Cash, Bank transfer…"
+                    value={form.salaryPay_method}
+                    onChange={(e) =>
+                      setForm({ ...form, salaryPay_method: e.target.value })
+                    }
+                    required
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Workshift Schedule
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Typical working hours or rotation.
+                  </p>
+                  <input
+                    name="workshift_schedule"
+                    placeholder="e.g. Mon–Fri 8:00–16:00"
+                    value={form.workshift_schedule}
+                    onChange={(e) =>
+                      setForm({ ...form, workshift_schedule: e.target.value })
+                    }
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
                     Overtime Payment
-                  </span>
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Total overtime pay for this period.
+                  </p>
                   <input
                     type="number"
                     name="overtime_pay"
                     placeholder="LKR"
                     value={form.overtime_pay}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, overtime_pay: e.target.value })
+                    }
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
-                </label>
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
                     Attendance Count
-                  </span>
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Number of days present in the period.
+                  </p>
                   <input
                     type="number"
-                    placeholder="min 0"
                     name="attendance_count"
+                    min="0"
+                    placeholder="0"
                     value={form.attendance_count}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, attendance_count: e.target.value })
+                    }
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
-                </label>
-              </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Leave Count</span>
+                {/* ROW: Leave Count + Performance Notes */}
+                <div className="flex flex-col">
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Performance Notes
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Any comments, adjustments, or remarks for this cycle.
+                  </p>
+                  <textarea
+                    name="performance_notes"
+                    placeholder="Description"
+                    value={form.performance_notes}
+                    onChange={(e) =>
+                      setForm({ ...form, performance_notes: e.target.value })
+                    }
+                    rows={4}
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Leave Count
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Approved leave days in the period.
+                  </p>
                   <input
                     type="number"
                     name="leave_count"
-                    placeholder="min 0"
+                    min="0"
+                    placeholder="0"
                     value={form.leave_count}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, leave_count: e.target.value })
+                    }
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
-                </label>
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">
-                    Workshift Schedule
-                  </span>
-                  <input
-                    name="workshift_schedule"
-                    placeholder="ex: Mon-Fri 8.00 a.m - 4.00 p.m"
-                    value={form.workshift_schedule}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
-                </label>
+                </div>
               </div>
 
-              <label className="text-sm block">
-                <span className="mb-1 block font-medium">
-                  Performance Notes
-                </span>
-                <textarea
-                  name="performance_notes"
-                  placeholder="Description"
-                  value={form.performance_notes}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 resize-y"
-                />
-              </label>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
+              {/* Footer */}
+              <div className="flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => {
@@ -519,13 +545,13 @@ export default function Salaries() {
                     setEditId(null);
                     resetForm();
                   }}
-                  className="rounded-xl border border-gray-300 px-4 py-2 text-sm"
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
                 >
                   {editId ? "Update Salary" : "Save Salary"}
                 </button>

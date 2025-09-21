@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useNavigate } from "react-router-dom"; // ✅ add this
 
 export default function RequestedMeals() {
   // Data
@@ -12,6 +13,8 @@ export default function RequestedMeals() {
 
   // UI
   const [query, setQuery] = useState("");
+
+  const navigate = useNavigate(); // ✅ add this
 
   // -------- FETCH ----------
   async function fetchRequests() {
@@ -45,6 +48,10 @@ export default function RequestedMeals() {
       const reqDate = String(r.request_date ?? "").toLowerCase();
       const weight = String(r.weight ?? "").toLowerCase();
       const height = String(r.height ?? "").toLowerCase();
+      const lastName = String(r.last_name ?? "").toLowerCase();
+      const description = String(r.description ?? "").toLowerCase();
+      const mealType = String(r.mealType ?? "").toLowerCase();
+      const birthday = String(r.birthday ?? "").toLowerCase();
 
       return (
         requestId.includes(q) ||
@@ -52,7 +59,11 @@ export default function RequestedMeals() {
         userName.includes(q) ||
         reqDate.includes(q) ||
         weight.includes(q) ||
-        height.includes(q)
+        height.includes(q) ||
+        lastName.includes(q) ||
+        description.includes(q) ||
+        mealType.includes(q) ||
+        birthday.includes(q)
       );
     });
   }, [query, requests]);
@@ -74,36 +85,34 @@ export default function RequestedMeals() {
     autoTable(doc, {
       startY: 25,
       head: [
-        [
-          "No",
-          "Request ID",
-          "User ID",
-          "Name",
-          "Requested Date",
-          "Weight",
-          "Height",
-        ],
+        ["Request ID", "User ID", "Name", "Requested Date", "Weight", "Height"],
       ],
-      body: list.map((r, i) => [
-        i + 1,
+      body: list.map((r) => [
         String(r.request_id ?? "-"),
         r.user_id ?? "-",
         r.user_name ?? "-",
         r.request_date ? String(r.request_date).slice(0, 10) : "-",
         r.weight ?? "-",
         r.height ?? "-",
+        r.last_name ?? "-",
+        r.description ?? "-",
+        r.mealType ?? "-",
+        r.birthday ?? "-",
       ]),
       theme: "grid",
       headStyles: { fillColor: [0, 0, 0] }, // black header
       styles: { fontSize: 9 },
       columnStyles: {
-        0: { cellWidth: 10 }, // No
-        1: { cellWidth: 25 }, // Request ID
-        2: { cellWidth: 22 }, // User ID
-        3: { cellWidth: 40 }, // Name
-        4: { cellWidth: 28 }, // Date
-        5: { cellWidth: 20 }, // Weight
-        6: { cellWidth: 20 }, // Height
+        0: { cellWidth: 25 }, // Request ID
+        1: { cellWidth: 22 }, // User ID
+        2: { cellWidth: 40 }, // Name
+        3: { cellWidth: 28 }, // Date
+        4: { cellWidth: 20 }, // Weight
+        5: { cellWidth: 20 }, // Height
+        6: { cellWidth: 30 }, // Last Name
+        7: { cellWidth: 50 }, // Description
+        8: { cellWidth: 25 }, // Meal Type
+        9: { cellWidth: 25 }, // Birthday
       },
     });
 
@@ -144,25 +153,28 @@ export default function RequestedMeals() {
           </div>
         </div>
 
-        {/* Video.jsx-style table container */}
+        {/* Table */}
         <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-black text-white">
               <tr>
-                <th className={headerCell}>No</th>
                 <th className={headerCell}>Request ID</th>
                 <th className={headerCell}>User ID</th>
-                <th className={headerCell}>Name</th>
+                <th className={headerCell}>First Name</th>
+                <th className={headerCell}>Last Name</th>
                 <th className={headerCell}>Requested Date</th>
+                <th className={headerCell}>Description</th>
+                <th className={headerCell}>Meal Type</th>
                 <th className={headerCell}>Weight</th>
                 <th className={headerCell}>Height</th>
+                <th className={headerCell}>Birthday</th>
               </tr>
             </thead>
 
             <tbody>
               {busy && (
                 <tr>
-                  <td className={cell} colSpan={7}>
+                  <td className={cell} colSpan={6}>
                     Loading…
                   </td>
                 </tr>
@@ -170,30 +182,33 @@ export default function RequestedMeals() {
 
               {!busy && filtered.length === 0 && (
                 <tr>
-                  <td className={cell} colSpan={7}>
+                  <td className={cell} colSpan={6}>
                     No requests found
                   </td>
                 </tr>
               )}
 
               {!busy &&
-                filtered.map((r, idx) => {
+                filtered.map((r) => {
                   const key = r._id ?? r.request_id;
                   return (
                     <tr key={key} className="border-t border-black/10">
-                      <td className={cell}>{idx + 1}</td>
                       <td className={`${cell} font-mono`}>
                         {String(r.request_id ?? "-")}
                       </td>
                       <td className={cell}>{r.user_id ?? "-"}</td>
                       <td className={cell}>{r.user_name ?? "-"}</td>
+                      <td className={cell}>{r.last_name ?? "-"}</td>
                       <td className={cell}>
                         {r.request_date
                           ? String(r.request_date).slice(0, 10)
                           : "-"}
                       </td>
+                      <td className={cell}>{r.description ?? "-"}</td>
+                      <td className={cell}>{r.mealType ?? "-"}</td>
                       <td className={cell}>{r.weight ?? "-"}</td>
                       <td className={cell}>{r.height ?? "-"}</td>
+                      <td className={cell}>{r.birthday ?? "-"}</td>
                     </tr>
                   );
                 })}
@@ -201,13 +216,6 @@ export default function RequestedMeals() {
           </table>
         </div>
       </div>
-
-      {/* Top progress bar */}
-      <div
-        className={`pointer-events-none fixed left-0 top-0 h-0.5 bg-red-600 transition-all ${
-          busy ? "w-full" : "w-0"
-        }`}
-      />
     </div>
   );
 }
