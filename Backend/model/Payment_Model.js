@@ -12,6 +12,7 @@ const paymentSchema = new mongoose.Schema({
     session_id: { type: String, unique: true, required: true },
     status: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending" },
     paid_at: { type: Date },
+    planName: { type: String, default: "" },
     notes: { type: String, default: "" }
   },
   { timestamps: true }

@@ -58,6 +58,7 @@ export async function createPayment(req, res) {
           amount: plan.price,
           session_id: session.id,
           subscription_id: subInfo._id,
+          planName:plan.plan_name
         };
         const lastPayment = await Payment.find().sort({ _id: -1 }).limit(1);
 
@@ -105,4 +106,17 @@ export async function fetchPayment(req, res) {
   //   .catch((err)=>{
   //       res.status(500).json({message:"Server Error when finding the subscription "+err})
   //   })
+}
+
+export function fetchUserPayment(req,res){
+  Payment.find({user_id:req.user._id}).populate({
+      path: "subscription_id",
+      populate: {
+        path: "plan_id", // the field inside Subscription model
+      }
+    }).then((payment)=>{
+      res.status(200).json(payment)
+  }).catch((err)=>{
+      res.status(500).json({message:err})
+  })
 }
