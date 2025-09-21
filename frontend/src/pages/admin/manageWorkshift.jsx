@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Swal from "sweetalert2";
 
 export default function Salaries() {
   const [items, setItems] = useState([]);
@@ -13,29 +14,83 @@ export default function Salaries() {
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
-    salary_id: "",
     base_salary: "",
     salaryPay_method: "",
     salaryPay_date: "",
-    overtime_pay: "",
+    employee_role: "",
     workshift_schedule: "",
     attendance_count: "",
     leave_count: "",
     performance_notes: "",
   });
 
-  const resetForm = () =>
+  const [errors, setErrors] = useState({});
+
+  const resetForm = () => {
     setForm({
-      salary_id: "",
       base_salary: "",
       salaryPay_method: "",
       salaryPay_date: "",
-      overtime_pay: "",
+      employee_role: "",
       workshift_schedule: "",
       attendance_count: "",
       leave_count: "",
       performance_notes: "",
     });
+    setErrors({});
+  };
+
+  const isValidDate = (str) => {
+    if (!str) return false;
+    const d = new Date(str);
+    return !Number.isNaN(d.getTime());
+  };
+
+  function validate(values) {
+    const e = {};
+
+    if (values.base_salary === "" || Number(values.base_salary) <= 0) {
+      e.base_salary = "Base salary must be greater than 0.";
+    }
+
+    if (!String(values.salaryPay_method || "").trim()) {
+      e.salaryPay_method = "Pay method is required.";
+    }
+
+    if (!String(values.salaryPay_date || "").trim()) {
+      e.salaryPay_date = "Pay date is required.";
+    } else if (!isValidDate(values.salaryPay_date)) {
+      e.salaryPay_date = "Pay date is invalid.";
+    }
+
+    if (!String(values.employee_role || "").trim()) {
+      e.employee_role = "Employee role is required.";
+    }
+
+    if (!String(values.workshift_schedule || "").trim()) {
+      e.workshift_schedule = "Workshift schedule is required.";
+    }
+
+    if (values.attendance_count === "") {
+      e.attendance_count = "Attendance count is required (use 0 if none).";
+    } else if (
+      !Number.isFinite(Number(values.attendance_count)) ||
+      Number(values.attendance_count) < 0
+    ) {
+      e.attendance_count = "Attendance must be 0 or more.";
+    }
+
+    if (values.leave_count === "") {
+      e.leave_count = "Leave count is required (use 0 if none).";
+    } else if (
+      !Number.isFinite(Number(values.leave_count)) ||
+      Number(values.leave_count) < 0
+    ) {
+      e.leave_count = "Leave must be 0 or more.";
+    }
+
+    return e;
+  }
 
   async function fetchSalaries() {
     try {
@@ -62,28 +117,22 @@ export default function Salaries() {
 
   async function onCreate(e) {
     e.preventDefault();
-    if (
-      !form.salary_id ||
-      !form.base_salary ||
-      !form.salaryPay_method ||
-      !form.salaryPay_date
-    ) {
-      toast.error(
-        "Please fill Salary ID, Base Salary, Pay Method, and Pay Date."
-      );
+
+    const validationErrors = validate(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
     const payload = {
-      salary_id: String(form.salary_id).trim(),
       base_salary: Number(form.base_salary),
       salaryPay_method: String(form.salaryPay_method || "").trim(),
       salaryPay_date: String(form.salaryPay_date || "").trim(),
-      overtime_pay: form.overtime_pay === "" ? 0 : Number(form.overtime_pay),
+      employee_role: String(form.employee_role),
       workshift_schedule: String(form.workshift_schedule || "").trim(),
-      attendance_count:
-        form.attendance_count === "" ? 0 : Number(form.attendance_count),
-      leave_count: form.leave_count === "" ? 0 : Number(form.leave_count),
+      attendance_count: Number(form.attendance_count),
+      leave_count: Number(form.leave_count),
       performance_notes: String(form.performance_notes || "").trim(),
     };
 
@@ -111,36 +160,42 @@ export default function Salaries() {
   function startEdit(p) {
     setEditId(p.salary_id);
     setForm({
-      salary_id: p.salary_id ?? "",
       base_salary: p.base_salary ?? "",
       salaryPay_method: p.salaryPay_method ?? "",
       salaryPay_date: (p.salaryPay_date ?? "").slice(0, 10),
-      overtime_pay: p.overtime_pay ?? "",
+      employee_role: p.employee_role ?? "",
       workshift_schedule: p.workshift_schedule ?? "",
       attendance_count: p.attendance_count ?? "",
       leave_count: p.leave_count ?? "",
       performance_notes: p.performance_notes ?? "",
     });
+    setErrors({});
     setOpen(true);
   }
 
   async function onUpdate(e) {
     e.preventDefault();
+
+    const validationErrors = validate(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast.error("Please fix the highlighted fields.");
+      return;
+    }
+
     if (!editId) {
       toast.error("Missing salary_id for update");
       return;
     }
 
     const payload = {
-      salary_id: String(form.salary_id).trim(),
       base_salary: Number(form.base_salary),
       salaryPay_method: String(form.salaryPay_method || "").trim(),
       salaryPay_date: String(form.salaryPay_date || "").trim(),
-      overtime_pay: form.overtime_pay === "" ? 0 : Number(form.overtime_pay),
+      employee_role: String(form.employee_role),
       workshift_schedule: String(form.workshift_schedule || "").trim(),
-      attendance_count:
-        form.attendance_count === "" ? 0 : Number(form.attendance_count),
-      leave_count: form.leave_count === "" ? 0 : Number(form.leave_count),
+      attendance_count: Number(form.attendance_count),
+      leave_count: Number(form.leave_count),
       performance_notes: String(form.performance_notes || "").trim(),
     };
 
@@ -149,10 +204,16 @@ export default function Salaries() {
       await axios.put(
         `${
           import.meta.env.VITE_BACKEND_URL
-        }/api/employeeSalary/${encodeURIComponent(form.salary_id)}`,
+        }/api/employeeSalary/${encodeURIComponent(editId)}`,
         payload
       );
-      toast.success("Salary record updated");
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your request has been updated",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       setOpen(false);
       setEditId(null);
       resetForm();
@@ -174,12 +235,30 @@ export default function Salaries() {
       toast.error("Missing salary_id");
       return;
     }
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       setBusy(true);
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/employeeSalary/${key}`
       );
-      toast.success("Salary record deleted");
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Salary record has been deleted.",
+        icon: "success",
+      });
+
       fetchSalaries();
     } catch (err) {
       toast.error(
@@ -202,11 +281,10 @@ export default function Salaries() {
       startY: 25,
       head: [
         [
-          "Salary ID",
           "Base Salary",
           "Pay Method",
           "Pay Date",
-          "Overtime",
+          "Employee Role",
           "Workshift",
           "Attendance",
           "Leave",
@@ -214,11 +292,10 @@ export default function Salaries() {
         ],
       ],
       body: items.map((p) => [
-        p.salary_id ?? "-",
         p.base_salary ?? "-",
         p.salaryPay_method ?? "-",
         p.salaryPay_date ?? "-",
-        p.overtime_pay ?? "-",
+        p.employee_role ?? "-",
         p.workshift_schedule ?? "-",
         p.attendance_count ?? "-",
         p.leave_count ?? "-",
@@ -243,7 +320,7 @@ export default function Salaries() {
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-2xl font-semibold text-black">Salaries</h1>
+          <h1 className="text-2xl font-semibold text-black">Manage Employee Details</h1>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -267,76 +344,85 @@ export default function Salaries() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-black text-white">
+        {/* table (styled like membershipPlan.jsx) */}
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
+          <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+            <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
               <tr>
-                <th className="px-3 py-2 text-left">Salary ID</th>
-                <th className="px-3 py-2 text-left">Base Salary</th>
-                <th className="px-3 py-2 text-left">Pay Method</th>
-                <th className="px-3 py-2 text-left">Pay Date</th>
-                <th className="px-3 py-2 text-left">Overtime</th>
-                <th className="px-3 py-2 text-left">Workshift</th>
-                <th className="px-3 py-2 text-left">Attendance</th>
-                <th className="px-3 py-2 text-left">Leave</th>
-                <th className="px-3 py-2 text-left">Performance Notes</th>
-                <th className="px-3 py-2 text-left">Actions</th>
+                <th className="w-20 px-4 py-3">Salary ID</th>
+                <th className="w-28 px-4 py-3">Base Salary</th>
+                <th className="w-40 px-4 py-3">Pay Method</th>
+                <th className="w-28 px-4 py-3">Pay Date</th>
+                <th className="w-40 px-4 py-3">Employee Role</th>
+                <th className="w-40 px-4 py-3">Workshift</th>
+                <th className="w-28 px-4 py-3">Attendance</th>
+                <th className="w-28 px-4 py-3">Leave</th>
+                <th className="w-[230px] px-4 py-3 text-left">
+                  Performance Notes
+                </th>
+                <th className="w-32 px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
+
+            <tbody className="divide-y divide-gray-500">
               {busy && (
                 <tr>
                   <td
                     colSpan={11}
-                    className="px-3 py-4 text-center text-neutral-500"
+                    className="px-4 py-3 text-center text-neutral-500"
                   >
                     Loading…
                   </td>
                 </tr>
               )}
+
               {!busy && items.length === 0 && (
                 <tr>
                   <td
                     colSpan={11}
-                    className="px-3 py-4 text-center text-neutral-500"
+                    className="px-4 py-3 text-center text-neutral-500"
                   >
                     No salary data found.
                   </td>
                 </tr>
               )}
+
               {!busy &&
                 items.map((p) => (
-                  <tr
-                    key={p._id ?? p.salary_id}
-                    className="border-t border-black/10"
-                  >
-                    <td className="px-3 py-2 font-mono">
+                  <tr key={p._id ?? p.salary_id} className="align-top">
+                    <td className="w-20 px-4 py-3 font-mono">
                       {p.salary_id ?? "-"}
                     </td>
-                    <td className="px-3 py-2">{money(p.base_salary)}</td>
-                    <td className="px-3 py-2">{p.salaryPay_method ?? "-"}</td>
-                    <td className="px-3 py-2">
+                    <td className="w-28 px-4 py-3">{money(p.base_salary)}</td>
+                    <td className="w-40 px-4 py-3">
+                      {p.salaryPay_method ?? "-"}
+                    </td>
+                    <td className="w-28 px-4 py-3">
                       {p.salaryPay_date
                         ? String(p.salaryPay_date).slice(0, 10)
                         : "-"}
                     </td>
-                    <td className="px-3 py-2">{money(p.overtime_pay)}</td>
-                    <td className="px-3 py-2">{p.workshift_schedule ?? "-"}</td>
-                    <td className="px-3 py-2">{p.attendance_count ?? "-"}</td>
-                    <td className="px-3 py-2">{p.leave_count ?? "-"}</td>
-                    <td className="px-3 py-2 max-w-[280px] truncate">
+                    <td className="w-40 px-4 py-3">{p.employee_role ?? "-"}</td>
+                    <td className="w-40 px-4 py-3">
+                      {p.workshift_schedule ?? "-"}
+                    </td>
+                    <td className="w-28 px-4 py-3">
+                      {p.attendance_count ?? "-"}
+                    </td>
+                    <td className="w-28 px-4 py-3">{p.leave_count ?? "-"}</td>
+                    <td className="w-[230px] px-4 py-3 whitespace-pre-line break-words">
                       {p.performance_notes ?? "-"}
                     </td>
-                    <td className="px-3 py-2">
-                      <div className="flex items-center gap-2">
+                    <td className="w-32 px-4 py-3">
+                      <div className="flex justify-evenly">
                         <button
-                          className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+                          className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 mr-[5px]"
                           onClick={() => startEdit(p)}
                         >
-                          Edit
+                          Update
                         </button>
                         <button
-                          className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
+                          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
                           onClick={() => deleteSalary(p)}
                         >
                           Delete
@@ -358,9 +444,6 @@ export default function Salaries() {
                 <h2 className="text-lg font-semibold text-black">
                   {editId ? "Update Salary" : "Add Salary"}
                 </h2>
-                <p className="text-xs text-gray-500">
-                  Keep it short & accurate.
-                </p>
               </div>
               <button
                 type="button"
@@ -378,16 +461,13 @@ export default function Salaries() {
             <form
               onSubmit={editId ? onUpdate : onCreate}
               className="space-y-6 p-6"
+              noValidate
             >
-              {/* Two-column section */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">
-                    Base Salary *
+                    Base Salary
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Gross monthly amount before extras.
-                  </p>
                   <input
                     type="number"
                     name="base_salary"
@@ -396,18 +476,22 @@ export default function Salaries() {
                     onChange={(e) =>
                       setForm({ ...form, base_salary: e.target.value })
                     }
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.base_salary ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
+                  {errors.base_salary && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.base_salary}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">
-                    Pay Date *
+                    Pay Date
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Calendar date this salary is paid.
-                  </p>
+
                   <input
                     type="date"
                     name="salaryPay_date"
@@ -415,18 +499,24 @@ export default function Salaries() {
                     onChange={(e) =>
                       setForm({ ...form, salaryPay_date: e.target.value })
                     }
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.salaryPay_date
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
+                  {errors.salaryPay_date && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.salaryPay_date}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">
-                    Pay Method *
+                    Pay Method
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    How the employee is paid (cash, bank transfer, etc.).
-                  </p>
+
                   <input
                     name="salaryPay_method"
                     placeholder="Cash, Bank transfer…"
@@ -434,18 +524,51 @@ export default function Salaries() {
                     onChange={(e) =>
                       setForm({ ...form, salaryPay_method: e.target.value })
                     }
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.salaryPay_method
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
+                  {errors.salaryPay_method && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.salaryPay_method}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Employee Role
+                  </label>
+                  <select
+                    name="employee_role"
+                    value={form.employee_role}
+                    onChange={(e) =>
+                      setForm({ ...form, employee_role: e.target.value })
+                    }
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.employee_role
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">— Select a role —</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Trainer">Trainer</option>
+                    <option value="Equipment Manager">Equipment Manager</option>
+                  </select>
+                  {errors.employee_role && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.employee_role}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">
                     Workshift Schedule
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Typical working hours or rotation.
-                  </p>
                   <input
                     name="workshift_schedule"
                     placeholder="e.g. Mon–Fri 8:00–16:00"
@@ -453,57 +576,73 @@ export default function Salaries() {
                     onChange={(e) =>
                       setForm({ ...form, workshift_schedule: e.target.value })
                     }
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.workshift_schedule
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
-                </div>
-
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">
-                    Overtime Payment
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Total overtime pay for this period.
-                  </p>
-                  <input
-                    type="number"
-                    name="overtime_pay"
-                    placeholder="LKR"
-                    value={form.overtime_pay}
-                    onChange={(e) =>
-                      setForm({ ...form, overtime_pay: e.target.value })
-                    }
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
+                  {errors.workshift_schedule && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.workshift_schedule}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">
                     Attendance Count
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Number of days present in the period.
-                  </p>
+
                   <input
                     type="number"
                     name="attendance_count"
-                    min="0"
                     placeholder="0"
                     value={form.attendance_count}
                     onChange={(e) =>
                       setForm({ ...form, attendance_count: e.target.value })
                     }
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.attendance_count
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
+                  {errors.attendance_count && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.attendance_count}
+                    </p>
+                  )}
                 </div>
 
-                {/* ROW: Leave Count + Performance Notes */}
-                <div className="flex flex-col">
+                <div>
                   <label className="block mb-1 text-sm font-medium text-black">
-                    Performance Notes
+                    Leave Count
                   </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Any comments, adjustments, or remarks for this cycle.
-                  </p>
+
+                  <input
+                    type="number"
+                    name="leave_count"
+                    placeholder="0"
+                    value={form.leave_count}
+                    onChange={(e) =>
+                      setForm({ ...form, leave_count: e.target.value })
+                    }
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 ${
+                      errors.leave_count ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                  {errors.leave_count && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.leave_count}
+                    </p>
+                  )}
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block mb-1 text-sm font-medium text-black">
+                    Performance Notes (optional)
+                  </label>
                   <textarea
                     name="performance_notes"
                     placeholder="Description"
@@ -512,31 +651,20 @@ export default function Salaries() {
                       setForm({ ...form, performance_notes: e.target.value })
                     }
                     rows={4}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 resize-y"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-red-500 resize-y ${
+                      errors.performance_notes
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
-                </div>
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">
-                    Leave Count
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Approved leave days in the period.
-                  </p>
-                  <input
-                    type="number"
-                    name="leave_count"
-                    min="0"
-                    placeholder="0"
-                    value={form.leave_count}
-                    onChange={(e) =>
-                      setForm({ ...form, leave_count: e.target.value })
-                    }
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                  />
+                  {errors.performance_notes && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.performance_notes}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Footer */}
               <div className="flex items-center justify-between">
                 <button
                   type="button"

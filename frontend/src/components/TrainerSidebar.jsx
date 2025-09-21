@@ -15,8 +15,7 @@ const idleStyle =
 
 const navItems = [
   { to: "/trainerDashboard/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/trainerDashboard/reqMeals", label: "User Requests", icon: ArrowDownToDot  },
-  { to: "/trainerDashboard/mealPlans", label: "Meal Plans", icon: HandPlatter },
+  { to: "/trainerDashboard/reqMeals", label: "User Requests", icon: HandPlatter  },
   { to: "/trainerDashboard/challenges", label: "Challenges", icon: Trophy },
 
 ];
