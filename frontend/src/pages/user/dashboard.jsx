@@ -1,22 +1,22 @@
 import axios from "axios";
 import { Phone, Mail, MessageSquare, Medal } from "lucide-react";
 import { useEffect, useState } from "react";
-import Profilepic from "../../assets/default-avatar.png"
+import Profilepic from "../../assets/default-avatar.png";
 import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const [loaded, setLoaded] = useState(false);
   const userData = JSON.parse(localStorage.getItem("user"));
   const fullName = userData.firstName + " " + userData.lastName;
   const token = localStorage.getItem("token");
-  const navigate=useNavigate();
-  
+  const navigate = useNavigate();
+
   console.log(userData);
-  if(userData.role!="user"&&userData.role!="member"){
-    navigate("/login");
-  }
 
   console.log(userData);
   useEffect(() => {
+    if (userData.role != "user" && userData.role != "member") {
+      return navigate("/login");
+    }
     if (!loaded) {
       axios
         .get(import.meta.env.VITE_BACKEND_URL + "/api/user/getUser", {
@@ -44,9 +44,7 @@ export default function Dashboard() {
               className="h-24 w-24 rounded-full object-cover ring-8 ring-slate-100"
             />
             <div className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full bg-white shadow ring-1 ring-slate-200">
-              <div className="h-7 w-7 flex items-center justify-center rounded-full border-2 border-green-200 bg-green-500 text-emerald-700 text-sm font-semibold">
-                
-              </div>
+              <div className="h-7 w-7 flex items-center justify-center rounded-full border-2 border-green-200 bg-green-500 text-emerald-700 text-sm font-semibold"></div>
             </div>
           </div>
           <h2 className="mt-4 text-lg font-semibold text-slate-900">
