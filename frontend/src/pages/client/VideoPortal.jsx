@@ -3,6 +3,8 @@ import axios from "axios";
 import VideoCard from "../../components/VideoCard";
 import toast from "react-hot-toast";
 import Header from "../../components/header";
+import HomeFooter from "../../components/homeFooter";
+import ChatBot from "../../components/ChatBot/chatBot";
 
 const RAW_BASE = import.meta.env.VITE_BACKEND_URL;
 const API_BASE = RAW_BASE.replace(/\/+$/, "");
@@ -19,7 +21,6 @@ export default function VideoPortal() {
       .then((res) => {
         setVideos(res.data || []);
 
-        
         const cats = Array.from(
           new Set((res.data || []).map((v) => v.category).filter(Boolean))
         );
@@ -31,8 +32,7 @@ export default function VideoPortal() {
         setVideos([]);
         setCategories([]);
       });
-  }, []); 
-
+  }, []);
 
   const filteredVideos = (videos || [])
     .filter((v) => v.isPublished !== false)
@@ -91,7 +91,16 @@ export default function VideoPortal() {
           </div>
         </aside>
 
+        {/* Main content */}
         <main className="flex-1 mx-auto max-w-6xl px-6 py-6">
+          {/* ✅ Heading + slogan */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-800">Video Portal</h1>
+            <p className="text-gray-500 mt-2">
+              Explore training videos from our expert coaches and boost your fitness journey.
+            </p>
+          </div>
+
           {!videos ? (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -114,6 +123,8 @@ export default function VideoPortal() {
           )}
         </main>
       </div>
+      <ChatBot />
+      <HomeFooter />
     </div>
   );
 }

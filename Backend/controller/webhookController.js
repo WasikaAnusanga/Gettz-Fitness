@@ -49,7 +49,7 @@ export async function handleWebhook(req, res) {
             { $sort: { count: -1 } },
             { $limit: 1 },
           ]);
-           sendPaymentReciept(email,session.id)
+           await sendPaymentReciept(email,session.id)
           const plan=await MembershipPlan.findById(top)
           plan.popular=true;
           
