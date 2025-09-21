@@ -286,8 +286,8 @@ import {
   Search as SearchIcon,
   Trophy,
 } from "lucide-react";
-import Header from "../../components/header";
 import Leaderboard from "../leaderboard";
+import Loader from "../../components/loader-animate2";
 
 function getAxiosError(err) {
   const data = err?.response?.data;
@@ -357,9 +357,8 @@ export default function Competitions() {
 
   if (loading) {
     return (
-      <div className="w-full min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#e30613]" size={32} />
-        <p className="ml-2 text-sm text-neutral-600">Loading competitions…</p>
+      <div className="w-full min-h-screen flex items-center justify-center bg-white">
+        <Loader />
       </div>
     );
   }
@@ -455,8 +454,7 @@ export default function Competitions() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-rose-100 via-white to-amber-50 text-black p-6 flex flex-col items-center">
-      <Header />
-      <div className="w-full max-w-[1600px] px-4 lg:px-6 mt-16">
+      <div className="w-full max-w-[1600px] px-4 lg:px-6">
         {/* Header and Search Bar in one row */}
         <div className="flex items-center justify-between mb-6 w-full gap-4 flex-wrap">
           <h1 className="text-3xl font-extrabold flex items-center gap-2 bg-gradient-to-r from-[#e30613] to-red-600 text-transparent bg-clip-text">

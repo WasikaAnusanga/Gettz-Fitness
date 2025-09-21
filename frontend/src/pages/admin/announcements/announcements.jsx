@@ -109,7 +109,7 @@ export default function AnnouncementDetailsPage() {
         notifi.type,
         notifi.title,
         notifi.deliveryTo,
-        notifi.createdBy,
+        // notifi.createdBy,
         new Date(notifi.createdAt).toLocaleDateString(),
       ]),
       theme: 'grid',
@@ -180,7 +180,7 @@ export default function AnnouncementDetailsPage() {
                   <th className="w-28 px-4 py-3">Type</th>
                   <th className="w-40 px-4 py-3">Title</th>
                   <th className="w-28 px-4 py-3">Delivery To</th>
-                  <th className="w-28 px-4 py-3">Created By</th>
+                  {/* <th className="w-28 px-4 py-3">Created By</th> */}
                   <th className="w-28 px-4 py-3">Sent Date</th>
                   <th className="w-32 px-4 py-3 text-center">Actions</th>
                 </tr>
@@ -204,7 +204,7 @@ export default function AnnouncementDetailsPage() {
                     <td className="w-28 px-4 py-3">{notifi.type}</td>
                     <td className="w-40 px-4 py-3 font-medium text-gray-900">{notifi.title}</td>
                     <td className="w-28 px-4 py-3">{notifi.deliveryTo}</td>
-                    <td className="w-28 px-4 py-3">{notifi.createdBy}</td>
+                    {/* <td className="w-28 px-4 py-3">{notifi.createdBy}</td> */}
                     <td className="w-28 px-4 py-3">{new Date(notifi.createdAt).toLocaleDateString()}</td>
                     <td className="w-32 px-4 py-3">
                       <div className="flex justify-evenly">
