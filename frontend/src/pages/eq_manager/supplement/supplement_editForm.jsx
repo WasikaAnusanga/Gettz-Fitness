@@ -11,6 +11,7 @@ import {
     Layers,
     FileText,
     User,
+    Banknote
 } from "lucide-react";
 
 function getAxiosError(err) {
@@ -272,11 +273,12 @@ export default function SupplementEditPage() {
                         <div>
                             <label className="block text-sm font-medium mb-1">Price</label>
                             <div className="relative">
-                                <Layers size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                <Banknote size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                                 <input
                                     type="number"
+                                    min="0"
                                     value={Sup_price}
-                                    onChange={(e) => setPrice(e.target.value)}
+                                    onChange={(e) => setPrice(e.target.value < 0) ? 0 : e.target.value}
                                     placeholder="2500"
                                     className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                 />
@@ -286,13 +288,17 @@ export default function SupplementEditPage() {
                         {/* qty */}
                         <div>
                             <label className="block text-sm font-medium mb-1">Quantity</label>
-                            <input
-                                type="number"
-                                value={Sup_quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                                placeholder="100"
-                                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-                            />
+                            <div className="relative">
+                                <Layers size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={Sup_quantity}
+                                    onChange={(e) => setQuantity(e.target.value < 0) ? 0 : e.target.value}
+                                    placeholder="100"
+                                    className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                                />
+                            </div>
                         </div>
 
                         {/* img url */}

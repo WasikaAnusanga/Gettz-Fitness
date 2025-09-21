@@ -60,7 +60,7 @@ export default function EquipmentManagerLayout() {
               <Route path="purchases/edit/:code" element={<PurchaseEditPage />} />
               <Route path="orders" element={<OrdersPage />} />
 
-              {/* Fallback */}
+              {/* fallback */}
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
           </div>
