@@ -3,6 +3,7 @@ import User from "../model/user.js";
 import Admin from "../model/admin.js";
 import Challenge from "../model/challenge.js";
 import UserChallenge from "../model/userChallenge.js";
+import { createNotificationForUser } from "./notificatinController.js";
 
 export async function viewChallenges(req, res) {
   try {
@@ -254,6 +255,28 @@ export async function completeUserChallenge(req, res) {
       { $inc: { point: challenge.points } },
       { new: true }
     );
+
+     // Create notification using your existing function
+    const mockReq = {
+      body: {
+        title: `Earned ${challenge.points} Points 🎖️🎉`,
+        body: `You earned points for completing the "${challenge.title}" challenge!`,
+        type: "promotional",
+        userId: userId.toString()
+      },
+      user: req.user // Pass the original user object
+    };
+
+    // Create a simple mock response that won't interfere with the main response
+    const mockRes = {
+      status: () => mockRes,
+      json: () => {} // Do nothing with the response
+    };
+
+    // Call your existing function without awaiting (to avoid response conflicts)
+    createNotificationForUser(mockReq, mockRes).catch(err => {
+      console.error("Notification creation failed:", err);
+    });
 
     return res.status(200).json({
       message: "Challenge marked as completed and points awarded.",
