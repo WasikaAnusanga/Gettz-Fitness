@@ -24,13 +24,21 @@ export const addPurchase = async (req, res) => {
     req.user = { role: "Equipment Manager" };
     if (req.user.role == "Equipment Manager") {
         const {
-            P_code,
             P_date,
             P_cost,
             P_quantiy,
             P_item,
             P_note
         } = req.body;
+        const last = await Purchase.find().sort({ _id: -1 }).limit(1);
+        let P_code;
+        if (last.length === 0) {
+            P_code = 1;
+        } else {
+            const lastCodeRaw = last[0]?.P_code;
+            const lastCodeNum = Number(String(lastCodeRaw).replace(/\D/g, "")) || 0;
+            P_code = lastCodeNum + 1;
+        }
         let purchase;
         try {
             purchase = new Purchase({

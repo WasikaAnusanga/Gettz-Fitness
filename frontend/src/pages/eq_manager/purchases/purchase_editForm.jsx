@@ -112,7 +112,7 @@ export default function PurchaseEditPage() {
             );
 
             toast.success("Purchase updated");
-            navigate("..", { replace: true });
+            navigate("/eq_manager/purchases", { replace: true });
         } catch (err) {
             toast.error(`Update failed: ${getAxiosError(err)}`);
         } finally {
@@ -197,7 +197,7 @@ export default function PurchaseEditPage() {
                                     min="0"
                                     step="0.01"
                                     value={P_cost}
-                                    onChange={(e) => setCost(e.target.value < 0) ? 0 : e.target.value}
+                                    onChange={(e) => setCost(e.target.value)}
                                     className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                 />
                             </div>
@@ -213,7 +213,7 @@ export default function PurchaseEditPage() {
                                 type="number"
                                 min="0"
                                 value={P_quantiy}
-                                onChange={(e) => setQty(e.target.value < 0) ? 0 : e.target.value}
+                                onChange={(e) => setQty(e.target.value)}
                                 className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                             />
                             </div>

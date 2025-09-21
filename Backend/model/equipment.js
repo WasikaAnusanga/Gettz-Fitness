@@ -1,10 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
-const counterSchema = new Schema(
-    { _id: { type: String, required: true }, seq: { type: Number, default: 100 } },
-    { versionKey: false }
-);
-const Counter = mongoose.model("AppCounter2", counterSchema, "app_counters");
+
+
 
 //equipment schema
 const EquipmentSchema = new Schema({
