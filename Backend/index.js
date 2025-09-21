@@ -76,11 +76,13 @@ app.use("/api/admin", adminRouter);
 app.use("/api/logging",loggingRouter);
 app.use("/api/equipmentManager",equipmentManagerRouter);
 
-app.use("/api/equipment",equipmentRouter);
+
 app.use("/api/mealPlan", mealPlanRouter);
 app.use("/api/employeeSalary", employeeSalaryRouter);
 app.use("/api/employeeSalarayRecords", employeeSalaryRecordsRouter);
 app.use("/api/mealRequest", mealRequestRouter);
+
+app.use("/api/equipment",equipmentRouter);
 app.use("/api/supplement",supplementRouter);
 app.use("/api/purchase",purchaseRouter);
 app.use("/api/maintenanceLogs",maintenanceLogsRouter);
