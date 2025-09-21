@@ -17,8 +17,7 @@ const activeStyle =
 const idleStyle =
   "text-gray-700 hover:text-red-600 hover:bg-gray-100";
 
-  //change the path directions accordingly
-  //dummy paths are here for now
+
 const navItems = [
   { to: "/eq_manager", label: "Dashboard", icon: LayoutDashboard}, 
   { to: "/eq_manager/equipment", label: "Equipment", icon: Dumbbell },
