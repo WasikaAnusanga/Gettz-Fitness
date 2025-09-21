@@ -1,10 +1,13 @@
 import mongoose from 'mongoose' ;
-import Counter from './counter.js';
+import generateID from "../utils/idGenerator.js";
 
 const trainerSchema = new mongoose.Schema({
     trainerId:{
         type: String,
-        unique: true
+        unique: true,
+        default : function () {
+        return "Trainer" + generateID()
+    }
     },
      name: {
         type: String,
@@ -78,16 +81,6 @@ const trainerSchema = new mongoose.Schema({
   },
 
 })
-trainerSchema.pre("save",async function(next){
-    if(this.isNew){
-        const counter = await Counter.findByIdAndUpdate(
-            { _id: 'trainerId' },
-            { $inc: { seq: 1 } },
-            { new: true, upsert: true }
-        );
-        this.trainerId = `TRN0${counter.seq}`;
-    }
-    next();
-})
+
 const Trainer = mongoose.model('Trainer', trainerSchema);
 export default Trainer;

@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
+import generateID from "../utils/idGenerator.js";
 const liveSessionSchema = new mongoose.Schema({
-    sessionId: { type: String, required: true, unique: true },
+    sessionId: { type: String, required: true, unique: true ,
+        default : function () {
+      return "Live" + generateID()
+    }
+    },
     title: { type: String, required: true },
     description: { type: String },
     trainerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Trainer', required: true },
