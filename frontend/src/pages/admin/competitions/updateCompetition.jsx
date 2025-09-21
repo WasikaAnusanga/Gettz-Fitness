@@ -186,7 +186,7 @@ export default function EditCompetition() {
             <input
               type="number"
               value={points}
-              onChange={(e) => setPoints(e.target.value)}
+              onChange={(e) => setPoints((e.target.value < 0) ? 0 : e.target.value)}
               className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm"
               placeholder="100"
             />

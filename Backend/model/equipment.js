@@ -9,7 +9,7 @@ const Counter = mongoose.model("AppCounter2", counterSchema, "app_counters");
 //equipment schema
 const EquipmentSchema = new Schema({
     Eq_code: {
-        type: String,
+        type: Number,
         unique: true,
         required: true,
         trim: true
@@ -44,29 +44,6 @@ const EquipmentSchema = new Schema({
     }
 
 });
-
-const CODE_PREFIX = "EQ-";
-const PAD = 4;
-EquipmentSchema.pre("validate", async function (next) {
-    try {
-        if (!this.isNew || this.Eq_code) return next();
-
-        // increment the counter atomically
-        const counter = await Counter.findOneAndUpdate(
-            { _id: "equipment" },
-            { $inc: { seq: 1 } },
-            { new: true, upsert: true }
-        );
-
-        const code = `${CODE_PREFIX}${String(counter.seq).padStart(PAD, "0")}`;
-        this.Eq_code = code;
-
-        next();
-    } catch (err) {
-        next(err);
-    }
-});
-
 
 
 const Equipment = mongoose.model("Equipment", EquipmentSchema);
