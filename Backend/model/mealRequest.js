@@ -36,11 +36,7 @@ const mealRequestSchema = new Schema({
   height: {
     type: String,
   },
-
-  birthday: {
-    type: String,
-  },
-
+  
   description: {
     type: String,
   },

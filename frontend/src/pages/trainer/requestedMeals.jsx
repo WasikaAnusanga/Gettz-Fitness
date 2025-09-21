@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { useNavigate } from "react-router-dom"; // ✅ add this
+import { useNavigate } from "react-router-dom";
 
 export default function RequestedMeals() {
   // Data
@@ -13,8 +13,6 @@ export default function RequestedMeals() {
 
   // UI
   const [query, setQuery] = useState("");
-
-  const navigate = useNavigate(); // ✅ add this
 
   // -------- FETCH ----------
   async function fetchRequests() {
@@ -38,44 +36,23 @@ export default function RequestedMeals() {
 
   // -------- SEARCH ----------
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return requests;
+  const q = query.trim().toLowerCase();
+  if (!q) return requests;
 
-    return requests.filter((r) => {
-      const requestId = String(r.request_id ?? "").toLowerCase();
-      const userId = String(r.user_id ?? "").toLowerCase();
-      const userName = String(r.user_name ?? "").toLowerCase();
-      const reqDate = String(r.request_date ?? "").toLowerCase();
-      const weight = String(r.weight ?? "").toLowerCase();
-      const height = String(r.height ?? "").toLowerCase();
-      const lastName = String(r.last_name ?? "").toLowerCase();
-      const description = String(r.description ?? "").toLowerCase();
-      const mealType = String(r.mealType ?? "").toLowerCase();
-      const birthday = String(r.birthday ?? "").toLowerCase();
+  return requests.filter((r) =>
+    String(r.request_id ?? "").toLowerCase().includes(q)
+  );
+}, [query, requests]);
 
-      return (
-        requestId.includes(q) ||
-        userId.includes(q) ||
-        userName.includes(q) ||
-        reqDate.includes(q) ||
-        weight.includes(q) ||
-        height.includes(q) ||
-        lastName.includes(q) ||
-        description.includes(q) ||
-        mealType.includes(q) ||
-        birthday.includes(q)
-      );
-    });
-  }, [query, requests]);
 
   // Initial load
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  // -------- PDF (exports current filtered list) ----------
+  // -------- PDF ----------
   const handleDownloadPDF = () => {
-    const list = filtered; // export what user sees
+    const list = filtered; 
     const doc = new jsPDF();
 
     doc.setFontSize(16);
@@ -97,14 +74,12 @@ export default function RequestedMeals() {
         r.last_name ?? "-",
         r.description ?? "-",
         r.mealType ?? "-",
-        r.birthday ?? "-",
       ]),
       theme: "grid",
       headStyles: { fillColor: [0, 0, 0] }, // black header
       styles: { fontSize: 9 },
       columnStyles: {
         0: { cellWidth: 25 }, // Request ID
-        1: { cellWidth: 22 }, // User ID
         2: { cellWidth: 40 }, // Name
         3: { cellWidth: 28 }, // Date
         4: { cellWidth: 20 }, // Weight
@@ -112,7 +87,6 @@ export default function RequestedMeals() {
         6: { cellWidth: 30 }, // Last Name
         7: { cellWidth: 50 }, // Description
         8: { cellWidth: 25 }, // Meal Type
-        9: { cellWidth: 25 }, // Birthday
       },
     });
 
@@ -137,12 +111,12 @@ export default function RequestedMeals() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by request id, user, name…"
+                placeholder="Search by request id"
                 className="w-80 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
 
-            {/* Download PDF (green) */}
+            {/* Download PDF */}
             <button
               type="button"
               onClick={handleDownloadPDF}
@@ -154,27 +128,28 @@ export default function RequestedMeals() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-black text-white">
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
+          <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+            <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
               <tr>
-                <th className={headerCell}>Request ID</th>
-                <th className={headerCell}>User ID</th>
-                <th className={headerCell}>First Name</th>
-                <th className={headerCell}>Last Name</th>
-                <th className={headerCell}>Requested Date</th>
-                <th className={headerCell}>Description</th>
-                <th className={headerCell}>Meal Type</th>
-                <th className={headerCell}>Weight</th>
-                <th className={headerCell}>Height</th>
-                <th className={headerCell}>Birthday</th>
+                <th className="px-4 py-3 w-28">Request ID</th>
+                <th className="px-4 py-3 w-40">First Name</th>
+                <th className="px-4 py-3 w-40">Last Name</th>
+                <th className="px-4 py-3 w-36">Requested Date</th>
+                <th className="px-4 py-3 w-[360px]">Description</th>
+                <th className="px-4 py-3 w-32">Meal Type</th>
+                <th className="px-4 py-3 w-24">Weight</th>
+                <th className="px-4 py-3 w-24">Height</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {busy && (
                 <tr>
-                  <td className={cell} colSpan={6}>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-3 text-center text-neutral-500"
+                  >
                     Loading…
                   </td>
                 </tr>
@@ -182,7 +157,10 @@ export default function RequestedMeals() {
 
               {!busy && filtered.length === 0 && (
                 <tr>
-                  <td className={cell} colSpan={6}>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-3 text-center text-neutral-500"
+                  >
                     No requests found
                   </td>
                 </tr>
@@ -192,23 +170,23 @@ export default function RequestedMeals() {
                 filtered.map((r) => {
                   const key = r._id ?? r.request_id;
                   return (
-                    <tr key={key} className="border-t border-black/10">
-                      <td className={`${cell} font-mono`}>
+                    <tr key={key} className="align-top">
+                      <td className="px-4 py-3 font-mono">
                         {String(r.request_id ?? "-")}
                       </td>
-                      <td className={cell}>{r.user_id ?? "-"}</td>
-                      <td className={cell}>{r.user_name ?? "-"}</td>
-                      <td className={cell}>{r.last_name ?? "-"}</td>
-                      <td className={cell}>
+                      <td className="px-4 py-3">{r.user_name ?? "-"}</td>
+                      <td className="px-4 py-3">{r.last_name ?? "-"}</td>
+                      <td className="px-4 py-3">
                         {r.request_date
                           ? String(r.request_date).slice(0, 10)
                           : "-"}
                       </td>
-                      <td className={cell}>{r.description ?? "-"}</td>
-                      <td className={cell}>{r.mealType ?? "-"}</td>
-                      <td className={cell}>{r.weight ?? "-"}</td>
-                      <td className={cell}>{r.height ?? "-"}</td>
-                      <td className={cell}>{r.birthday ?? "-"}</td>
+                      <td className="px-4 py-3 whitespace-pre-line break-words">
+                        {r.description ?? "-"}
+                      </td>
+                      <td className="px-4 py-3">{r.mealType ?? "-"}</td>
+                      <td className="px-4 py-3">{r.weight ?? "-"}</td>
+                      <td className="px-4 py-3">{r.height ?? "-"}</td>
                     </tr>
                   );
                 })}

@@ -6,13 +6,12 @@ import Swal from "sweetalert2";
 
 export default function MealPlan() {
   const [form, setForm] = useState({
-    user_id: "", // will fallback if not found in localStorage.user._id
+    user_id: "", 
     user_name: "",
     last_name: "",
     request_date: "",
     weight: "",
     height: "",
-    birthday: "",
     description: "",
     mealType: "Non-Vegan",
   });
@@ -27,7 +26,6 @@ export default function MealPlan() {
       request_date: "",
       weight: "",
       height: "",
-      birthday: "",
       description: "",
       mealType: "Non-Vegan",
     });
@@ -70,21 +68,6 @@ export default function MealPlan() {
           return "Weight must be between 20–300 kg";
         return null;
 
-      case "birthday":
-        if (!value) return "Birth date is required";
-        if (value > todayISO) return "Birth date cannot be in the future";
-        // optional age sanity check (10–100)
-        try {
-          const birth = new Date(value);
-          const age = Math.floor(
-            (Date.now() - birth.getTime()) / (365.25 * 24 * 3600 * 1000)
-          );
-          if (age < 10 || age > 100) return "Age must be between 10–100";
-        } catch {
-          return "Invalid birth date";
-        }
-        return null;
-
       case "description":
         if (!value?.trim()) return "Description is required";
         if (value.trim().length < 10)
@@ -109,7 +92,7 @@ export default function MealPlan() {
       "request_date",
       "height",
       "weight",
-      "birthday",
+
       "description",
       "mealType",
     ];
@@ -132,9 +115,10 @@ export default function MealPlan() {
     }
   }
 
-  function handleBlur(field) {  //onBlur fires when the user clicks away from a field or tabs to the next one.
-    const msg = validateField(field, form[field]);  //checks if the entered value is valid
-    setErrors((prev) => ({ ...prev, [field]: msg || undefined }));  
+  function handleBlur(field) {
+    //onBlur fires when the user clicks away from a field or tabs to the next one.
+    const msg = validateField(field, form[field]); //checks if the entered value is valid
+    setErrors((prev) => ({ ...prev, [field]: msg || undefined }));
   }
 
   //--------- CREATE ----------
@@ -175,7 +159,6 @@ export default function MealPlan() {
       request_date: form.request_date,
       weight: Number(form.weight),
       height: Number(form.height),
-      birthday: form.birthday,
       description: form.description.trim(),
       mealType: form.mealType,
     };
@@ -239,7 +222,7 @@ export default function MealPlan() {
         </div>
       </div>
 
-      {/* RIGHT SIDE (form) */}
+      {/* RIGHT SIDE */}
       <div className="w-1/2 bg-white items-center p-10 ">
         <form
           className="w-full max-w-lg space-y-6 ml-10"
@@ -440,32 +423,6 @@ export default function MealPlan() {
 
           {/* Birth Day | Meal Type */}
           <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block mb-1 text-sm font-medium text-black">
-                Birth Day
-              </label>
-              <p className="text-xs text-gray-500 mb-1">Your date of birth.</p>
-              <input
-                type="date"
-                value={form.birthday}
-                onChange={(e) => handleChange("birthday", e.target.value)}
-                onBlur={() => handleBlur("birthday")}
-                max={todayISO}
-                aria-invalid={!!errors.birthday}
-                aria-describedby={errId("birthday")}
-                className={`w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 ${
-                  errors.birthday
-                    ? "border-red-500 focus:ring-red-300"
-                    : "border-black/30 focus:ring-black/20"
-                }`}
-              />
-              {errors.birthday && (
-                <p id="birthday-error" className="mt-1 text-sm text-red-600">
-                  {errors.birthday}
-                </p>
-              )}
-            </div>
-
             <div className="flex-1">
               <label className="block mb-1 text-sm font-medium text-black">
                 Meal Type
