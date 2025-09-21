@@ -11,14 +11,12 @@ export async function viewChallenges(req, res) {
       return res.status(403).json({ message: "Please login to view challenges" });
     }
 
-    if (req.user.role !== "member" && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Login as a member to view challenges" });
-    }
+    // if (req.user.role !== "member" && req.user.role !== "admin") {
+    //   return res.status(403).json({ message: "Login as a member to view challenges" });
+    // }
 
-    // Fetch all challenges
     const challenges = await Challenge.find();
 
-    // Count participants for each challenge
     const counts = await UserChallenge.aggregate([
       { $group: { _id: "$CID", count: { $sum: 1 } } }
     ]);
@@ -28,7 +26,6 @@ export async function viewChallenges(req, res) {
       countMap[c._id.toString()] = c.count;
     });
 
-    // Map response
     const data = challenges.map((ch) => ({
       ...ch.toObject(),
       participantCount: countMap[ch._id.toString()] || 0,
@@ -196,10 +193,8 @@ export async function myJoinedChallenges(req, res) {
       ? new mongoose.Types.ObjectId(req.user._id)
       : req.user._id;
 
-    // Find all user challenge records and populate the Challenge info
     const rows = await UserChallenge.find({ user_id: userId }).populate("CID");
 
-    // Count participants for each challenge
     const counts = await UserChallenge.aggregate([
       { $group: { _id: "$CID", count: { $sum: 1 } } }
     ]);
@@ -216,6 +211,8 @@ export async function myJoinedChallenges(req, res) {
           ...ch,
           participantCount: countMap[ch._id.toString()] || 0,
           joinedAt: r.createdAt,
+          completed: r.completed, // include completion status
+          userChallengeId: r._id, 
         };
       });
 
@@ -229,11 +226,9 @@ export async function myJoinedChallenges(req, res) {
   }
 }
 
-// Mark a user's challenge as completed and award points (trainer only)
 export async function completeUserChallenge(req, res) {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-    // Only allow trainers (or admins if you wish)
     if (req.user.role !== "trainer" && req.user.role !== "admin") {
       return res.status(403).json({ message: "Only trainers or admins can complete challenges for users" });
     }
@@ -247,7 +242,6 @@ export async function completeUserChallenge(req, res) {
     userChallenge.completed = true;
     await userChallenge.save();
 
-    // Award points to user
     const challenge = userChallenge.CID;
     const userId = userChallenge.user_id;
     const updatedUser = await User.findByIdAndUpdate(
@@ -256,7 +250,6 @@ export async function completeUserChallenge(req, res) {
       { new: true }
     );
 
-     // Create notification using your existing function
     const mockReq = {
       body: {
         title: `Earned ${challenge.points} Points 🎖️🎉`,
@@ -264,16 +257,15 @@ export async function completeUserChallenge(req, res) {
         type: "promotional",
         userId: userId.toString()
       },
-      user: req.user // Pass the original user object
+      user: req.user 
     };
 
-    // Create a simple mock response that won't interfere with the main response
+    // Create a simple mock response won't interfere with the main response
     const mockRes = {
       status: () => mockRes,
       json: () => {} // Do nothing with the response
     };
 
-    // Call your existing function without awaiting (to avoid response conflicts)
     createNotificationForUser(mockReq, mockRes).catch(err => {
       console.error("Notification creation failed:", err);
     });
@@ -290,20 +282,16 @@ export async function completeUserChallenge(req, res) {
   }
 }
 
-// Get all user challenge participations with challenge and user info (for trainer approval UI)
 export async function getAllUserChallengeParticipations(req, res) {
   try {
-    // Only allow trainers or admins
     if (!req.user || (req.user.role !== "trainer" && req.user.role !== "admin")) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
-    // Find all user challenge participations and populate challenge and user info
     const participations = await UserChallenge.find()
       .populate("CID")
       .populate("user_id");
 
-    // Map to desired structure
     const result = participations.map((p) => ({
       _id: p._id,
       userChallengeId: p._id,
