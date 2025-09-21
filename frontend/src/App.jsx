@@ -22,7 +22,6 @@ import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
 import ReceiptPDF from "./pages/client/mySubscription/paymentReport";
 import UserDashboard from "./dashboard/userDashboard"
-
 function App() {
   const [count, setCount] = useState(0);
 

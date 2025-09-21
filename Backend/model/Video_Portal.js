@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
-import Counter from './counter.js';
+import generateID from "../utils/idGenerator.js";
 
 const videoSchema = new mongoose.Schema({
   videoId: {
     type: String,
     unique: true,
+    default : function () {
+      return "video" + generateID()
+    }
   },
   title: {
     type: String,
@@ -69,19 +72,6 @@ const videoSchema = new mongoose.Schema({
   },
    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }]
 })
-videoSchema.pre("save",async function(next){
-  if(this.isNew){
-    const counter = await Counter.findByIdAndUpdate(
-      {_id:'videoId'},
-      {$inc:{ seq:1 }},
-      {new : true, upsert:true}
-
-    );
-    this.videoId = `VID0${counter.seq}`;
-  }
-  next()
-});
-
 
 
 const Video = mongoose.model("Video", videoSchema);
