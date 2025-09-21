@@ -5,7 +5,7 @@ export const getAllSupplements= async (req ,res)=>{
     let supplement;
     //check
     try{
-        supplement= await Supplement.find();
+        supplement= await Supplement.find()
         if(!supplement){
             //not found
             return res.status(404).json({message:"Supplements not found"});

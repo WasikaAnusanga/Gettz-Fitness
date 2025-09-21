@@ -108,8 +108,8 @@ export default function Navbar() {
       "transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]",
       "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
       isActive
-        ? "text-white shadow-lg shadow-orange-200 bg-gradient-to-r from-red-500 to-orange-500"
-        : "text-gray-700 hover:text-white hover:shadow-lg hover:shadow-orange-200 hover:bg-gradient-to-r hover:from-red-500 hover:to-orange-500",
+        ? "text-white shadow-lg shadow-orange-200 bg-red-700 "
+        : "text-gray-700 hover:text-white hover:shadow-lg hover:shadow-orange-200 hover:bg-red-700",
     ].join(" ");
 
   const primaryBtn =
