@@ -11,9 +11,9 @@ export async function viewChallenges(req, res) {
       return res.status(403).json({ message: "Please login to view challenges" });
     }
 
-    if (req.user.role !== "member" && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Login as a member to view challenges" });
-    }
+    // if (req.user.role !== "member" && req.user.role !== "admin") {
+    //   return res.status(403).json({ message: "Login as a member to view challenges" });
+    // }
 
     // Fetch all challenges
     const challenges = await Challenge.find();
@@ -216,6 +216,8 @@ export async function myJoinedChallenges(req, res) {
           ...ch,
           participantCount: countMap[ch._id.toString()] || 0,
           joinedAt: r.createdAt,
+          completed: r.completed, // include completion status
+          userChallengeId: r._id, // optional: expose the user challenge record id
         };
       });
 
