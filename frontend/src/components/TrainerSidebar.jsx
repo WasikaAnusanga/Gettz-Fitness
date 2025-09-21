@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, Dumbbell, CalendarClock, Video,
-  Wrench, Pill, BadgePercent, Settings, Menu, HandPlatter, ArrowDownToDot 
+  Wrench, Pill, BadgePercent, Settings, Menu, HandPlatter, ArrowDownToDot, Trophy
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/trainerDashboard/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/trainerDashboard/reqMeals", label: "User Requests", icon: ArrowDownToDot  },
   { to: "/trainerDashboard/mealPlans", label: "Meal Plans", icon: HandPlatter },
+  { to: "/trainerDashboard/challenges", label: "Challenges", icon: Trophy },
 
 ];
 

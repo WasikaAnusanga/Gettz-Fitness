@@ -148,7 +148,7 @@ export default function EditAnnouncement() {
               className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm"
             >
               <option value="promotional">Promotional</option>
-              <option value="info">Info</option>
+              <option value="warning">Warning</option>
               <option value="membership">Membership</option>
             </select>
           </div>
