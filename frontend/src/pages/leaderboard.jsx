@@ -25,10 +25,9 @@ export default function Leaderboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-100 via-white to-red-200">
-      <Header/>
-      <header className="mt-15 border-b border-gray-200 bg-transparent">
-        <div className="mx-auto max-w-5xl px-4 py-10 text-center">
+    <div>
+      <header className="mt-1 border-b border-gray-200 bg-transparent">
+        <div className="mx-auto max-w-5xl px-4 text-center">
           <h1 className="text-4xl font-extrabold flex items-center justify-center gap-2 bg-gradient-to-r from-[#e30613] to-red-600 text-transparent bg-clip-text">
             <Crown className="text-yellow-400 drop-shadow" size={36} /> Leaderboard
           </h1>
@@ -38,7 +37,7 @@ export default function Leaderboard() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-10">
+      <main className="mx-auto max-w-5xl px-4 py-10">
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[...Array(5)].map((_, i) => (

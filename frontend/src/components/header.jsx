@@ -65,6 +65,7 @@ export default function Navbar() {
     return "Member";
   }, [user]);
 
+
   const avatarSrc = useMemo(() => {
     if (
       user?.avatar &&
