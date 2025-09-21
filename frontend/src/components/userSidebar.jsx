@@ -27,7 +27,12 @@ const navItems = [
   },
   {
     to: "/userDashboard/requestMeal",
-    label: "Request Meal",
+    label: "Requested Meal Plans",
+    icon: HandPlatter,
+  },
+  {
+    to: "/userDashboard/currentMeal",
+    label: "Current Meal Plans",
     icon: HandPlatter,
   },
   {

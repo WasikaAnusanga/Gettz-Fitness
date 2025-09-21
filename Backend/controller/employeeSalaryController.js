@@ -21,11 +21,10 @@ export const addEmployeeSalary = (req, res) => {
   req.user = { role: "Admin" };
   if (req.user.role == "Admin") {
     const salary = new EmployeeSalary({
-      salary_id: req.body.salary_id,
       base_salary: req.body.base_salary,
       salaryPay_method: req.body.salaryPay_method,
       salaryPay_date: req.body.salaryPay_date,
-      overtime_pay: req.body.overtime_pay,
+      employee_role: req.body.employee_role,
       workshift_schedule: req.body.workshift_schedule,
       attendance_count: req.body.attendance_count,
       leave_count: req.body.leave_count,
@@ -50,17 +49,16 @@ export const updateEmployeeSalary = (req, res) => {
   req.user = { role: "Admin" };
   if (req.user.role == "Admin") {
     const {
-      salary_id,
       base_salary,
       salaryPay_method,
       salaryPay_date,
-      overtime_pay,
+      employee_role,
       workshift_schedule,
       attendance_count,
       leave_count,
       performance_notes,
     } = req.body;
-
+    const salary_id = Number(req.params.id);
     EmployeeSalary.updateOne(
       { salary_id: salary_id },
       {
@@ -68,7 +66,7 @@ export const updateEmployeeSalary = (req, res) => {
           base_salary,
           salaryPay_method,
           salaryPay_date,
-          overtime_pay,
+          employee_role,
           workshift_schedule,
           attendance_count,
           leave_count,
@@ -92,7 +90,8 @@ export const updateEmployeeSalary = (req, res) => {
 export const deleteEmployeeSalary = (req, res) => {
   req.user = { role: "Admin" };
   if (req.user.role == "Admin") {
-    EmployeeSalary.findOneAndDelete({ salary_id: req.params.id })
+    const salary_id = Number(req.params.id);
+    EmployeeSalary.findOneAndDelete({ salary_id: salary_id })
       .then((response) => {
         res.status(200).json({
           message: "Delete Successful",

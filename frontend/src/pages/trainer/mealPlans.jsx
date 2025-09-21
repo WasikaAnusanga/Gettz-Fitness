@@ -13,22 +13,22 @@ export default function MealPlans() {
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
-    mealPlan_id: "",
-    user_id: "",
+    user_name: "",
     meal_name: "",
     description: "",
     meal_type: "",
     duration: "",
+    calaries: "",
   });
 
   const resetForm = () =>
     setForm({
-      mealPlan_id: "",
-      user_id: "",
+      user_name: "",
       meal_name: "",
       description: "",
       meal_type: "",
       duration: "",
+      calaries: "",
     });
 
   async function fetchMealPlans() {
@@ -57,25 +57,13 @@ export default function MealPlans() {
   async function onCreate(e) {
     e.preventDefault();
 
-    if (
-      !form.mealPlan_id ||
-      !form.user_id ||
-      !form.meal_name ||
-      !form.duration
-    ) {
-      toast.error(
-        "Please fill Meal Plan ID, User ID, Meal Name, and Duration."
-      );
-      return;
-    }
-
     const payload = {
-      mealPlan_id: Number(form.mealPlan_id),
-      user_id: Number(form.user_id),
+      user_name: String(form.user_name).trim(),
       meal_name: form.meal_name.trim(),
       description: form.description.trim(),
       meal_type: form.meal_type.trim(),
       duration: String(form.duration).trim(),
+      calaries: String(form.calaries).trim(),
     };
 
     try {
@@ -101,32 +89,28 @@ export default function MealPlans() {
   }
 
   function startEdit(p) {
-    setEditId(p.mealPlan_id ?? null);
+    setEditId(p.mealPlan_id);
     setForm({
-      mealPlan_id: p.mealPlan_id ?? "",
-      user_id: p.user_id ?? "",
+      user_name: p.user_name ?? "",
       meal_name: p.meal_name ?? "",
       description: p.description ?? "",
       meal_type: p.meal_type ?? "",
       duration: p.duration ?? "",
+      calaries: p.calaries ?? "",
     });
     setOpen(true);
   }
 
   async function onUpdate(e) {
     e.preventDefault();
-    if (!editId) {
-      toast.error("Missing mealPlan_id for update");
-      return;
-    }
 
     const payload = {
-      mealPlan_id: Number(form.mealPlan_id),
-      user_id: Number(form.user_id),
+      user_name: String(form.user_name).trim(),
       meal_name: form.meal_name.trim(),
       description: form.description.trim(),
       meal_type: form.meal_type.trim(),
       duration: String(form.duration).trim(),
+      calaries: String(form.calaries).trim(),
     };
 
     try {
@@ -183,52 +167,39 @@ export default function MealPlans() {
   const handleDownloadPDF = () => {
     const list = plans;
     const doc = new jsPDF();
-
+    const titleY = 10;
     doc.setFontSize(16);
     doc.setTextColor("#e30613");
-    doc.text("Meal Plans Report", 14, 16);
-
+    doc.text("Meal Plans Report\n", 14, 16);
     autoTable(doc, {
-      startY: 25,
+      startY: titleY + 10,
       head: [
         [
-          "No",
           "Meal Plan ID",
-          "User ID",
-          "Name",
-          "Description",
-          "Type",
+          "User Name",
+          "Meal Name",
+          "Meal Type",
           "Duration",
+          "Calaries",
+          "Description",
         ],
       ],
-      body: list.map((p, i) => [
-        i + 1,
+      body: plans.map((p) => [
         p.mealPlan_id ?? "-",
-        p.user_id ?? "-",
+        p.user_name ?? "-",
         p.meal_name ?? "-",
-        p.description ?? "-",
         p.meal_type ?? "-",
         p.duration ?? "-",
+        p.calaries ?? "-",
+        p.description ?? "-",
       ]),
       theme: "grid",
       headStyles: { fillColor: [0, 0, 0] },
       styles: { fontSize: 9 },
-      columnStyles: {
-        0: { cellWidth: 10 },
-        1: { cellWidth: 25 },
-        2: { cellWidth: 22 },
-        3: { cellWidth: 40 },
-        4: { cellWidth: 50 },
-        5: { cellWidth: 25 },
-        6: { cellWidth: 25 },
-      },
     });
 
     doc.save("meal_plans.pdf");
   };
-
-  const headerCell = "px-3 py-2 text-left";
-  const cell = "px-3 py-2";
 
   return (
     <div className="p-6">
@@ -259,24 +230,28 @@ export default function MealPlans() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-black text-white">
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-x-auto">
+          <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+            <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
               <tr>
-                <th className={headerCell}>Meal Plan ID</th>
-                <th className={headerCell}>User ID</th>
-                <th className={headerCell}>Name</th>
-                <th className={headerCell}>Description</th>
-                <th className={headerCell}>Type</th>
-                <th className={headerCell}>Duration</th>
-                <th className={headerCell}>Actions</th>
+                <th className="px-4 py-3 w-28">Meal Plan ID</th>
+                <th className="px-4 py-3 w-28">User Name</th>
+                <th className="px-4 py-3 w-40">Meal Name</th>
+                <th className="px-4 py-3 w-32">Meal Type</th>
+                <th className="px-4 py-3 w-28">Duration</th>
+                <th className="px-4 py-3 w-20">Calaries</th>
+                <th className="px-4 py-3 w-60">Description</th>
+                <th className="px-4 py-3 w-32">Actions</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {busy && (
                 <tr>
-                  <td className={cell} colSpan={8}>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-3 text-center text-neutral-500"
+                  >
                     Loading…
                   </td>
                 </tr>
@@ -284,7 +259,10 @@ export default function MealPlans() {
 
               {!busy && plans.length === 0 && (
                 <tr>
-                  <td className={cell} colSpan={8}>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-3 text-center text-neutral-500"
+                  >
                     No meal plans found
                   </td>
                 </tr>
@@ -294,30 +272,31 @@ export default function MealPlans() {
                 plans.map((p) => {
                   const key = p._id ?? p.mealPlan_id;
                   return (
-                    <tr key={key} className="border-t border-black/10">
-                      <td className={`${cell} font-mono`}>
+                    <tr key={key} className="align-top">
+                      <td className="px-4 py-3 font-mono">
                         {p.mealPlan_id ?? "-"}
                       </td>
-                      <td className={cell}>{p.user_id ?? "-"}</td>
-                      <td className={cell}>{p.meal_name ?? "-"}</td>
-                      <td className={`${cell} max-w-[320px] truncate`}>
+                      <td className="px-4 py-3">{p.user_name ?? "-"}</td>
+                      <td className="px-4 py-3">{p.meal_name ?? "-"}</td>
+                      <td className="px-4 py-3">{p.meal_type ?? "-"}</td>
+                      <td className="px-4 py-3">{p.duration ?? "-"}</td>
+                      <td className="px-4 py-3">{p.calaries ?? "-"}</td>
+                      <td className="px-4 py-3 whitespace-pre-line break-words">
                         {p.description ?? "-"}
                       </td>
-                      <td className={cell}>{p.meal_type ?? "-"}</td>
-                      <td className={cell}>{p.duration ?? "-"}</td>
-                      <td className={cell}>
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
                             onClick={() => startEdit(p)}
-                            className="rounded-md bg-black px-2 py-1 text-white hover:opacity-90"
+                            className="rounded-md bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
                           >
-                            Edit
+                            Update
                           </button>
                           <button
                             type="button"
                             onClick={() => deletePlan(p)}
-                            className="rounded-md bg-[#e30613] px-2 py-1 text-white hover:opacity-90"
+                            className="rounded-md bg-red-600 px-2 py-1 text-white  hover:bg-red-700"
                           >
                             Delete
                           </button>
@@ -355,36 +334,17 @@ export default function MealPlans() {
               onSubmit={editId ? onUpdate : onCreate}
               className="space-y-6 p-6"
             >
-              {/* Full width: Meal Plan ID */}
-              <label className="block text-sm">
-                <span className="mb-1 block font-medium">Meal Plan ID *</span>
-                <p className="text-xs text-gray-500 mb-2">
-                  Unique identifier for this plan.
-                </p>
-                <input
-                  name="mealPlan_id"
-                  value={form.mealPlan_id}
-                  onChange={(e) =>
-                    setForm({ ...form, mealPlan_id: e.target.value })
-                  }
-                  required
-                  disabled={!!editId}
-                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 disabled:bg-gray-100"
-                />
-              </label>
-
-              {/* Two columns */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <label className="block text-sm">
-                  <span className="mb-1 block font-medium">User ID *</span>
+                  <span className="mb-1 block font-medium">User Name *</span>
                   <p className="text-xs text-gray-500 mb-2">
-                    ID of the user the plan belongs to.
+                    Name of the user the plan belongs to.
                   </p>
                   <input
-                    name="user_id"
-                    value={form.user_id}
+                    name="user_name"
+                    value={form.user_name}
                     onChange={(e) =>
-                      setForm({ ...form, user_id: e.target.value })
+                      setForm({ ...form, user_name: e.target.value })
                     }
                     required
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
@@ -410,9 +370,7 @@ export default function MealPlans() {
 
                 <label className="block text-sm">
                   <span className="mb-1 block font-medium">Type</span>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Type of the meal
-                  </p>
+                  <p className="text-xs text-gray-500 mb-2">Type of the meal</p>
                   <input
                     name="meal_type"
                     value={form.meal_type}
@@ -420,6 +378,23 @@ export default function MealPlans() {
                       setForm({ ...form, meal_type: e.target.value })
                     }
                     placeholder="e.g. Pre-workout, Post-workout"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </label>
+
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium">
+                    No of Calaries{" "}
+                  </span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Amount of calaries in the meal.
+                  </p>
+                  <input
+                    name="calaries"
+                    value={form.calaries}
+                    onChange={(e) =>
+                      setForm({ ...form, calaries: e.target.value })
+                    }
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
                 </label>
@@ -442,7 +417,6 @@ export default function MealPlans() {
                 </label>
               </div>
 
-              {/* Full width: Description */}
               <label className="block text-sm">
                 <span className="mb-1 block font-medium">Description</span>
                 <p className="text-xs text-gray-500 mb-2">

@@ -1,56 +1,52 @@
 import mongoose, { Mongoose } from "mongoose";
 import AutoIncrementFactory from "mongoose-sequence";
+import "./user.js";
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 const Schema = mongoose.Schema;
 
-
 const mealRequestSchema = new Schema({
+  request_id: {
+    type: Number,
+    unique: true,
+  },
 
-    request_id:{
-        type: Number,
-        unique: true,
-    },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 
-    user_id:{
-        type: Number,
-    },
+  user_name: {
+    type: String,
+  },
 
-    user_name:{
-        type: String,
-    },
+  last_name: {
+    type: String,
+  },
 
-    last_name:{
-        type: String,
-    },
+  request_date: {
+    type: String,
+  },
 
-    request_date:{
-        type: String,
-    },
+  weight: {
+    type: String,
+  },
 
-    weight:{
-        type: String,
-    },
+  height: {
+    type: String,
+  },
+  
+  description: {
+    type: String,
+  },
 
-    height:{
-        type: String,
-    },
-
-    birthday:{
-        type: String,
-    },
-
-    description:{
-        type: String,
-    },
-
-    mealType:{
-        type: String,
-    }
-
+  mealType: {
+    type: String,
+  },
 });
 
-mealRequestSchema.plugin(AutoIncrement, {inc_field: 'request_id'});
+mealRequestSchema.plugin(AutoIncrement, { inc_field: "request_id" });
 
 const mealRequest = mongoose.model("mealRequest", mealRequestSchema);
 export default mealRequest;
