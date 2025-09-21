@@ -1,12 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
+import AutoIncrementFactory from "mongoose-sequence";
+
+const AutoIncrement = AutoIncrementFactory(mongoose);
 const Schema = mongoose.Schema;
+
 
 const mealRequestSchema = new Schema({
 
     request_id:{
         type: Number,
         unique: true,
-        required: true,
     },
 
     user_id:{
@@ -14,6 +17,10 @@ const mealRequestSchema = new Schema({
     },
 
     user_name:{
+        type: String,
+    },
+
+    last_name:{
         type: String,
     },
 
@@ -29,7 +36,21 @@ const mealRequestSchema = new Schema({
         type: String,
     },
 
+    birthday:{
+        type: String,
+    },
+
+    description:{
+        type: String,
+    },
+
+    mealType:{
+        type: String,
+    }
+
 });
+
+mealRequestSchema.plugin(AutoIncrement, {inc_field: 'request_id'});
 
 const mealRequest = mongoose.model("mealRequest", mealRequestSchema);
 export default mealRequest;

@@ -9,7 +9,6 @@ import SignupPage from "./pages/Signup";
 import Homepage from "./pages/homepage";
 import AdminLoginForm from "./pages/admin/adminLogging";
 import TestingCheckout from "./pages/testingCheckout";
-import PaymentSuccess from "./pages/client/paymentSuccess";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import VideoPortal from "./pages/client/VideoPortal";
 import VideoDetails from "./pages/client/VideoDetails";
@@ -21,6 +20,7 @@ import ChallengesPage from './pages/client/challengesPage';
 import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
+import ReceiptPDF from "./pages/client/mySubscription/paymentReport";
 import UserDashboard from "./dashboard/userDashboard"
 
 function App() {
@@ -42,10 +42,6 @@ function App() {
           <Route path="/testing" element={<Testing />} />
           <Route path="/register" element={<SignupPage />} />
           <Route path="/adminLog" element={<AdminLoginForm />} />
-          <Route
-            path="/payment-success"
-            element={<PaymentSuccess></PaymentSuccess>}
-          />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
           <Route path="/community" element={<CommunityFeed/>}/>
           <Route path="/challenges" element={<ChallengesPage />} />
@@ -59,8 +55,7 @@ function App() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-
+          
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

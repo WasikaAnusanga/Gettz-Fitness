@@ -10,7 +10,9 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
-import SupplementStore from "./eq_manager/supplement_store/store_view";
+import PaymentSuccess from "../pages/client/payment/paymentSuccess";
+import PaymentFailed from "./client/payment/paymentFailed";
+import MealPlan from "./mealPlan";import SupplementStore from "./eq_manager/supplement_store/store_view";
 import { CartProvider } from "./eq_manager/supplement_store/supplement_cart";
 import SupplementCart from "./eq_manager/supplement_store/supplement_cart";
 
@@ -23,7 +25,6 @@ export default function Homepage() {
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
           <Route path="/" element={<GymLandingPage />} />
-
           <Route path="/membership" element={<MembershipPlan />} />
           <Route path="/membership/savedCards" element={<ViewSavedCards />} />
           <Route path="/membership/card" element={<PaymentCard />} />
@@ -37,8 +38,9 @@ export default function Homepage() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
-
+          <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />        
+          <Route path="/membership/paymentFailed" element={<PaymentFailed/>} />
+          <Route path="/mealPlan" element={<MealPlan />} />
 
           <Route
             path="/*"

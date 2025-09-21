@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import generateID from "../utils/idGenerator.js";
+import UserChallenge from "./userChallenge.js";
 
 
 const challengeSchema = new mongoose.Schema({
@@ -48,6 +49,18 @@ const challengeSchema = new mongoose.Schema({
     },
 
 }, {timestamps: true });
+
+challengeSchema.post('findOneAndDelete', async function (doc) {
+  if (doc) {
+    await mongoose.model('UserChallenge').deleteMany({ CID: doc._id });
+  }
+});
+
+challengeSchema.post('deleteOne', async function (doc) {
+  if (doc) {
+    await mongoose.model('UserChallenge').deleteMany({ CID: doc._id });
+  }
+});
 
 const Challenge = mongoose.model("Challenge", challengeSchema);
 export default Challenge;

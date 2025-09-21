@@ -3,6 +3,7 @@ import User from "../model/user.js";
 import Admin from "../model/admin.js";
 import Challenge from "../model/challenge.js";
 import UserChallenge from "../model/userChallenge.js";
+import { createNotificationForUser } from "./notificatinController.js";
 
 export async function viewChallenges(req, res) {
   try {
@@ -255,6 +256,28 @@ export async function completeUserChallenge(req, res) {
       { new: true }
     );
 
+     // Create notification using your existing function
+    const mockReq = {
+      body: {
+        title: `Earned ${challenge.points} Points 🎖️🎉`,
+        body: `You earned points for completing the "${challenge.title}" challenge!`,
+        type: "promotional",
+        userId: userId.toString()
+      },
+      user: req.user // Pass the original user object
+    };
+
+    // Create a simple mock response that won't interfere with the main response
+    const mockRes = {
+      status: () => mockRes,
+      json: () => {} // Do nothing with the response
+    };
+
+    // Call your existing function without awaiting (to avoid response conflicts)
+    createNotificationForUser(mockReq, mockRes).catch(err => {
+      console.error("Notification creation failed:", err);
+    });
+
     return res.status(200).json({
       message: "Challenge marked as completed and points awarded.",
       awarded: challenge.points,
@@ -264,5 +287,37 @@ export async function completeUserChallenge(req, res) {
   } catch (e) {
     console.error("completeUserChallenge error:", e);
     return res.status(500).json({ message: "Internal server error", error: e.message });
+  }
+}
+
+// Get all user challenge participations with challenge and user info (for trainer approval UI)
+export async function getAllUserChallengeParticipations(req, res) {
+  try {
+    // Only allow trainers or admins
+    if (!req.user || (req.user.role !== "trainer" && req.user.role !== "admin")) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    // Find all user challenge participations and populate challenge and user info
+    const participations = await UserChallenge.find()
+      .populate("CID")
+      .populate("user_id");
+
+    // Map to desired structure
+    const result = participations.map((p) => ({
+      _id: p._id,
+      userChallengeId: p._id,
+      challengeID: p.CID?.challengeID,
+      title: p.CID?.title,
+      points: p.CID?.points,
+      userID: p.user_id?._id,
+      userName: p.user_id ? `${p.user_id.firstName} ${p.user_id.lastName}` : "",
+      completed: p.completed,
+    }));
+
+    res.json(result);
+  } catch (e) {
+    console.error("getAllUserChallengeParticipations error:", e);
+    res.status(500).json({ message: "Internal server error", error: e.message });
   }
 }
