@@ -36,11 +36,25 @@ import sessionRouter from './routes/liveSessionRoute.js';
 import webhookRoutes from './routes/webHookRoute.js';
 import cardRouter from './routes/cardRouter.js';
 import inqRouter from './routes/inquiryRoute.js';
+import memberRoutes from "./routes/memberRoutes.js";
+import { SerialPort, ReadlineParser } from "serialport";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+import Member from "./model/memberModel.js";
+import Attendance from "./model/attendanceModel.js";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: "*" } });
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 mongoose.connect(process.env.MONGO_URL).then(
   () => { console.log('Connected to MongoDB'); }
@@ -99,6 +113,35 @@ app.use("/api/card",cardRouter);
 app.use("/api/inquiry",inqRouter);
 
 app.use('/api/notification',notificationRouter)
+app.use("/api/members", memberRoutes);
+app.use("/api/attendance", attendanceRoutes);
+
+
+// const port = new SerialPort({ path: "COM5", baudRate: 9600 }); // Replace COM5 with your port
+// const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
+// parser.on("data", async (raw) => {
+//   const uid = String(raw).trim().toUpperCase();
+//   if (!/^[0-9A-F]{8,}$/i.test(uid)) return;
+
+//   const member = await Member.findOne({ rfid: uid });
+
+//   let status = "INACTIVE";
+//   let mid = member?.membershipId || ""; // or compute one
+//   if (member) {
+//     const valid = member.isActive && (!member.membershipExpiry || member.membershipExpiry > new Date());
+//     // create attendance record
+//     await new Attendance({ rfid: uid, memberName: member.name, time: new Date() }).save();
+//     if (valid) status = "ACTIVE";
+//     // realtime update to dashboard
+//     io.emit("attendanceUpdate", { rfid: uid, memberName: member.name, time: new Date().toISOString() });
+//   }
+
+//   // Send status back to Arduino (ACTIVE|MID:XXXX or INACTIVE)
+//   const line = status === "ACTIVE" && mid ? `ACTIVE|MID:${mid}\n` : `${status}\n`;
+//   try { port.write(line); } catch (e) { console.error("serial write failed:", e.message); }
+// });
+
+
 
 app.post('/api/auth/google', googleLogin);
 app.listen(3000, () =>{
