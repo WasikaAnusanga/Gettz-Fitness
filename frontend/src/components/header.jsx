@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import DefaultAvatar from "../assets/default-avatar.png";
 import NotificationBell from "./notificationBell/NotificationBell";
+import Swal from "sweetalert2";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -36,10 +37,22 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/login");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/login");
+      }
+    });
   };
 
   const displayName = useMemo(() => {
@@ -119,7 +132,7 @@ export default function Navbar() {
         {/* Center links (desktop) */}
         <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
           {navLinks.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClasses} end>
+            <NavLink key={l.to} to={l.to} className={linkClasses} end={l.to === "/"} >
               {l.label}
             </NavLink>
           ))}
@@ -174,7 +187,7 @@ export default function Navbar() {
                 to={l.to}
                 onClick={() => setOpen(false)}
                 className={linkClasses}
-                end
+                end={l.to === "/"} 
               >
                 {l.label}
               </NavLink>

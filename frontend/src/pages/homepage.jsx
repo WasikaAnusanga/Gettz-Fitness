@@ -10,6 +10,8 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
+import PaymentSuccess from "../pages/client/payment/paymentSuccess";
+import PaymentFailed from "./client/payment/paymentFailed";
 import MealPlan from "./mealPlan";
 
 export default function Homepage() {
@@ -19,15 +21,15 @@ export default function Homepage() {
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
           <Route path="/" element={<GymLandingPage />} />
-
           <Route path="/membership" element={<MembershipPlan />} />
           <Route path="/membership/savedCards" element={<ViewSavedCards />} />
           <Route path="/membership/card" element={<PaymentCard />} />
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/contactUs" element={<ContactUs />} />
-
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
+          <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />        
+          <Route path="/membership/paymentFailed" element={<PaymentFailed/>} />
           <Route path="/mealPlan" element={<MealPlan />} />
 
           <Route

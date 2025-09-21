@@ -4,6 +4,9 @@ import UserSidebar from "../components/userSidebar.jsx";
 
 import Dashboard from "../pages/user/dashboard.jsx";
 import RequestMeals from "../pages/user/requestMeal.jsx";
+import SaveCards from "../pages/client/cards/viewCards.jsx";
+import AddCardForm from "../pages/client/cards/addCards.jsx";
+import UpdateCardForm from "../pages/client/cards/updateCard.jsx";
 
 export default function UserLayout() {
   return (
@@ -21,12 +24,15 @@ export default function UserLayout() {
             </div>
           </div>
 
-          <div className="mx-auto max-w-7xl px-4 py-6">
+          <div className="mx-auto max-w-7xl px-0 py-0">
             <Routes>
               <Route index element={<Navigate to="dashboard" replace />} />
 
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="requestMeal" element={<RequestMeals/>} />
+              <Route path="/manageCards" element={<SaveCards/>} />
+              <Route path="/manageCards/addCard" element={<AddCardForm/>} />
+              <Route path="/manageCards/updateCard" element={<UpdateCardForm/>} />
 
               <Route path="*" element={<Navigate to="dashboard" replace />} />
             </Routes>
