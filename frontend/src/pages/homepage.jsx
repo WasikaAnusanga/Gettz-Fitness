@@ -12,6 +12,7 @@ import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
 import PaymentSuccess from "../pages/client/payment/paymentSuccess";
 import PaymentFailed from "./client/payment/paymentFailed";
+import MealPlan from "./mealPlan";
 
 export default function Homepage() {
   return (
@@ -27,8 +28,9 @@ export default function Homepage() {
           <Route path="/contactUs" element={<ContactUs />} />
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-          <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />
+          <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />        
           <Route path="/membership/paymentFailed" element={<PaymentFailed/>} />
+          <Route path="/mealPlan" element={<MealPlan />} />
 
           <Route
             path="/*"

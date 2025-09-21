@@ -21,12 +21,15 @@ export const addMealRequest = (req, res) => {
     req.user={role: "User"};
     if(req.user.role == "User"){
         const mealrequest = new MealRequest({
-            request_id: req.body.request_id,
             user_id: req.body.user_id,
             user_name: req.body.user_name,
             request_date: req.body.request_date,
             weight: req.body.weight,
             height: req.body.height,
+            last_name: req.body.last_name,
+            birthday: req.body.birthday,
+            description: req.body.description,
+            mealType: req.body.mealType,
         });
         mealrequest.save()
             .then(response => {
@@ -47,16 +50,20 @@ export const updateMealRequest = (req, res) => {
     req.user={role: "User"};
     if(req.user.role == "User"){
         const {
-            request_id, 
             user_id, 
             user_name, 
             request_date, 
             weight,
             height,
+            last_name,
+            description,
+            birthday,
+            mealType,
         } = req.body;
+        const request_id = Number(req.params.id);
         MealRequest.updateOne(
             { request_id: request_id }, 
-            { $set: { user_id, user_name, request_date, weight, height } }
+            { $set: { user_id, user_name, request_date, weight, height, last_name, description, birthday, mealType } }
         )
             .then(response => {
                 res.json({response})
@@ -74,8 +81,9 @@ export const updateMealRequest = (req, res) => {
 export const deleteMealRequest = (req, res) => {
     req.user={role: "User"};
     if(req.user.role == "User"){
-        const {request_id} = req.body;
-        MealRequest.deleteOne({ request_id: request_id })
+        const request_id = Number(req.params.id);
+        MealRequest.deleteOne(
+            { request_id: request_id })
             .then(response => {
                 res.json({response})
             })
