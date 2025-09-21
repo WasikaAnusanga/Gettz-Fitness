@@ -9,15 +9,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendPaymentReciept(email,sessionId) {
-    const payment=await Payment.findOne({session_id:sessionId});
-    const user=await User.findById(payment.user_id);
+export async function sendPaymentReciept(email, sessionId) {
+  const payment = await Payment.findOne({ session_id: sessionId });
+  const user = await User.findById(payment.user_id);
 
-    const dateOnly = payment.createdAt.toISOString().split("T")[0];
-    
-
-    console.log(user);
-    console.log(payment);
+  const dateOnly = payment.createdAt.toISOString().split("T")[0];
 
   const htmlTemplate = `
     <!DOCTYPE html>
@@ -125,7 +121,9 @@ export async function sendPaymentReciept(email,sessionId) {
 
         <!-- Content -->
         <div class="content">
-        <p>Hello Mr.<strong>${user.firstName}${" "}${user.lastName}</strong>,</p>
+        <p>Hello Mr.<strong>${user.firstName}${" "}${
+    user.lastName
+  }</strong>,</p>
         <p>Your payment has been processed successfully 🎉</p>
         <div class="success">Payment Successful</div>
 

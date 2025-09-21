@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import UserSidebar from "../components/userSidebar.jsx";
 import { User } from "lucide-react";
 
@@ -12,9 +12,17 @@ import UpdateCardForm from "../pages/client/cards/updateCard.jsx";
 import ViewSubscription from "../pages/client/mySubscription/viewSubscription.jsx";
 
 export default function UserLayout() {
+  const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
-  const fullName = userData.firstName;
   console.log(userData);
+  useEffect(() => {
+    if (userData.role != "user" && userData.role != "member") {
+      return navigate("/login");
+    }
+  }, []);
+
+  const fullName = userData.firstName;
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="flex">
@@ -46,7 +54,7 @@ export default function UserLayout() {
 
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="requestMeal" element={<RequestMeals />} />
-              <Route path="currentMeal" element={<CurrentMeal/>} />
+              <Route path="currentMeal" element={<CurrentMeal />} />
               <Route path="/manageCards" element={<SaveCards />} />
               <Route path="/manageCards/addCard" element={<AddCardForm />} />
               <Route
@@ -54,7 +62,6 @@ export default function UserLayout() {
                 element={<UpdateCardForm />}
               />
               <Route path="/mySubscription" element={<ViewSubscription />} />
-
 
               <Route path="*" element={<Navigate to="dashboard" replace />} />
             </Routes>
