@@ -20,6 +20,7 @@ import ChallengesPage from './pages/client/challengesPage';
 import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
+import ReceiptPDF from "./pages/client/mySubscription/paymentReport";
 
 
 function App() {
@@ -54,7 +55,7 @@ function App() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
+          
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>
