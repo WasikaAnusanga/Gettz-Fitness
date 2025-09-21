@@ -3,7 +3,7 @@ import HomeFooter from "../components/homeFooter";
 import PaymentCard from "./client/payment/paymentCard";
 import ViewSavedCards from "./client/payment/savedCards";
 import GymLandingPage from "../components/homePage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import MembershipPlan from "./client/membershipPlan";
 import AboutUs from "./aboutUs";
 import ContactUs from "./contactUs";
@@ -19,6 +19,12 @@ import SupplementCart from "./eq_manager/supplement_store/supplement_cart";
 import ChallengePage from "./client/challengesPage";
 
 export default function Homepage() {
+  const navigate=useNavigate();
+  const userData = JSON.parse(localStorage.getItem("user"));
+  console.log(userData);
+  if(userData.role!="user"&&userData.role!="member"){
+    navigate("/login");
+  }
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-800 flex flex-col">
       <Header />
