@@ -14,6 +14,16 @@ import {
     ArrowLeft,
 } from "lucide-react";
 
+const types = [
+    { value: "Protein", label: "Protein" },
+    { value: "Vitamins", label: "Vitamins" },
+    { value: "Minerals", label: "Minerals" },
+    { value: "Amino Acids", label: "Amino Acids" },
+    { value: "Pre-Workout", label: "Pre-Workout" },
+    { value: "Post-Workout", label: "Post-Workout" },
+    { value: "Performance Enhancer", label: "Performance Enhancer" }
+];
+
 export default function SupplementAddForm() {
     const STATUS = ["In stock", "Out of stock"];
 
@@ -136,12 +146,18 @@ export default function SupplementAddForm() {
                                 <label className="block text-sm font-medium mb-1">
                                     Type <span className="text-red-600">*</span>
                                 </label>
-                                <input
+                                <select
                                     value={Sup_type}
                                     onChange={(e) => setType(e.target.value)}
-                                    placeholder="Protein / Vitamins / Pre-Workout ..."
                                     className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-                                />
+                                >
+                                    <option className="block text-sm font-medium mb-1" value="">Select a type...</option>
+                                    {types.map((t) => (
+                                        <option key={t.value} value={t.value}>
+                                            {t.label}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">
