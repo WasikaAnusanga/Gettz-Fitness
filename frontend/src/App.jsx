@@ -21,7 +21,7 @@ import ChallengesPage from './pages/client/challengesPage';
 import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
-
+import UserDashboard from "./dashboard/userDashboard"
 
 function App() {
   const [count, setCount] = useState(0);

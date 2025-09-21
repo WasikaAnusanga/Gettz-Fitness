@@ -10,12 +10,16 @@ import ContactUs from "./contactUs";
 import ChatBot from "../components/ChatBot/chatBot";
 import VideoPortal from "./client/VideoPortal";
 import VideoDetails from "./client/VideoDetails";
+import SupplementStore from "./eq_manager/supplement_store/store_view";
+import { CartProvider } from "./eq_manager/supplement_store/supplement_cart";
+import SupplementCart from "./eq_manager/supplement_store/supplement_cart";
 
 
 export default function Homepage() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-gray-800 flex flex-col">
       <Header />
+      <CartProvider>
       <div className="flex-1 w-full pt-16 h-screen">
         <Routes>
           <Route path="/" element={<GymLandingPage />} />
@@ -25,11 +29,16 @@ export default function Homepage() {
           <Route path="/membership/card" element={<PaymentCard />} />
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/contactUs" element={<ContactUs />} />
+          
+          <Route path="/store" element={<SupplementStore />} />
+          <Route path="/cart" element={<SupplementCart />} /*fixed*//>
+          
+
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
 
-          
+
 
           <Route
             path="/*"
@@ -39,6 +48,7 @@ export default function Homepage() {
           />
         </Routes>
       </div>
+      </CartProvider>
       <ChatBot />
       <HomeFooter />
     </div>
