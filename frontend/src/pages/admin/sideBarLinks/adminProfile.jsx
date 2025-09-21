@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import Profilepic from "../../../assets/default-avatar.png";
 export default function AdminProfile() {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function AdminProfile() {
     <div className="max-w-xl mx-auto bg-white rounded-2xl shadow p-8 mt-8">
       <div className="flex flex-col items-center gap-4">
         <img
-          src={admin.profilePicture}
+          src={Profilepic}
           alt="Profile"
           className="w-28 h-28 rounded-full object-cover border"
         />
