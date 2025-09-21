@@ -140,7 +140,7 @@ export default function EquipmentEditPage(){
             </div>
           </div>
           <Link
-            to=".."
+            to="/eq_manager/equipment"
             relative="path"//previous place
             className="inline-flex items-center gap-1 text-sm text-[#e30613] hover:underline"
           >
@@ -277,7 +277,7 @@ export default function EquipmentEditPage(){
         {/* footer aprt of the form */}
         <div className="flex items-center justify-between border-t border-black/10 px-6 py-4">
           <Link
-            to=".."
+            to="/eq_manager/equipment"
             relative="path"//to previous view
             className="inline-flex items-center gap-1 rounded-xl border border-black/10 px-4 py-2 text-sm hover:bg-black/5"
           >

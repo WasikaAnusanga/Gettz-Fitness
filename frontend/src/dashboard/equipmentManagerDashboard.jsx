@@ -12,7 +12,7 @@ import PurchaseEditPage from "../pages/eq_manager/purchases/purchase_editForm.js
 import SupplementsViewPage from "../pages/eq_manager/supplement/supplement_view.jsx";
 import SupplementAddForm from "../pages/eq_manager/supplement/supplement_addForm.jsx";
 import SupplementEditPage from "../pages/eq_manager/supplement/supplement_editForm.jsx";
-
+import EquipmentDashboard from "../pages/eq_manager/EquipmentDashboard.jsx";
 
 const OrdersPage = () => <h1>Orders</h1>;
 
@@ -44,7 +44,7 @@ export default function EquipmentManagerLayout() {
           <div className="mx-auto max-w-7xl px-4 py-6">
             <Routes>
               {/* Index (Overview) */}
-              <Route index element={<h1>homepage</h1>} />
+              <Route index element={<EquipmentDashboard/>} />
 
               {/* Matches the nav items you requested */}
               <Route path="equipment" element={<EquipmentDetailsPage />} />
@@ -59,8 +59,9 @@ export default function EquipmentManagerLayout() {
               <Route path="purchases/add" element={<PurchaseAddPage />} />
               <Route path="purchases/edit/:code" element={<PurchaseEditPage />} />
               <Route path="orders" element={<OrdersPage />} />
+              
 
-              {/* Fallback */}
+              {/* fallback */}
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>
           </div>

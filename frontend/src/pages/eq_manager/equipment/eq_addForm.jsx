@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Dumbbell,
-  Hash,
   Tag,
   Wrench,
   User,
@@ -15,7 +14,6 @@ import {
 export default function EquipmentAddPage() {
   const STATUS = ["Available", "In use", "Under Maintenance"];
 
-  const [Eq_code, setCode] = useState("");
   const [Eq_name, setName] = useState("");
   const [Eq_type, setType] = useState("");
   const [Eq_status, setStatus] = useState("Available");
@@ -35,7 +33,6 @@ export default function EquipmentAddPage() {
 
   async function handleSubmit() {
     //validations 
-    if (!Eq_code.trim()) return toast.error("Equipment code is required");
     if (!Eq_name.trim()) return toast.error("Equipment name is required");
     if (!Eq_type.trim()) return toast.error("Equipment type is required");
     if (!IM_ID.trim()) return toast.error("Equipment Manager ID (IM_ID) is required");
@@ -44,7 +41,6 @@ export default function EquipmentAddPage() {
       setLoading(true);
 
       const payload = {
-        Eq_code: Eq_code.trim(),
         Eq_name: Eq_name.trim(),
         Eq_type: Eq_type.trim(),
         Eq_status,
@@ -99,20 +95,6 @@ export default function EquipmentAddPage() {
           <div className="lg:col-span-2 space-y-4">
             {/* Code & Name */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-1">
-                <label className="block text-sm font-medium mb-1">
-                  Code <span className="text-red-600">*</span>
-                </label>
-                <div className="relative">
-                  <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-                  <input
-                    value={Eq_code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="EQ-0001"
-                    className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-                  />
-                </div>
-              </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium mb-1">
                   Name <span className="text-red-600">*</span>
@@ -220,7 +202,6 @@ export default function EquipmentAddPage() {
                 <div className="text-sm font-medium">Tips</div>
               </div>
               <ul className="list-disc pl-5 text-xs text-neutral-600 space-y-1">
-                <li><strong>Eq_code</strong> must be unique (e.g., EQ-0001).</li>
                 <li>Status can be changed later from the table.</li>
                 <li>Repair note is optional.</li>
               </ul>
