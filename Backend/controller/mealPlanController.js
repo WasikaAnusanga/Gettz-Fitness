@@ -18,6 +18,26 @@ export const getMealPlan = (req, res) => {
   }
 };
 
+export const getOneMealPlan = (req, res) => {
+  const user = req.user._id;
+  if (req.user.role == "user") {
+    MealPlan.find({ user_id: user })
+      .then((response) => {
+        res.json({ response });
+      })
+      .catch((error) => {
+        res.json({ error: error });
+      });
+  } else {
+    res.status(401).json({
+      message: "You need User authorization...",
+    });
+  }
+};
+
+
+
+
 export const addMealPlan = (req, res) => {
   req.user = { role: "Trainer" };
   if (req.user.role == "Trainer") {
@@ -28,6 +48,7 @@ export const addMealPlan = (req, res) => {
       meal_type: req.body.meal_type,
       duration: req.body.duration,
       calaries: req.body.calaries,
+      user_id: req.body.user_id,
     });
     mealplan
       .save()
@@ -54,6 +75,7 @@ export const updateMealPlan = (req, res) => {
       meal_type,
       duration,
       calaries,
+      user_id,
     } = req.body;
     const mealPlan_id = Number(req.params.id);
     MealPlan.updateOne(
@@ -66,6 +88,7 @@ export const updateMealPlan = (req, res) => {
           meal_type,
           duration,
           calaries,
+          user_id,
         },
       }
     )

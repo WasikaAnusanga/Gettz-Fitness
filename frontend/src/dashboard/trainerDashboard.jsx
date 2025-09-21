@@ -29,7 +29,7 @@ export default function TrainerLayout() {
 
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reqMeals" element={<RequestedMeals />} />
-              <Route path="/mealPlans" element={<MealPlans />} />
+              
               <Route path="/challenges" element={<Challenges />} />
 
               <Route path="*" element={<Navigate to="dashboard" replace />} />

@@ -22,7 +22,6 @@ export const getOneMealRequest = (req, res) => {
   if (req.user.role == "user") {
     MealRequest.find({ user_id: user })
       .then((response) => {
-        console.log(response + "hello");
         res.json({ response });
       })
       .catch((error) => {

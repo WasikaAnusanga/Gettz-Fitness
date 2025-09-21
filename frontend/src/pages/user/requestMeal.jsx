@@ -2,67 +2,98 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import add from "../../assets/plus.png";
 
 /* Small inline icons (no extra libs) */
 function IconUser() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-gray-600" aria-hidden="true">
-      <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"
-            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
+  return <img src={add} className="icon h-5 w-5 inline-block object-contain" />;
 }
 function IconCalendar() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden="true">
-      <path d="M7 3v3M17 3v3M3.5 9.5h17M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
-            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path
+        d="M7 3v3M17 3v3M3.5 9.5h17M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
-/* One card per row */
+function Pill({ children, tone = "gray" }) {
+  const tones = {
+    gray: "bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-200",
+    green: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100",
+    red: "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-100",
+  };
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${tones[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
 function RequestCard({ row, onUpdate, onDelete }) {
   const id = row.request_id ?? "-";
-  const started = row.request_date ? String(row.request_date).slice(0, 10) : "-";
-  const fullName = [row.user_name, row.last_name].filter(Boolean).join(" ") || "-";
+  const started = row.request_date
+    ? String(row.request_date).slice(0, 10)
+    : "-";
+  const fullName =
+    [row.user_name, row.last_name].filter(Boolean).join(" ") || "-";
   const mealType = row.mealType ?? "-";
   const weight = row.weight ?? "-";
   const height = row.height ?? "-";
   const description = row.description || "-";
 
+  const tone =
+    String(mealType).toLowerCase() === "vegan"
+      ? "green"
+      : String(mealType).toLowerCase() === "non-vegan"
+      ? "red"
+      : "gray";
+
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
       {/* Header */}
-      <div className="flex items-start gap-3 p-4 sm:p-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+      <div className="flex items-start gap-3 p-5">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 ring-1 ring-gray-200">
           <IconUser />
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex -wrap items-center gap-2">
-            <p className="text-sm font-semibold text-gray-900">Meal Request #{id}</p>
-            <span className="inline-flex items-center rounded-full bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-200">
-              {mealType}
-            </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-base font-semibold text-gray-900">
+              Meal Request #{id}
+            </h3>
+            <Pill tone={tone}>{mealType}</Pill>
           </div>
-          <p className="mt-0.5 text-sm text-gray-600">
-            {fullName} — {weight} kg · {height} cm
+          <p className="mt-1 text-sm text-gray-600 break-words">
+            — {fullName} —
+          </p>
+          <p className="mt-1 text-sm text-gray-600 break-words">
+            {weight} kg · {height} cm
+          </p>
+          <p className="mt-1 text-sm text-gray-600 break-words">
+            {description}
           </p>
         </div>
 
-        <div className="flex gap-2">
+        {/* Actions (same wiring, just styled to match) */}
+        <div className="shrink-0 flex gap-2">
           <button
             type="button"
             onClick={() => onUpdate(row)}
-            className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100"
+            className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
           >
             Update
           </button>
           <button
             type="button"
             onClick={() => onDelete(row)}
-            className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100"
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
           >
             Delete
           </button>
@@ -70,28 +101,22 @@ function RequestCard({ row, onUpdate, onDelete }) {
       </div>
 
       {/* Meta strip */}
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-gray-200 px-4 py-3 sm:px-5">
-        <div className="flex items-center gap-2 text-sm text-gray-700">
-          <IconCalendar />
-          <span>
-            <span className="text-gray-500">Requested: </span>
-            <span className="font-medium">{started}</span>
+      <div className="flex flex-wrap items-center gap-3 border-t border-gray-200 px-5 py-3">
+        <Pill>
+          <span className="inline-flex items-center gap-1">
+            <IconCalendar />
+            <span className="text-gray-600">Requested:</span>
+            <span className="font-medium text-gray-800">{started}</span>
           </span>
-        </div>
-        <div className="text-sm text-gray-700">
-          <span className="text-gray-500">Weight/Height: </span>
-          <span className="font-medium">
-            {weight} kg / {height} cm
+        </Pill>
+        <Pill>
+          <span className="inline-flex items-center gap-1">
+            <span className="text-gray-600">W/H:</span>
+            <span className="font-medium text-gray-800">
+              {weight} kg / {height} cm
+            </span>
           </span>
-        </div>
-      </div>
-
-      {/* Description */}
-      <div className="px-4 pb-4 pt-2 sm:px-5">
-        <p className="text-sm text-gray-700">
-          <span className="text-gray-500">Notes: </span>
-          {description}
-        </p>
+        </Pill>
       </div>
     </div>
   );
@@ -287,19 +312,20 @@ export default function RequestMeals() {
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
         <div className="mb-4">
-          <h1 className="text-xl font-semibold text-black">Manage Your Meal Requests</h1>
+          <h1 className="text-xl font-semibold text-black">
+            Manage Your Meal Requests
+          </h1>
         </div>
 
-        {/* Cards list replacing the table */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {busy && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-neutral-500">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-neutral-500 col-span-full">
               Loading…
             </div>
           )}
 
           {!busy && requests.length === 0 && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-neutral-500">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-neutral-500 col-span-full">
               No requests found
             </div>
           )}
@@ -316,12 +342,14 @@ export default function RequestMeals() {
         </div>
       </div>
 
-      {/* EDIT DIALOG */}
+      {/* Form */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-3">
           <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl mt-13">
             <div className="flex items-center justify-between rounded-t-xl border-b px-4 py-3">
-              <h2 className="text-base font-semibold text-black">Update Meal Request</h2>
+              <h2 className="text-base font-semibold text-black">
+                Update Meal Request
+              </h2>
               <button
                 onClick={() => setOpen(false)}
                 className="rounded-md px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
@@ -330,7 +358,11 @@ export default function RequestMeals() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmitUpdate} className="space-y-4 p-4" noValidate>
+            <form
+              onSubmit={handleSubmitUpdate}
+              className="space-y-4 p-4"
+              noValidate
+            >
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className={label}>First Name</label>
@@ -341,10 +373,14 @@ export default function RequestMeals() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, user_name: e.target.value })
                     }
-                    className={`${input} ${errors.user_name ? "border-red-500" : ""}`}
+                    className={`${input} ${
+                      errors.user_name ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.user_name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.user_name}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.user_name}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -356,10 +392,14 @@ export default function RequestMeals() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, last_name: e.target.value })
                     }
-                    className={`${input} ${errors.last_name ? "border-red-500" : ""}`}
+                    className={`${input} ${
+                      errors.last_name ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.last_name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.last_name}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.last_name}
+                    </p>
                   )}
                 </div>
               </div>
@@ -378,10 +418,14 @@ export default function RequestMeals() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, request_date: e.target.value })
                     }
-                    className={`${input} ${errors.request_date ? "border-red-500" : ""}`}
+                    className={`${input} ${
+                      errors.request_date ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.request_date && (
-                    <p className="mt-1 text-sm text-red-600">{errors.request_date}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.request_date}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -393,7 +437,9 @@ export default function RequestMeals() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, height: e.target.value })
                     }
-                    className={`${input} ${errors.height ? "border-red-500" : ""}`}
+                    className={`${input} ${
+                      errors.height ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.height && (
                     <p className="mt-1 text-sm text-red-600">{errors.height}</p>
@@ -408,7 +454,9 @@ export default function RequestMeals() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, weight: e.target.value })
                     }
-                    className={`${input} ${errors.weight ? "border-red-500" : ""}`}
+                    className={`${input} ${
+                      errors.weight ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.weight && (
                     <p className="mt-1 text-sm text-red-600">{errors.weight}</p>
@@ -425,10 +473,14 @@ export default function RequestMeals() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, description: e.target.value })
                   }
-                  className={`${input} ${errors.description ? "border-red-500" : ""}`}
+                  className={`${input} ${
+                    errors.description ? "border-red-500" : ""
+                  }`}
                 />
                 {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.description}
+                  </p>
                 )}
               </div>
 

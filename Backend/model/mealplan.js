@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import AutoIncrementFactory from "mongoose-sequence";
+import "./user.js";
 
 const AutoIncrement = AutoIncrementFactory(mongoose);
 const Schema = mongoose.Schema;
@@ -34,6 +35,11 @@ const mealPlanSchema = new Schema({
 
     calaries:{
         type:String,
+    },
+
+    user_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     }
 
 });
