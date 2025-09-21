@@ -15,6 +15,13 @@ function getAxiosError(err) {
 }
 
 export default function EditCompetition() {
+  function getTodayStr() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
   const { compId } = useParams();
   const navigate = useNavigate();
 
@@ -76,6 +83,15 @@ export default function EditCompetition() {
     if (!points) return toast.error("Points are required");
     if (!startDate) return toast.error("Start date is required");
     if (!endDate) return toast.error("End date is required");
+
+    // Validation: startDate >= today, endDate >= startDate
+    const todayStr = getTodayStr();
+    if (startDate < todayStr) {
+      return toast.error("Start date cannot be before today");
+    }
+    if (endDate < startDate) {
+      return toast.error("End date cannot be before start date");
+    }
 
     try {
       setLoading(true);
@@ -182,6 +198,7 @@ export default function EditCompetition() {
               <input
                 type="date"
                 value={startDate}
+                min={getTodayStr()}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm"
               />
@@ -191,6 +208,7 @@ export default function EditCompetition() {
               <input
                 type="date"
                 value={endDate}
+                min={startDate || getTodayStr()}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm"
               />

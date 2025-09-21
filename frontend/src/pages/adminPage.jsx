@@ -76,7 +76,9 @@ export default function AdminLayout() {
               <Route path="/workshift" element={<Workshift/>} />
               <Route path="/trainers/register" element={<TrainerRegistration/>} />
               <Route path="/members/register" element={<MemberRegistration/>} />
-              <Route path="/inquiry" element={<Inquiry/>} />
+              <Route path="/inquiry" element={<Inquiry/>} />              <Route path="/trainers/register" element={<TrainerRegistration/>} />
+              <Route path="/members/register" element={<MemberRegistration/>} />
+
               
               <Route path="*" element={<Navigate to="." replace />} />
             </Routes>

@@ -1,5 +1,5 @@
 import express from "express";
-import {createChallenge, viewChallenges, deleteChallenge, updateChallenge,joinChallenge, myJoinedChallenges, completeUserChallenge} from "../controller/challengeController.js";
+import {createChallenge, viewChallenges, deleteChallenge, updateChallenge,joinChallenge, myJoinedChallenges, completeUserChallenge, getAllUserChallengeParticipations} from "../controller/challengeController.js";
 
 const challengeRouter = express.Router();
 
@@ -10,5 +10,6 @@ challengeRouter.post("/add", createChallenge);
 challengeRouter.delete("/delete/:id", deleteChallenge);
 challengeRouter.put("/update/:id", updateChallenge);
 challengeRouter.post("/complete/:id", completeUserChallenge);
+challengeRouter.get("/userchallenges", getAllUserChallengeParticipations);
 
 export default challengeRouter;

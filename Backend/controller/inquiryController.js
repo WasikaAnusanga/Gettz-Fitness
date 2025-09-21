@@ -2,6 +2,9 @@ import Inquiry from "../model/inquiry.js";
 
 
 export function createInquiry(req, res) {
+  if (req.user == null) {
+    return res.status(400).json({ message: "Logging First" });
+  }
   const inquiry = new Inquiry(req.body);
   inquiry
     .save()
@@ -12,6 +15,7 @@ export function createInquiry(req, res) {
       res.status(500).json({ message: "Unsuccessful!", error: err.message });
     });
 }
+
 
 
 
