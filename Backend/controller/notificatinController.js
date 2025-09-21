@@ -72,20 +72,19 @@ export async function createPromotionalNotification(req, res) {
       return res.status(400).json({ message: "Please provide title and body." });
     }
 
-    // 👇 normalize user id (accepts both .id and ._id)
-    let creatorId = req.user?._id || req.user?.id;
-    if (creatorId) {
-      creatorId = new mongoose.Types.ObjectId(creatorId);
-    }
+    // Get admin name from req.user (adjust as needed)
+    const adminName = req.user?.firstName && req.user?.lastName
+      ? req.user.firstName + ' ' + req.user.lastName
+      : req.user?.name || req.user?.username || 'Admin';
 
     const notification = new Notification({
       title,
       body,
       type,
       status: "sent",
-      deliveryTo: "all_members",
+      deliveryTo: "All Members",
       sentDate: new Date(),
-      createdBy: creatorId, // now always valid
+      createdBy: adminName,
     });
 
     await notification.save();
@@ -111,25 +110,33 @@ export async function createPromotionalNotification(req, res) {
 
 export async function createNotificationForUser(req, res) {
   try {
-    const { title, body, type, userId } = req.body;
+    const { title, body, type, userId, deliveryTo } = req.body;
     if (!title || !body || !userId || !type) {
       return res.status(400).json({ message: 'title, body, userId, and type are required' });
     }
-    const targetId = new mongoose.Types.ObjectId(userId);
-    const creatorId = new mongoose.Types.ObjectId(req.user?._id);
+    // Get user name for deliveryTo
+    let userName = deliveryTo;
+    if (!userName) {
+      const user = await User.findById(userId);
+      userName = user ? (user.firstName + ' ' + user.lastName) : userId;
+    }
+    // Get admin name
+    const adminName = req.user?.firstName && req.user?.lastName
+      ? req.user.firstName + ' ' + req.user.lastName
+      : req.user?.name || req.user?.username || 'Admin';
 
     const notification = new Notification({
       title,
       body,
       type,
       status: 'sent',
-      deliveryTo: targetId,
+      deliveryTo: userName,
       sentDate: new Date(),
-      createdBy: creatorId
+      createdBy: adminName
     });
     await notification.save();
 
-    await new UserNotification({ NIC: notification._id, user_id: targetId }).save();
+    await new UserNotification({ NIC: notification._id, user_id: userId }).save();
 
     res.status(201).json({ message: 'Notification created for user', notificationId: notification._id });
   } catch (e) {

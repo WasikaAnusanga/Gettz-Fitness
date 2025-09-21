@@ -1,6 +1,8 @@
 import Stripe from "stripe";
 import Subscription from "../model/Subscription_Model.js";
 import Payment from "../model/Payment_Model.js";
+import MembershipPlan from "../model/Membership_Plans_Model.js";
+import { sendPaymentReciept } from "../utils/mailer.js";
 const stripe = new Stripe(process.env.SECRET_KEY);
 
 export async function handleWebhook(req, res) {
@@ -36,11 +38,23 @@ export async function handleWebhook(req, res) {
         try {
           const userId = session.metadata?.userId; // optional if you want to pass one
           const planId = session.metadata?.planId;
-
+          const email = session.customer_details?.email;
           const sub = await Subscription.findOneAndUpdate(
             { user_id: userId },
             { status: "active" }
           );
+          const top = await Subscription.aggregate([
+            { $match: { status: "active" } },
+            { $group: { _id: "$plan_id", count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 1 },
+          ]);
+           sendPaymentReciept(email,session.id)
+          const plan=await MembershipPlan.findById(top)
+          plan.popular=true;
+          
+          await plan.save()
+
         } catch (subErr) {
           console.error(
             "Sub creation failed:",

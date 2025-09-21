@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import successGif from "../../../assets/payment-success.gif";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { generateReceiptPDF } from "../../../utils/paymentReciept";
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
@@ -12,6 +13,9 @@ export default function PaymentSuccess() {
   const [date, setDate] = useState("");
   const [paymentId, setPaymentId] = useState("");
   const sessionId = searchParams.get("session_id");
+  const [paymentAllData,setPaymentAllData]= useState(null);
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const fullName= userData.firstName +" "+userData.lastName
 
   useEffect(() => {
     if (!loaded) {
@@ -22,6 +26,7 @@ export default function PaymentSuccess() {
             sessionId
         )
         .then((res) => {
+          setPaymentAllData(res.data);
           setPlanName(res.data.subscription_id.plan_id.plan_name);
           setAmount(res.data.amount);
           setDate(res.data.createdAt.split("T")[0]);
@@ -83,15 +88,15 @@ export default function PaymentSuccess() {
 
           {/* ⭐ Buttons moved OUTSIDE the receipt box */}
           <div className="mt-6 flex gap-3 justify-center">
-            <a
-              href="/dashboard"
+            <Link
+              to="/"
               className="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-white font-semibold hover:bg-red-500"
             >
               Go to Home
-            </a>
+            </Link>
             <button
               type="button"
-              onClick={() => window.print()}
+              onClick={() => generateReceiptPDF(paymentAllData,fullName)}
               className="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-100"
             >
               Download receipt

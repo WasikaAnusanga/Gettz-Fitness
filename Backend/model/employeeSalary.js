@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
+import AutoIncrementFactory from "mongoose-sequence";
+import "./user.js";
+
+const AutoIncrement = AutoIncrementFactory(mongoose);
 const Schema = mongoose.Schema;
 
 const employeeSalarySchema = new Schema({
   salary_id: {
     type: Number,
     unique: true,
-    required: true,
   },
 
   base_salary: {
@@ -20,7 +23,7 @@ const employeeSalarySchema = new Schema({
     type: String,
   },
 
-  overtime_pay: {
+  employee_role: {
     type: String,
   },
 
@@ -40,6 +43,8 @@ const employeeSalarySchema = new Schema({
     type: String,
   },
 });
+
+employeeSalarySchema.plugin(AutoIncrement, { inc_field: "salary_id" });
 
 const salary = mongoose.model("employeeSalary", employeeSalarySchema);
 export default salary;

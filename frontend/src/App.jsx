@@ -20,7 +20,8 @@ import ChallengesPage from './pages/client/challengesPage';
 import AddNotification from './pages/AddNotification';
 import Leaderboard from './pages/leaderboard';
 import ChatBot from './components/ChatBot/chatBot';
-
+import ReceiptPDF from "./pages/client/mySubscription/paymentReport";
+import UserDashboard from "./dashboard/userDashboard"
 
 function App() {
   const [count, setCount] = useState(0);
@@ -43,7 +44,6 @@ function App() {
           <Route path="/adminLog" element={<AdminLoginForm />} />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
           <Route path="/community" element={<CommunityFeed/>}/>
-          <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/admin/notifications/new" element={<AddNotification />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/chatbot" element={<ChatBot />} />
@@ -54,7 +54,7 @@ function App() {
 
           <Route path="/videos" element={<VideoPortal />} />
           <Route path="/videos/:videoId" element={<VideoDetails />} />
-
+          
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

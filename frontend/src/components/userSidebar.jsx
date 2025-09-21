@@ -6,6 +6,7 @@ import {
   Menu,
   LogOut,
   CreditCard,
+  FileText,
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import Swal from "sweetalert2";
@@ -20,19 +21,29 @@ const idleStyle =
 const navItems = [
   {
     to: "/userDashboard/dashboard",
-    label: "Dashboard",
+    label: "Profile",
     icon: LayoutDashboard,
     end: true,
   },
   {
     to: "/userDashboard/requestMeal",
-    label: "Request Meal",
+    label: "Requested Meal Plans",
+    icon: HandPlatter,
+  },
+  {
+    to: "/userDashboard/currentMeal",
+    label: "Current Meal Plans",
     icon: HandPlatter,
   },
   {
     to: "/userDashboard/manageCards",
     label: "Credit Cards",
     icon: CreditCard,
+  },
+  {
+    to: "/userDashboard/mysubscription",
+    label: "My Subscription",
+    icon: FileText,
   },
 ];
 
