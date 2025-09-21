@@ -152,7 +152,7 @@ export default function Navbar() {
                   e.currentTarget.src = DefaultAvatar;
                 }}
               />
-              <Link to="/user/dashboard" className={ghostBtn}>
+              <Link to="/userDashboard" className={ghostBtn}>
                 {displayName}
               </Link>
               <button onClick={handleLogout} className={primaryBtn}>

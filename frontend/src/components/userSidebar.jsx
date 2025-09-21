@@ -6,6 +6,7 @@ import {
   Menu,
   LogOut,
   CreditCard,
+  FileText,
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import Swal from "sweetalert2";
@@ -33,6 +34,11 @@ const navItems = [
     to: "/userDashboard/manageCards",
     label: "Credit Cards",
     icon: CreditCard,
+  },
+  {
+    to: "/userDashboard/mysubscription",
+    label: "My Subscription",
+    icon: FileText,
   },
 ];
 

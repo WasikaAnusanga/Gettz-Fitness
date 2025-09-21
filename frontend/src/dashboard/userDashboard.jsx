@@ -7,6 +7,7 @@ import RequestMeals from "../pages/user/requestMeal.jsx";
 import SaveCards from "../pages/client/cards/viewCards.jsx";
 import AddCardForm from "../pages/client/cards/addCards.jsx";
 import UpdateCardForm from "../pages/client/cards/updateCard.jsx";
+import ViewSubscription from "../pages/client/mySubscription/viewSubscription.jsx";
 
 export default function UserLayout() {
   return (
@@ -33,7 +34,7 @@ export default function UserLayout() {
               <Route path="/manageCards" element={<SaveCards/>} />
               <Route path="/manageCards/addCard" element={<AddCardForm/>} />
               <Route path="/manageCards/updateCard" element={<UpdateCardForm/>} />
-
+              <Route path="/mySubscription" element={<ViewSubscription/>} />
               <Route path="*" element={<Navigate to="dashboard" replace />} />
             </Routes>
           </div>
