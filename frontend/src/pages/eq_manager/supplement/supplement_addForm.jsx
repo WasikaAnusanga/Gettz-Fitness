@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Layers, FileText,Banknote } from "lucide-react";
+import { Layers, FileText, Banknote } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -52,8 +52,12 @@ export default function SupplementAddForm() {
         if (!Sup_name.trim()) return toast.error("Name is required");
         if (!Sup_type.trim()) return toast.error("Type is required");
         if (!IM_ID.trim()) return toast.error("Equipment Manager ID (IM_ID) is required");
-        if (Sup_price === "" || Number.isNaN(Number(Sup_price))) { return toast.error("Valid price is required"); }
-        if (Sup_quantity === "" || Number.isNaN(Number(Sup_quantity))) { return toast.error("Valid quantity is required"); }
+        if (Sup_price === "" || Number.isNaN(Number(Sup_price)) || Number(Sup_price) < 0) {
+            return toast.error("Valid non-negative price is required");
+        }
+        if (Sup_quantity === "" || Number.isNaN(Number(Sup_quantity)) || Number(Sup_quantity) < 0) {
+            return toast.error("Valid non-negative quantity is required");
+        }
 
         try {
             setSaving(true);
@@ -187,7 +191,7 @@ export default function SupplementAddForm() {
                                         type="number"
                                         min="0"
                                         value={Sup_price}
-                                        onChange={(e) => setPrice(e.target.value < 0) ? 0 : e.target.value}
+                                        onChange={(e) => setPrice(e.target.value)}
                                         placeholder="50.00"
                                         className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                     />
@@ -206,7 +210,7 @@ export default function SupplementAddForm() {
                                         type="number"
                                         min="0"
                                         value={Sup_quantity}
-                                        onChange={(e) => setQuantity(e.target.value < 0) ? 0 : e.target.value}
+                                        onChange={(e) => setQuantity(e.target.value)}
                                         placeholder="100"
                                         className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                     />

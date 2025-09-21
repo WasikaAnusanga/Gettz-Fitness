@@ -41,8 +41,8 @@ export const addEquipment= async (req ,res)=>{
         if (output.length === 0) {
             Eq_code = 1;
         } else {
-            const lastPlanId = Number(output[0].Eq_code); // force number
-            const Eq_code = lastPlanId + 1;
+            const lastPlanId = Number(output[0].Eq_code); 
+            Eq_code = lastPlanId + 1;
         }
 
         

@@ -176,11 +176,7 @@ export default function SupplementCart() {
                                 <p className="font-semibold text-gray-900 leading-tight line-clamp-2">
                                     {item.name}
                                 </p>
-                                {item.Sup_code && (
-                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                                        {item.Sup_code}
-                                    </span>
-                                )}
+                                
                             </div>
                             {item.type && (
                                 <p className="text-sm text-gray-500 mt-0.5">{item.type}</p>
