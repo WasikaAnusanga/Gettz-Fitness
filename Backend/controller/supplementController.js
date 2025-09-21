@@ -24,7 +24,6 @@ export const addSupplement= async (req ,res)=>{
     req.user={role:"Equipment Manager"};
     if(req.user.role=="Equipment Manager"){
         const{
-            Sup_code,
             Sup_name,
             Sup_type,
             Sup_price,
@@ -34,7 +33,14 @@ export const addSupplement= async (req ,res)=>{
             IM_ID,
             Sup_image
         }=req.body;
-
+        const output = await Supplement.find().sort({ _id: -1 }).limit(1);
+        let Sup_code;
+        if (output.length === 0) {
+            Sup_code = 1;
+        } else {
+            const lastPlanId = Number(output[0].Sup_code); 
+            Sup_code = lastPlanId + 1;
+        }
         let supplement;
         try{
             supplement= new Supplement({

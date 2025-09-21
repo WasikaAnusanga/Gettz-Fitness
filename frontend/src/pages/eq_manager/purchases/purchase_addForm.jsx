@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Calendar, ClipboardList, Layers,Banknote } from "lucide-react";
+import { Calendar, ClipboardList, Layers, Banknote } from "lucide-react";
 
 //date into ISO 
 function toISO(dateStr) {
@@ -37,8 +37,12 @@ export default function PurchaseAddPage() {
   async function handleSave() {
     //if (!P_code.trim()) return toast.error("Code is required");
     if (!P_date) return toast.error("Date is required");
-    if (P_cost === "" || isNaN(Number(P_cost))) return toast.error("Cost is required");
-    if (P_quantiy === "" || isNaN(Number(P_quantiy))) return toast.error("Quantity is required");
+    if (P_cost === "" || isNaN(Number(P_cost)) || Number(P_cost) < 0) {
+      return toast.error("Valid non-negative price is required");
+    }
+    if (P_quantiy === "" || isNaN(Number(P_quantiy)) || Number(P_quantiy) < 0) {
+      return toast.error("Valid non-negative quantity is required");
+    }
 
     try {
       setSaving(true);
@@ -142,7 +146,7 @@ export default function PurchaseAddPage() {
                   min="0"
                   step="0.01"
                   value={P_cost}
-                  onChange={(e) => setCost(e.target.value < 0) ? 0 : e.target.value}
+                  onChange={(e) => setCost(e.target.value)}
                   placeholder="0.00"
                   className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                 />
@@ -156,14 +160,14 @@ export default function PurchaseAddPage() {
               </label>
               <div className="relative">
                 <Layers size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-              <input
-                type="number"
-                min="1"
-                value={P_quantiy}
-                onChange={(e) => setQty(e.target.value < 0) ? 0 : e.target.value}
-                placeholder="1"
-                className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-              />
+                <input
+                  type="number"
+                  min="1"
+                  value={P_quantiy}
+                  onChange={(e) => setQty(e.target.value)}
+                  placeholder="1"
+                  className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                />
               </div>
             </div>
 
