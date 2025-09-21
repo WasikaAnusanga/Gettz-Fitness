@@ -16,6 +16,7 @@ import MealPlan from "./mealPlan";import SupplementStore from "./eq_manager/supp
 import { CartProvider } from "./eq_manager/supplement_store/supplement_cart";
 import SupplementCart from "./eq_manager/supplement_store/supplement_cart";
 
+import ChallengePage from "./client/challengesPage";
 
 export default function Homepage() {
   return (
@@ -41,7 +42,7 @@ export default function Homepage() {
           <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />        
           <Route path="/membership/paymentFailed" element={<PaymentFailed/>} />
           <Route path="/mealPlan" element={<MealPlan />} />
-
+          <Route path="/challenges" element={<ChallengePage/>} />
           <Route
             path="/*"
             element={

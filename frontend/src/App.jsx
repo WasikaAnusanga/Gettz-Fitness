@@ -44,7 +44,6 @@ function App() {
           <Route path="/adminLog" element={<AdminLoginForm />} />
           <Route path="/equip-manager/*" element={<EquipmentManagerLayout />} />
           <Route path="/community" element={<CommunityFeed/>}/>
-          <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/admin/notifications/new" element={<AddNotification />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/chatbot" element={<ChatBot />} />
