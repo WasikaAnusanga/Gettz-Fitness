@@ -2,13 +2,13 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { Megaphone, X } from "lucide-react";
+import { Megaphone } from "lucide-react";
 
 export default function AnnouncementAdd() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [type, setType] = useState("promotional");
-  const [targetUser, setTargetUser] = useState(""); // optional: for single user
+  const [targetUser, setTargetUser] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ export default function AnnouncementAdd() {
 
       let url = `${import.meta.env.VITE_BACKEND_URL}/api/notification/add`;
 
-      // if targetUser provided, send to one user
       if (targetUser.trim()) {
         payload.userId = targetUser.trim();
         url = `${import.meta.env.VITE_BACKEND_URL}/api/notification/addOne`;

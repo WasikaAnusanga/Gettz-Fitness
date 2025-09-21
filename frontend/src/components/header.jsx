@@ -96,7 +96,7 @@ export default function Navbar() {
       { to: "/contactUs", label: "Contact" },
       { to: "/mealPlan", label: "Meals" },
       { to: "/store", label: "Store" },
-      { to: "/achievements", label: "Achievements" },
+      { to: "/challenges", label: "Competitions" },
     ],
     []
   );

@@ -13,6 +13,7 @@ import VideoDetails from "./client/VideoDetails";
 import PaymentSuccess from "../pages/client/payment/paymentSuccess";
 import PaymentFailed from "./client/payment/paymentFailed";
 import MealPlan from "./mealPlan";
+import ChallengePage from "./client/challengesPage";
 
 export default function Homepage() {
   return (
@@ -31,7 +32,7 @@ export default function Homepage() {
           <Route path="/membership/paymentSuccess" element={<PaymentSuccess/>} />        
           <Route path="/membership/paymentFailed" element={<PaymentFailed/>} />
           <Route path="/mealPlan" element={<MealPlan />} />
-
+          <Route path="/challenges" element={<ChallengePage/>} />
           <Route
             path="/*"
             element={
