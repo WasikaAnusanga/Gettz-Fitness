@@ -14,7 +14,7 @@ import ViewSubscription from "../pages/client/mySubscription/viewSubscription.js
 export default function UserLayout() {
   const userData = JSON.parse(localStorage.getItem("user"));
   const fullName = userData.firstName;
-  console.log(userData);
+  
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="flex">
