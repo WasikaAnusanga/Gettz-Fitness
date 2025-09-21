@@ -127,6 +127,12 @@ export default function CurrentMeal() {
     }
   }
 
+  
+  
+  
+
+
+
   useEffect(() => {
     fetchPlans();
   }, []);
@@ -182,7 +188,7 @@ export default function CurrentMeal() {
   return (
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
-        {/* Header (title + download button on right) */}
+        {/* Header*/}
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold text-black">Meal Plans</h1>

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import add from "../../assets/plus.png";
 
-/* Small inline icons (no extra libs) */
+/* Small inline icons */
 function IconUser() {
   return <img src={add} className="icon h-5 w-5 inline-block object-contain" />;
 }
@@ -41,8 +41,7 @@ function RequestCard({ row, onUpdate, onDelete }) {
   const started = row.request_date
     ? String(row.request_date).slice(0, 10)
     : "-";
-  const fullName =
-    [row.user_name, row.last_name].filter(Boolean).join(" ") || "-";
+  
   const mealType = row.mealType ?? "-";
   const weight = row.weight ?? "-";
   const height = row.height ?? "-";
@@ -70,9 +69,6 @@ function RequestCard({ row, onUpdate, onDelete }) {
             </h3>
             <Pill tone={tone}>{mealType}</Pill>
           </div>
-          <p className="mt-1 text-sm text-gray-600 break-words">
-            — {fullName} —
-          </p>
           <p className="mt-1 text-sm text-gray-600 break-words">
             {weight} kg · {height} cm
           </p>
@@ -363,46 +359,6 @@ export default function RequestMeals() {
               className="space-y-4 p-4"
               noValidate
             >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div>
-                  <label className={label}>First Name</label>
-                  <p className={sub}>Your first name.</p>
-                  <input
-                    type="text"
-                    value={editForm.user_name}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, user_name: e.target.value })
-                    }
-                    className={`${input} ${
-                      errors.user_name ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.user_name && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.user_name}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className={label}>Last Name</label>
-                  <p className={sub}>Your family surname.</p>
-                  <input
-                    type="text"
-                    value={editForm.last_name}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, last_name: e.target.value })
-                    }
-                    className={`${input} ${
-                      errors.last_name ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.last_name && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.last_name}
-                    </p>
-                  )}
-                </div>
-              </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div>
