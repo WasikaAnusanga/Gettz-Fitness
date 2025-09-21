@@ -1,21 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { Plus, X } from "lucide-react"; // removed Search import
+import { useEffect, useState } from "react";
+import { Plus, X } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function MealPlans() {
-  // Data
   const [plans, setPlans] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  // UI state
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState(""); // kept for filtering logic (no visible search UI)
-  const [editId, setEditId] = useState(null); // mealPlan_id when editing
+  const [editId, setEditId] = useState(null);
 
-  // Form (snake_case to match backend)
   const [form, setForm] = useState({
     mealPlan_id: "",
     user_id: "",
@@ -35,12 +31,6 @@ export default function MealPlans() {
       duration: "",
     });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
-  // -------- FETCH ----------
   async function fetchMealPlans() {
     try {
       setBusy(true);
@@ -60,7 +50,10 @@ export default function MealPlans() {
     }
   }
 
-  // -------- CREATE ----------
+  useEffect(() => {
+    fetchMealPlans();
+  }, []);
+
   async function onCreate(e) {
     e.preventDefault();
 
@@ -107,9 +100,8 @@ export default function MealPlans() {
     }
   }
 
-  // -------- EDIT PREP ----------
   function startEdit(p) {
-    setEditId(p.mealPlan_id);
+    setEditId(p.mealPlan_id ?? null);
     setForm({
       mealPlan_id: p.mealPlan_id ?? "",
       user_id: p.user_id ?? "",
@@ -121,7 +113,6 @@ export default function MealPlans() {
     setOpen(true);
   }
 
-  // -------- UPDATE ----------
   async function onUpdate(e) {
     e.preventDefault();
     if (!editId) {
@@ -142,7 +133,7 @@ export default function MealPlans() {
       setBusy(true);
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/mealPlan/${encodeURIComponent(
-          form.mealPlan_id
+          editId
         )}`,
         payload
       );
@@ -163,18 +154,17 @@ export default function MealPlans() {
     }
   }
 
-  // -------- DELETE ----------
   async function deletePlan(p) {
-    const key = p.mealPlan_id ?? p._id;
-    if (!key) {
+    if (!p.mealPlan_id) {
       toast.error("Missing id");
       return;
     }
-
     try {
       setBusy(true);
       await axios.delete(
-        import.meta.env.VITE_BACKEND_URL + "/api/mealPlan/" + key
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealPlan/${encodeURIComponent(
+          p.mealPlan_id
+        )}`
       );
       toast.success("Meal plan deleted");
       fetchMealPlans();
@@ -190,39 +180,12 @@ export default function MealPlans() {
     }
   }
 
-  // -------- SEARCH (query kept; no visible UI) ----------
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return plans;
-    return plans.filter((p) => {
-      const id = String(p.mealPlan_id ?? "").toLowerCase();
-      const user = String(p.user_id ?? "").toLowerCase();
-      const name = String(p.meal_name ?? "").toLowerCase();
-      const desc = String(p.description ?? "").toLowerCase();
-      const type = String(p.meal_type ?? "").toLowerCase();
-      const dur = String(p.duration ?? "").toLowerCase();
-      return (
-        id.includes(q) ||
-        user.includes(q) ||
-        name.includes(q) ||
-        desc.includes(q) ||
-        type.includes(q) ||
-        dur.includes(q)
-      );
-    });
-  }, [query, plans]);
-
-  useEffect(() => {
-    fetchMealPlans();
-  }, []);
-
-  // -------- PDF (exports current filtered list) ----------
   const handleDownloadPDF = () => {
-    const list = filtered;
+    const list = plans;
     const doc = new jsPDF();
 
     doc.setFontSize(16);
-    doc.setTextColor("#e30613"); // red accent like your theme
+    doc.setTextColor("#e30613");
     doc.text("Meal Plans Report", 14, 16);
 
     autoTable(doc, {
@@ -248,34 +211,31 @@ export default function MealPlans() {
         p.duration ?? "-",
       ]),
       theme: "grid",
-      headStyles: { fillColor: [0, 0, 0] }, // black header like Video.jsx table
+      headStyles: { fillColor: [0, 0, 0] },
       styles: { fontSize: 9 },
       columnStyles: {
-        0: { cellWidth: 10 }, // No
-        1: { cellWidth: 25 }, // Meal Plan ID
-        2: { cellWidth: 22 }, // User ID
-        3: { cellWidth: 40 }, // Name
-        4: { cellWidth: 50 }, // Description
-        5: { cellWidth: 25 }, // Type
-        6: { cellWidth: 25 }, // Duration
+        0: { cellWidth: 10 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 50 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 25 },
       },
     });
 
     doc.save("meal_plans.pdf");
   };
 
-  // --- UI helpers for Video.jsx look ---
   const headerCell = "px-3 py-2 text-left";
   const cell = "px-3 py-2";
 
   return (
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
-        {/* Header */}
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-black">Meal Plans</h1>
           <div className="flex items-center gap-2">
-            {/* Download PDF (green) */}
             <button
               type="button"
               onClick={handleDownloadPDF}
@@ -284,7 +244,6 @@ export default function MealPlans() {
               Download PDF
             </button>
 
-            {/* Add */}
             <button
               type="button"
               onClick={() => {
@@ -300,12 +259,10 @@ export default function MealPlans() {
           </div>
         </div>
 
-        {/* Video.jsx-style table */}
         <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-black text-white">
               <tr>
-                <th className={headerCell}>No</th>
                 <th className={headerCell}>Meal Plan ID</th>
                 <th className={headerCell}>User ID</th>
                 <th className={headerCell}>Name</th>
@@ -325,7 +282,7 @@ export default function MealPlans() {
                 </tr>
               )}
 
-              {!busy && filtered.length === 0 && (
+              {!busy && plans.length === 0 && (
                 <tr>
                   <td className={cell} colSpan={8}>
                     No meal plans found
@@ -334,11 +291,10 @@ export default function MealPlans() {
               )}
 
               {!busy &&
-                filtered.map((p, idx) => {
+                plans.map((p) => {
                   const key = p._id ?? p.mealPlan_id;
                   return (
                     <tr key={key} className="border-t border-black/10">
-                      <td className={cell}>{idx + 1}</td>
                       <td className={`${cell} font-mono`}>
                         {p.mealPlan_id ?? "-"}
                       </td>
@@ -375,12 +331,10 @@ export default function MealPlans() {
         </div>
       </div>
 
-      {/* Modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
-            {/* Title + close */}
-            <div className="mb-4 flex items-center justify-between">
+          <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
+            <div className="flex items-center justify-between rounded-t-2xl border-b px-6 py-4">
               <h3 className="text-lg font-semibold">
                 {editId ? "Update Meal Plan" : "Add Meal Plan"}
               </h3>
@@ -397,49 +351,90 @@ export default function MealPlans() {
               </button>
             </div>
 
-            <form onSubmit={editId ? onUpdate : onCreate} className="space-y-3">
-              <label className="text-sm block">
+            <form
+              onSubmit={editId ? onUpdate : onCreate}
+              className="space-y-6 p-6"
+            >
+              {/* Full width: Meal Plan ID */}
+              <label className="block text-sm">
                 <span className="mb-1 block font-medium">Meal Plan ID *</span>
+                <p className="text-xs text-gray-500 mb-2">
+                  Unique identifier for this plan.
+                </p>
                 <input
                   name="mealPlan_id"
                   value={form.mealPlan_id}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setForm({ ...form, mealPlan_id: e.target.value })
+                  }
                   required
                   disabled={!!editId}
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500 disabled:bg-gray-100"
                 />
               </label>
 
-              <label className="text-sm block">
-                <span className="mb-1 block font-medium">User ID *</span>
-                <input
-                  name="user_id"
-                  value={form.user_id}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                />
-              </label>
-
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <label className="text-sm block">
-                  <span className="mb-1 block font-medium">Meal Name *</span>
+              {/* Two columns */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium">User ID *</span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    ID of the user the plan belongs to.
+                  </p>
                   <input
-                    name="meal_name"
-                    value={form.meal_name}
-                    onChange={handleChange}
+                    name="user_id"
+                    value={form.user_id}
+                    onChange={(e) =>
+                      setForm({ ...form, user_id: e.target.value })
+                    }
                     required
-                    placeholder="e.g. whole-grain cereals, oats"
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                   />
                 </label>
 
-                <label className="text-sm block">
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium">Meal Name *</span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Name of the meal.
+                  </p>
+                  <input
+                    name="meal_name"
+                    value={form.meal_name}
+                    onChange={(e) =>
+                      setForm({ ...form, meal_name: e.target.value })
+                    }
+                    required
+                    placeholder="e.g. Whole-grain cereals, oats"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </label>
+
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium">Type</span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Type of the meal
+                  </p>
+                  <input
+                    name="meal_type"
+                    value={form.meal_type}
+                    onChange={(e) =>
+                      setForm({ ...form, meal_type: e.target.value })
+                    }
+                    placeholder="e.g. Pre-workout, Post-workout"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                  />
+                </label>
+
+                <label className="block text-sm">
                   <span className="mb-1 block font-medium">Duration *</span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    How long the plan runs.
+                  </p>
                   <input
                     name="duration"
                     value={form.duration}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setForm({ ...form, duration: e.target.value })
+                    }
                     required
                     placeholder="e.g. 3 months"
                     className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
@@ -447,29 +442,24 @@ export default function MealPlans() {
                 </label>
               </div>
 
-              <label className="text-sm block">
-                <span className="mb-1 block font-medium">Type</span>
-                <input
-                  name="meal_type"
-                  value={form.meal_type}
-                  onChange={handleChange}
-                  placeholder="e.g. pre-workout, post-workout"
-                  className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                />
-              </label>
-
-              <label className="text-sm block">
+              {/* Full width: Description */}
+              <label className="block text-sm">
                 <span className="mb-1 block font-medium">Description</span>
+                <p className="text-xs text-gray-500 mb-2">
+                  Notes, goals, or any extra guidance.
+                </p>
                 <textarea
                   name="description"
                   value={form.description}
-                  onChange={handleChange}
-                  rows={3}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                  rows={4}
                   className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
                 />
               </label>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-between pt-4">
                 <button
                   type="button"
                   onClick={() => {
@@ -477,13 +467,13 @@ export default function MealPlans() {
                     setEditId(null);
                     resetForm();
                   }}
-                  className="rounded-xl border border-gray-300 px-4 py-2 text-sm"
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
                 >
                   {editId ? "Update Meal Plan" : "Save Meal Plan"}
                 </button>
@@ -492,13 +482,6 @@ export default function MealPlans() {
           </div>
         </div>
       )}
-
-      {/* Top progress bar */}
-      <div
-        className={`pointer-events-none fixed left-0 top-0 h-0.5 bg-red-600 transition-all ${
-          busy ? "w-full" : "w-0"
-        }`}
-      />
     </div>
   );
 }
