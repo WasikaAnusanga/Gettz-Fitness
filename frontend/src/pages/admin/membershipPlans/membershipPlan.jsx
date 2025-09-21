@@ -1,25 +1,36 @@
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react"; // ✅ changed (added X)
 import { useState, useEffect } from "react";
 import Loader from "../../../components/lorder-animate";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
+
 export default function MembershipPlans() {
+  // ✅ changed: split source data (allPlans) from view data (plans)
+  const [allPlans, setAllPlans] = useState([]); // ✅ added
   const [plans, setPlans] = useState([]);
   const [loaded, setLoaded] = useState(false);
+
+  // ✅ added: search state
+  const [query, setQuery] = useState("");
+
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!loaded) {
       axios
         .get(import.meta.env.VITE_BACKEND_URL + "/api/plan/")
         .then((res) => {
-          setPlans(res.data);
+          setAllPlans(res.data); // ✅ added
+          setPlans(res.data);     // ✅ moved
           setLoaded(true);
         })
         .catch((err) => console.log("message:", err));
     }
   }, [loaded]);
+
   const token = localStorage.getItem("token");
+
   function handleDelete(planId) {
     Swal.fire({
       title: "Are you sure?",
@@ -38,7 +49,7 @@ export default function MembershipPlans() {
               headers: token ? { Authorization: `Bearer ${token}` } : undefined,
             }
           )
-          .then((res) => {
+          .then(() => {
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",
@@ -49,7 +60,7 @@ export default function MembershipPlans() {
           .catch((err) => {
             Swal.fire({
               title: "Not Deleted!",
-              text: err,
+              text: String(err),
               icon: "warning",
             });
             console.log("message:", err);
@@ -57,6 +68,36 @@ export default function MembershipPlans() {
       }
     });
   }
+
+  // ✅ added: lightweight debounce + filter
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        setPlans(allPlans);
+        return;
+      }
+      const filtered = allPlans.filter((p) => {
+        const id = String(p?.plan_id ?? "").toLowerCase();
+        const name = String(p?.plan_name ?? "").toLowerCase();
+        const desc = String(p?.description ?? "").toLowerCase();
+        const duration = String(p?.duration ?? "").toLowerCase();
+        const price = String(p?.price ?? "").toLowerCase();
+        const features = Array.isArray(p?.features)
+          ? p.features.join(" ").toLowerCase()
+          : String(p?.features ?? "").toLowerCase();
+
+        // ✅ fields covered: ID, Name, Description, Features, Duration, Price
+        return [id, name, desc, features, duration, price].some((field) =>
+          field.includes(q)
+        );
+      });
+      setPlans(filtered);
+    }, 200); // 200ms debounce
+
+    return () => clearTimeout(t);
+  }, [query, allPlans]);
+
   return (
     <div className="p-6 ">
       {loaded && (
@@ -66,14 +107,31 @@ export default function MembershipPlans() {
             <h1 className="text-2xl font-semibold text-black">
               Manage Membership Plans
             </h1>
+
             <div className="flex items-center gap-2">
+              {/* ✅ changed: wired up search box */}
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  placeholder="Search by title, tags, alt name, ID…"
-                  className="w-72 rounded-xl border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-red-500"
+                  value={query} // ✅ added
+                  onChange={(e) => setQuery(e.target.value)} // ✅ added
+                  placeholder="Search by ID, name, features, price, duration…"
+                  className="w-72 rounded-xl border border-gray-300 bg-white pl-9 pr-9 py-2 text-sm outline-none focus:border-red-500"
                 />
+                {/* ✅ added: clear button */}
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-gray-100"
+                    aria-label="Clear search"
+                    title="Clear"
+                  >
+                    <X className="h-4 w-4 text-gray-400" />
+                  </button>
+                )}
               </div>
+
               <Link to={"/admin/membership/addPlan"}>
                 <button className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-700">
                   <Plus className="h-4 w-4" />
@@ -142,6 +200,18 @@ export default function MembershipPlans() {
                     </td>
                   </tr>
                 ))}
+
+                {/* ✅ added: empty state for no matches */}
+                {plans.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-4 py-6 text-center text-gray-500"
+                    >
+                      No plans match “{query}”.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
