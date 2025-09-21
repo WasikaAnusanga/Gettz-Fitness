@@ -45,22 +45,31 @@ export async function handleWebhook(req, res) {
             { user_id: userId },
             { status: "active" }
           );
-          
-          const user =await User.findById(userId);
-          user.role="member"
-          await user.save()
+
+          const user = await User.findById(userId);
+          user.role = "member";
+          await user.save();
           const top = await Subscription.aggregate([
             { $match: { status: "active" } },
             { $group: { _id: "$plan_id", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
             { $limit: 1 },
           ]);
-           await sendPaymentReciept(email,session.id)
-          const plan=await MembershipPlan.findById(top)
-          plan.popular=true;
-          
-          await plan.save()
 
+          if (top.length > 0) {
+            const topPlanId = top[0]._id;
+
+            // 1) Set all plans' popular = false
+            await MembershipPlan.updateMany({}, { $set: { popular: false } });
+
+            // 2) Mark only top plan as popular = true
+            await MembershipPlan.findByIdAndUpdate(topPlanId, {
+              $set: { popular: true },
+            });
+
+            // (optional) Send receipt here
+            await sendPaymentReciept(email, session.id);
+          }
         } catch (subErr) {
           console.error(
             "Sub creation failed:",
