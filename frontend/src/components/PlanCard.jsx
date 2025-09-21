@@ -52,8 +52,9 @@ export default function PlanCard(props) {
 
       <div className="mb-4">
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold">LKR{plan.price}</span>
-          <span className="text-sm text-black/60">/mo</span>
+          <span className="text-3xl font-bold">LKR.{plan.price}</span>
+          <span className="text-base text-black/70">/For {plan.duration} days</span>
+
         </div>
       </div>
 
