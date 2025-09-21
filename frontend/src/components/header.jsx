@@ -91,7 +91,7 @@ export default function Navbar() {
       { to: "/", label: "Home" },
       { to: "/aboutUs", label: "About" },
       { to: "/membership", label: "Membership" },
-      { to: "/trainers", label: "Trainers" },
+      //{ to: "/trainers", label: "Trainers" },
       { to: "/videos", label: "Videos" },
       { to: "/contactUs", label: "Contact" },
       { to: "/mealPlan", label: "Meals" },

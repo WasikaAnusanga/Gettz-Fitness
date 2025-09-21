@@ -42,8 +42,8 @@ export default function AdminLoginPage() {
       // Redirect based on role
       if (user.role.toLowerCase() === "admin") {
         navigate("/admin", { replace: true });
-      } else {
-        navigate("/", { replace: true });
+      } else if(user.role==="Equipment Manager") {
+        navigate("/eq_manager", { replace: true });
       }
     } catch (err) {
       setError(err?.response?.data?.message || err?.message || "Login failed");
