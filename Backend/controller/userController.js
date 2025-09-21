@@ -207,8 +207,7 @@ export function getAllUsers(req, res) {
 
 
 export async function getUserById(req, res) {
-  const userId = req.params.id;
-  const user = await User.findOne({ userId: userId });
+  const user = await User.findOne({ _id:req.user._id});
   if (user == null) {
     res.status(404).json({
       message: "User not found",
