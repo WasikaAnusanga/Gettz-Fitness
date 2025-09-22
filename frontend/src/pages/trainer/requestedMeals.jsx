@@ -37,8 +37,12 @@ export default function RequestedMeals() {
   async function fetchRequests() {
     try {
       setBusy(true);
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: "Bearer " + token } : undefined;
+
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/mealRequest`
+        `${import.meta.env.VITE_BACKEND_URL}/api/mealRequest`,
+        { headers }
       );
       const items = Array.isArray(data?.response) ? data.response : [];
       setRequests(items);

@@ -77,7 +77,7 @@ function RequestCard({ row, onUpdate, onDelete }) {
           </p>
         </div>
 
-        {/* Actions (same wiring, just styled to match) */}
+        {/* Actions */}
         <div className="shrink-0 flex gap-2">
           <button
             type="button"

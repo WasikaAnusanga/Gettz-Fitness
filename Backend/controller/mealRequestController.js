@@ -1,8 +1,7 @@
 import MealRequest from "../model/mealRequest.js";
 
 export const getMealRequest = (req, res) => {
-  req.user = { role: "User" };
-  if (req.user.role == "User") {
+  if (req.user.role == "admin" || req.user.role == "trainer") {
     MealRequest.find()
       .then((response) => {
         res.json({ response });
@@ -12,7 +11,7 @@ export const getMealRequest = (req, res) => {
       });
   } else {
     res.status(401).json({
-      message: "You need User authorization...",
+      message: "You need Trainer or Admin authorization...",
     });
   }
 };
@@ -36,8 +35,7 @@ export const getOneMealRequest = (req, res) => {
 
 export const addMealRequest = (req, res) => {
   const user = req.user._id;
-  if (req.user.role == "user") {
-    //role should also be member
+  if (req.user.role == "user" || req.user.role == "member") {
     const mealrequest = new MealRequest({
       user_id: user,
       user_name: req.body.user_name,
