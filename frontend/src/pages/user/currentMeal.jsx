@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import bowl from "../../assets/healthy-meal.png";
+import Swal from "sweetalert2";
 
 function IconBowl() {
   return (
@@ -45,7 +46,7 @@ function Pill({ children, tone = "gray" }) {
   );
 }
 
-function MealPlanCard({ plan }) {
+function MealPlanCard({ plan, onDelete }) {
   const name = plan.meal_name ?? plan.mealName ?? "-";
   const type = plan.meal_type ?? plan.planMealType ?? "-";
   const duration = plan.duration ?? "-";
@@ -71,10 +72,7 @@ function MealPlanCard({ plan }) {
         <div className="shrink-0">
           <button
             type="button"
-            onClick={() => {
-              /* UI-only delete button (no backend) */
-              // you can later call a delete handler here
-            }}
+            onClick={() => onDelete(plan)}
             className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
             aria-label="Delete meal plan"
             title="Delete"
@@ -105,6 +103,7 @@ function MealPlanCard({ plan }) {
 export default function CurrentMeal() {
   const [plans, setPlans] = useState([]);
   const [busy, setBusy] = useState(false);
+   const [saving, setSaving] = useState(false);
 
   async function fetchPlans() {
     try {
@@ -126,6 +125,52 @@ export default function CurrentMeal() {
       setBusy(false);
     }
   }
+
+
+  async function handleDelete(plan) {
+    
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      setSaving(true);
+        const id = plan.mealPlan_id;
+
+      await axios.delete(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/mealPlan/${encodeURIComponent(id)}`
+      );
+      await Swal.fire({
+        title: "Deleted!",
+        text: "The plan has been deleted.",
+        icon: "success",
+      });
+      fetchPlans();
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        err?.message ||
+        "Failed to delete plan";
+      toast.error(msg);
+    } finally {
+      setSaving(false);
+    }
+  } 
+  
+  
+  
+
+
 
   useEffect(() => {
     fetchPlans();
@@ -182,7 +227,7 @@ export default function CurrentMeal() {
   return (
     <div className="p-6">
       <div className="mx-auto w-full max-w-screen-2xl">
-        {/* Header (title + download button on right) */}
+        {/* Header*/}
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold text-black">Meal Plans</h1>
@@ -216,7 +261,11 @@ export default function CurrentMeal() {
         {!busy && plans.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {plans.map((plan) => (
-              <MealPlanCard key={plan._id ?? plan.meal_name ?? Math.random()} plan={plan} />
+              <MealPlanCard 
+                key={plan._id ?? plan.meal_name ?? Math.random()}
+               plan={plan} 
+               onDelete={handleDelete}
+               />
             ))}
           </div>
         )}

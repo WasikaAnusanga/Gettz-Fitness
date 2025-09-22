@@ -8,6 +8,7 @@ import {
   CreditCard,
   FileText,
   
+  ArrowDownToDot,
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
 import Swal from "sweetalert2";
@@ -29,11 +30,11 @@ const navItems = [
   {
     to: "/userDashboard/requestMeal",
     label: "Requested Meal Plans",
-    icon: HandPlatter,
+    icon: ArrowDownToDot,
   },
   {
     to: "/userDashboard/currentMeal",
-    label: "Current Meal Plans",
+    label: "Active Meal Plans",
     icon: HandPlatter,
   },
   {
