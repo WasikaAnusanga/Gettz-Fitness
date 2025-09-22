@@ -20,7 +20,7 @@ export const getMealPlan = (req, res) => {
 
 export const getOneMealPlan = (req, res) => {
   const user = req.user._id;
-  if (req.user.role == "user") {
+  if (req.user.role == "user" || req.user.role == "member") {
     MealPlan.find({ user_id: user })
       .then((response) => {
         res.json({ response });
