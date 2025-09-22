@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
-const schema = mongoose.Schema;
+const {Schema} = mongoose;
+
 
 //supplement schema
-const supplementSchema = new schema({
+const supplementSchema = new Schema({
     Sup_code:{
-        type:String,
+        type:Number,
         unique:true,
         required:true,
         trim:true
@@ -19,7 +20,8 @@ const supplementSchema = new schema({
     },
     Sup_price:{
         type: Number,
-        required: true
+        required: true,
+        min:0
     },
     Sup_status:{
         type: String,
@@ -29,7 +31,8 @@ const supplementSchema = new schema({
     },
     Sup_quantity:{
         type: Number,
-        required: true
+        required: true,
+        min:1
     },
     Sup_supplier:{
         type: String
@@ -42,6 +45,7 @@ const supplementSchema = new schema({
     Sup_image:[],  
 
 });
+
 
 const supplement= mongoose.model("supplement",supplementSchema);
 export default supplement;

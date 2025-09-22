@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import io from "socket.io-client";   // ✅ for realtime updates
 import {
   Users,
   Video as VideoIcon,
@@ -24,11 +25,13 @@ import {
   Line,
 } from "recharts";
 
+// ✅ Connect to backend socket
+const socket = io(import.meta.env.VITE_BACKEND_URL);
+
 const ENDPOINTS = {
-  members: "/api/user",       
-  // equipment: "/api/equipment", 
+  members: "/api/user",
   videos: "/api/video",
-  attendance: "/api/employeeSalary",
+  attendance: "/api/attendance/allAtend",   // ✅ updated
   salaries: "/api/employeeSalary",
 };
 
@@ -36,13 +39,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   const [members, setMembers] = useState([]);
-  // const [equipment, setEquipment] = useState([]);
   const [inquiries, setInquiries] = useState([]);
   const [videos, setVideos] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [salaries, setSalaries] = useState([]);
 
-  // -------------------- Fetch helpers --------------------
+  // -------------------- Helpers --------------------
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token") || localStorage.getItem("jwt");
     return token ? { Authorization: `Bearer ${token}` } : undefined;
@@ -50,55 +52,36 @@ export default function AdminDashboard() {
 
   const extractArray = (payload) => {
     if (Array.isArray(payload)) return payload;
-    // try common shapes
-    return (
-      payload?.items ||
-      payload?.data ||
-      payload?.results ||
-      payload?.users ||
-      []
-    );
+    return payload?.items || payload?.data || payload?.results || payload?.users || [];
   };
 
+  // -------------------- Fetch All Data --------------------
   const fetchAll = async () => {
     setLoading(true);
     try {
       const base = import.meta.env.VITE_BACKEND_URL;
       const headers = getAuthHeaders();
 
-      const [
-        resMembers,
-  // resEquipment,
-        resVideos,
-        resAttendance,
-        resSalaries,
-      ] = await Promise.all([
+      const [resMembers, resVideos, resAttendance, resSalaries] = await Promise.all([
         axios.get(`${base}${ENDPOINTS.members}`, { headers }),
-  // axios.get(`${base}${ENDPOINTS.equipment}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.videos}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.attendance}`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${base}${ENDPOINTS.salaries}`, { headers }).catch(() => ({ data: [] })),
       ]);
 
       const rawUsers = extractArray(resMembers.data);
-      setMembers(
-        rawUsers.filter((u) => String(u.role || "").toLowerCase() === "user")
-      );
-      // setEquipment(extractArray(resEquipment.data));
-      // Fetch inquiries
-      axios.get(`${base}/api/inquiry/viewAll`, { headers })
-        .then((res) => setInquiries(Array.isArray(res.data) ? res.data : []))
-        .catch(() => setInquiries([]));
+      setMembers(rawUsers.filter((u) => String(u.role || "").toLowerCase() === "user"));
       setVideos(extractArray(resVideos.data));
       setAttendance(extractArray(resAttendance.data));
       setSalaries(extractArray(resSalaries.data));
+
+      // inquiries
+      axios.get(`${base}/api/inquiry/viewAll`, { headers })
+        .then((res) => setInquiries(Array.isArray(res.data) ? res.data : []))
+        .catch(() => setInquiries([]));
     } catch (err) {
       console.error(err);
-      toast.error(
-        err?.response?.status === 401
-          ? "Unauthorized — please sign in again."
-          : "Failed to load dashboard data."
-      );
+      toast.error("Failed to load dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -106,26 +89,36 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchAll();
+
+    // ✅ Realtime Attendance Updates
+    socket.on("attendanceUpdate", (data) => {
+      toast.success(`Attendance: ${data.memberName} checked in`);
+      setAttendance((prev) => [
+        { rfid: data.rfid, memberName: data.memberName, time: new Date() },
+        ...prev,
+      ]);
+    });
+
+    return () => {
+      socket.off("attendanceUpdate");
+    };
   }, []);
 
   // -------------------- Totals --------------------
-  const totals = useMemo(
-    () => ({
-      members: members.length,
-  // equipment: equipment.length,
-  inquiries: inquiries.length,
-      videos: videos.length,
-      attendance: attendance.length,
-      salaries: salaries.length,
-    }),
-  [members, inquiries, videos, attendance, salaries]
-  );
+  const totals = useMemo(() => ({
+    members: members.length,
+    inquiries: inquiries.length,
+    videos: videos.length,
+    attendance: attendance.length,
+    salaries: salaries.length,
+  }), [members, inquiries, videos, attendance, salaries]);
 
+  // -------------------- Charts --------------------
   const tryParseDate = (item) => {
     const v =
       item?.createdAt ||
-      item?.created_at ||
       item?.date ||
+      item?.time ||
       item?.payDate ||
       item?.attendanceDate ||
       item?.updatedAt ||
@@ -183,17 +176,15 @@ export default function AdminDashboard() {
     }));
   }, [seriesMembers, seriesVideos, seriesAttendance, seriesInquiries]);
 
-  const barData = useMemo(
-    () => [
-      { name: "Members", value: totals.members },
-      { name: "Inquiries", value: totals.inquiries },
-      { name: "Videos", value: totals.videos },
-      { name: "Attendance", value: totals.attendance },
-      { name: "Salaries", value: totals.salaries },
-    ],
-    [totals]
-  );
+  const barData = useMemo(() => [
+    { name: "Members", value: totals.members },
+    { name: "Inquiries", value: totals.inquiries },
+    { name: "Videos", value: totals.videos },
+    { name: "Attendance", value: totals.attendance },
+    { name: "Salaries", value: totals.salaries },
+  ], [totals]);
 
+  // -------------------- UI --------------------
   const StatCard = ({ icon: Icon, label, value, accent = "bg-red-600" }) => (
     <div className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm flex items-center gap-4">
       <div className={`h-12 w-12 ${accent} text-white rounded-xl grid place-items-center`}>

@@ -47,6 +47,7 @@ export function saveUser(req, res) {
       });
     })
     .catch((err) => {
+      
       res.status(500).json({
         message: "Error saving user",
         error: err.message,

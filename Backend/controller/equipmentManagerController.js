@@ -5,6 +5,7 @@ import EquipmentManager from "../model/equipmentManager.js";
 
 dotenv.config();
 export async function registerEquipmentManager(req, res) {
+  console.log("Register equipment manager called");
   try {
     if (!req.user) {
       return res.status(403).json({ message: "Please login as admin to create a new user" });
@@ -40,6 +41,7 @@ export async function registerEquipmentManager(req, res) {
       data: safe,
     });
   } catch (err) {
+    
     return res.status(500).json({
       message: "Error registering equipment manager",
       error: err.message,

@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Layers, FileText } from "lucide-react";
+import { Layers, FileText, Banknote } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
     Package,
     Tag,
-    Boxes,
     Store,
     Hash,
     User,
@@ -27,7 +26,7 @@ const types = [
 export default function SupplementAddForm() {
     const STATUS = ["In stock", "Out of stock"];
 
-    const [Sup_code, setCode] = useState("");
+    //const [Sup_code, setCode] = useState("");
     const [Sup_name, setName] = useState("");
     const [Sup_type, setType] = useState("");
     const [Sup_price, setPrice] = useState("");
@@ -49,18 +48,22 @@ export default function SupplementAddForm() {
 
     async function handleSubmit() {
         //alidations
-        if (!Sup_code.trim()) return toast.error("Code is required");
+        //if (!Sup_code.trim()) return toast.error("Code is required");
         if (!Sup_name.trim()) return toast.error("Name is required");
         if (!Sup_type.trim()) return toast.error("Type is required");
         if (!IM_ID.trim()) return toast.error("Equipment Manager ID (IM_ID) is required");
-        if (Sup_price === "" || Number.isNaN(Number(Sup_price))) { return toast.error("Valid price is required"); }
-        if (Sup_quantity === "" || Number.isNaN(Number(Sup_quantity))) { return toast.error("Valid quantity is required"); }
+        if (Sup_price === "" || Number.isNaN(Number(Sup_price)) || Number(Sup_price) < 0) {
+            return toast.error("Valid non-negative price is required");
+        }
+        if (Sup_quantity === "" || Number.isNaN(Number(Sup_quantity)) || Number(Sup_quantity) < 0) {
+            return toast.error("Valid non-negative quantity is required");
+        }
 
         try {
             setSaving(true);
 
             const payload = {
-                Sup_code: Sup_code.trim(),
+                //Sup_code: Sup_code.trim(),
                 Sup_name: Sup_name.trim(),
                 Sup_type: Sup_type.trim(),
                 Sup_status,
@@ -112,7 +115,7 @@ export default function SupplementAddForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
                     <div className="lg:col-span-2 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="md:col-span-1">
+                            {/* {<div className="md:col-span-1">
                                 <label className="block text-sm font-medium mb-1">
                                     Code <span className="text-red-600">*</span>
                                 </label>
@@ -125,7 +128,7 @@ export default function SupplementAddForm() {
                                         className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
                                     />
                                 </div>
-                            </div>
+                            </div>} */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium mb-1">
                                     Name <span className="text-red-600">*</span>
@@ -183,9 +186,10 @@ export default function SupplementAddForm() {
                                     Price <span className="text-red-600">*</span>
                                 </label>
                                 <div className="relative">
-                                    <p className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-size-400 text-[13px]">LKR</p>
+                                    <Banknote size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                                     <input
                                         type="number"
+                                        min="0"
                                         value={Sup_price}
                                         onChange={(e) => setPrice(e.target.value)}
                                         placeholder="50.00"
@@ -204,6 +208,7 @@ export default function SupplementAddForm() {
                                     />
                                     <input
                                         type="number"
+                                        min="0"
                                         value={Sup_quantity}
                                         onChange={(e) => setQuantity(e.target.value)}
                                         placeholder="100"
@@ -275,7 +280,6 @@ export default function SupplementAddForm() {
                                 <div className="text-sm font-medium">Tips</div>
                             </div>
                             <ul className="list-disc pl-5 text-xs text-neutral-600 space-y-1">
-                                <li><strong>Sup_code</strong> must be unique (e.g., SUP-0001).</li>
                                 <li>Status can be changed later from the table.</li>
                                 <li>Supplier is optional.</li>
                                 <li>Image URL is optional, can be added later.</li>

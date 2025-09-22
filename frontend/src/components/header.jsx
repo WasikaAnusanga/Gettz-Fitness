@@ -12,7 +12,7 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const userData = JSON.parse(localStorage.getItem("user"));
   const readUser = () => {
     try {
       const token = localStorage.getItem("token");
@@ -87,19 +87,19 @@ export default function Navbar() {
 
   // Centralized links (keeps desktop + mobile in sync)
   const navLinks = useMemo(
-    () => [
-      { to: "/", label: "Home" },
-      { to: "/aboutUs", label: "About" },
-      { to: "/membership", label: "Membership" },
-      { to: "/trainers", label: "Trainers" },
-      { to: "/videos", label: "Videos" },
-      { to: "/contactUs", label: "Contact" },
-      { to: "/mealPlan", label: "Meals" },
-      { to: "/store", label: "Store" },
-      { to: "/challenges", label: "Competitions" },
-    ],
-    []
-  );
+  () => [
+    { to: "/", label: "Home" },
+    { to: "/aboutUs", label: "About" },
+    { to: "/membership", label: "Membership" },
+    //{ to: "/trainers", label: "Trainers" },
+    { to: "/videos", label: "Videos" },
+    { to: "/contactUs", label: "Contact" },
+    { to: "/mealPlan", label: "Meals" },
+    { to: "/store", label: "Store" },
+    ...(userData ? [{ to: "/challenges", label: "Competitions" }] : [])
+  ],
+  [userData]
+);
 
   // Consistent link style for active/inactive
   const linkClasses = ({ isActive }) =>

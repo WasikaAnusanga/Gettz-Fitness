@@ -152,7 +152,7 @@ export default function MaintenanceLogAddPage() {
                         {/* Equipment Picker (helps fill Eq_ID) */}
                         <div>
                             <label className="block text-sm font-medium mb-1">
-                                Pick Equipment (optional helper)
+                                Pick Equipment
                             </label>
                             <div className="relative">
                                 <Database
@@ -175,9 +175,6 @@ export default function MaintenanceLogAddPage() {
                                     ))}
                                 </select>
                             </div>
-                            <p className="mt-1 text-[11px] text-neutral-500">
-                                This will fill <strong>Eq_ID</strong> (and name if blank). You can also paste Eq_ID manually below.
-                            </p>
                         </div>
 
                         {/* Eq_ID (required) */}

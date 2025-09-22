@@ -1,37 +1,41 @@
-import mongoose from 'mongoose';
-const schema = mongoose.Schema;
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
 
 //purchase schema
-const purchaseSchema = new schema({
-    P_code:{
-        type:String,
-        unique:true,
-        required:true,
-        trim:true
+const purchaseSchema = new Schema({
+    P_code: {
+        type: Number,
+        unique: true,
+        required: true,
+        trim: true
     },
-    P_date:{
+    P_date: {
         type: Date,
         required: true
     },
-    P_cost:{
+    P_cost: {
         type: Number,
+        required: true,
+        min:0
+    },
+    P_quantiy: {
+        type: Number,
+        required: true,
+        min:1
+    },
+    P_item: {
+        type: String,
+        enum: ['Equipment', 'Supplement', 'Other'],
+        default: 'Other',
         required: true
     },
-    P_quantiy:{
-        type: Number,
-        required: true
-    },
-    P_item:{
+    P_note: {
         type: String,
-        enum:['Equipment','Supplement','Other'],
-        default:'Other',
-        required:true
-    },
-    P_note:{ 
-        type: String,
-        default:'No notes'
+        default: 'No notes'
     },
 });
 
-const purchase= mongoose.model("purchase",purchaseSchema);
+
+const purchase = mongoose.model("purchase", purchaseSchema);
 export default purchase;

@@ -3,6 +3,7 @@ import Subscription from "../model/Subscription_Model.js";
 import Payment from "../model/Payment_Model.js";
 import MembershipPlan from "../model/Membership_Plans_Model.js";
 import { sendPaymentReciept } from "../utils/mailer.js";
+import User from "../model/user.js";
 const stripe = new Stripe(process.env.SECRET_KEY);
 
 export async function handleWebhook(req, res) {
@@ -37,24 +38,38 @@ export async function handleWebhook(req, res) {
         // 2) Create/activate subscription in YOUR system (now safe)
         try {
           const userId = session.metadata?.userId; // optional if you want to pass one
+          console.log(userId);
           const planId = session.metadata?.planId;
           const email = session.customer_details?.email;
           const sub = await Subscription.findOneAndUpdate(
             { user_id: userId },
             { status: "active" }
           );
+
+          const user = await User.findById(userId);
+          user.role = "member";
+          await user.save();
           const top = await Subscription.aggregate([
             { $match: { status: "active" } },
             { $group: { _id: "$plan_id", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
             { $limit: 1 },
           ]);
-           sendPaymentReciept(email,session.id)
-          const plan=await MembershipPlan.findById(top)
-          plan.popular=true;
-          
-          await plan.save()
 
+          if (top.length > 0) {
+            const topPlanId = top[0]._id;
+
+            // 1) Set all plans' popular = false
+            await MembershipPlan.updateMany({}, { $set: { popular: false } });
+
+            // 2) Mark only top plan as popular = true
+            await MembershipPlan.findByIdAndUpdate(topPlanId, {
+              $set: { popular: true },
+            });
+
+            // (optional) Send receipt here
+            await sendPaymentReciept(email, session.id);
+          }
         } catch (subErr) {
           console.error(
             "Sub creation failed:",

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import Swal from "sweetalert2";
+
 import {
-  LayoutDashboard,Dumbbell, Pill, ClipboardList, ShoppingCart, Menu
+  LayoutDashboard, Dumbbell, Pill, ClipboardList, ShoppingCart, Menu
 } from "lucide-react";
 import GymLogo from "../assets/GymLogo.jpg";
-import { BiPurchaseTag  } from "react-icons/bi";
+import { BiPurchaseTag } from "react-icons/bi";
 
 const linkBase =
   "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all";
@@ -13,10 +17,9 @@ const activeStyle =
 const idleStyle =
   "text-gray-700 hover:text-red-600 hover:bg-gray-100";
 
-  //change the path directions accordingly
-  //dummy paths are here for now
+
 const navItems = [
-  { to: "/eq_manager", label: "Dashboard", icon: LayoutDashboard}, 
+  { to: "/eq_manager", label: "Dashboard", icon: LayoutDashboard },
   { to: "/eq_manager/equipment", label: "Equipment", icon: Dumbbell },
   { to: "/eq_manager/supplements", label: "Supplements", icon: Pill },
   { to: "/eq_manager/maintenance", label: "Maintenance Logs", icon: ClipboardList },
@@ -26,12 +29,28 @@ const navItems = [
 
 export default function EquipmentManagerSidebar() {
   const [open, setOpen] = useState(true);
-
+  const navigate = useNavigate();
+  function logout() {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    });
+  }
   return (
     <aside
-      className={`${
-        open ? "w-64" : "w-16"
-      } sticky top-0 h-screen shrink-0 border-r bg-white transition-all`}
+      className={`${open ? "w-64" : "w-16"
+        } sticky top-0 h-screen shrink-0 border-r bg-white transition-all`}
     >
       {/* Top Logo + Toggle */}
       <div className="flex items-center justify-between px-3 py-3">
@@ -67,6 +86,19 @@ export default function EquipmentManagerSidebar() {
           </NavLink>
         ))}
       </nav>
+      <div className="fixed bottom-4 left-4 z-50">
+        <button
+          onClick={logout}
+          title={!open ? "Logout" : undefined}
+          className="flex items-center justify-center bg-gradient-to-r from-red-700 to-red-500 
+               text-white font-semibold w-12 h-12 md:w-14 md:h-14 
+               rounded-xl shadow-lg border border-gray-200 
+               hover:shadow-2xl transition-all duration-300"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
+        {open && <span className="ml-2 text-sm font-medium">Logout</span>}
+      </div>
     </aside>
   );
 }

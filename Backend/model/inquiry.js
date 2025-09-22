@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
+import generateID from "../utils/idGenerator.js";
 
 const inquirySchema = new mongoose.Schema({
     inquiry_id:{
         type: Number,
         unique: true,
-        required: true,
+        default : function () {
+        return "Inq" + generateID()
+    }
     },
     inquiry_type:{
         type: String,

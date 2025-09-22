@@ -2,80 +2,84 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Tag, Calendar, DollarSign, Hash, ClipboardList } from "lucide-react";
+import { Calendar, ClipboardList, Layers, Banknote } from "lucide-react";
 
 //date into ISO 
 function toISO(dateStr) {
-    try {
-        return new Date(dateStr).toISOString();
-    } catch {
-        return dateStr;
-    }
+  try {
+    return new Date(dateStr).toISOString();
+  } catch {
+    return dateStr;
+  }
 }
 
 function todayInputDate() {
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 export default function PurchaseAddPage() {
-    const ITEM_TYPES = ["Equipment", "Supplement", "Other"];
+  const ITEM_TYPES = ["Equipment", "Supplement", "Other"];
 
-    const [P_code, setCode] = useState("");
-    const [P_date, setDate] = useState(todayInputDate());
-    const [P_cost, setCost] = useState("");
-    const [P_quantiy, setQty] = useState("");
-    const [P_item, setItem] = useState("Other");
-    const [P_note, setNote] = useState("");
+  //const [P_code, setCode] = useState("");
+  const [P_date, setDate] = useState(todayInputDate());
+  const [P_cost, setCost] = useState("");
+  const [P_quantiy, setQty] = useState("");
+  const [P_item, setItem] = useState("Other");
+  const [P_note, setNote] = useState("");
 
-    const [saving, setSaving] = useState(false);
-    const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
-    async function handleSave() {
-        if (!P_code.trim()) return toast.error("Code is required");
-        if (!P_date) return toast.error("Date is required");
-        if (P_cost === "" || isNaN(Number(P_cost))) return toast.error("Cost is required");
-        if (P_quantiy === "" || isNaN(Number(P_quantiy))) return toast.error("Quantity is required");
-
-        try {
-            setSaving(true);
-            const payload = {
-                P_code: P_code.trim(),
-                P_date: toISO(P_date),
-                P_cost: Number(P_cost),
-                P_quantiy: Number(P_quantiy),
-                P_item,
-                P_note: P_note.trim() || undefined,
-            };
-
-            const token = localStorage.getItem("token") || localStorage.getItem("jwt");
-            const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/purchase`,
-                payload,
-                { headers }
-            );
-
-            toast.success("Purchase added");
-            navigate("/eq_manager/purchases");
-        } catch (err) {
-            console.error(err);
-            toast.error(err?.response?.data?.message || "Failed to add purchase");
-        } finally {
-            setSaving(false);
-        }
+  async function handleSave() {
+    //if (!P_code.trim()) return toast.error("Code is required");
+    if (!P_date) return toast.error("Date is required");
+    if (P_cost === "" || isNaN(Number(P_cost)) || Number(P_cost) < 0) {
+      return toast.error("Valid non-negative price is required");
     }
-    
+    if (P_quantiy === "" || isNaN(Number(P_quantiy)) || Number(P_quantiy) < 0) {
+      return toast.error("Valid non-negative quantity is required");
+    }
 
-    //form start
-    return (
+    try {
+      setSaving(true);
+      const payload = {
+        //P_code: P_code.trim(),
+        P_date: toISO(P_date),
+        P_cost: Number(P_cost),
+        P_quantiy: Number(P_quantiy),
+        P_item,
+        P_note: P_note.trim() || undefined,
+      };
+
+      const token = localStorage.getItem("token") || localStorage.getItem("jwt");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/purchase`,
+        payload,
+        { headers }
+      );
+
+      toast.success("Purchase added");
+      navigate("/eq_manager/purchases");
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to add purchase");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
+  //form start
+  return (
     <div className="w-full min-h-screen bg-white text-black flex items-center justify-center p-6">
       <div className="w-full max-w-4xl rounded-2xl border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
-        {/* header */}
+        {/* Header */}
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-4">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e30613] text-white">
@@ -91,24 +95,10 @@ export default function PurchaseAddPage() {
           </Link>
         </div>
 
-        {/* form */}
+        {/* Form */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Code <span className="text-red-600">*</span>
-              </label>
-              <div className="relative">
-                <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-                <input
-                  value={P_code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="PU-0001"
-                  className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-                />
-              </div>
-            </div>
-
+            {/* Date */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 Date <span className="text-red-600">*</span>
@@ -124,6 +114,7 @@ export default function PurchaseAddPage() {
               </div>
             </div>
 
+            {/* Item */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 Item <span className="text-red-600">*</span>
@@ -143,16 +134,17 @@ export default function PurchaseAddPage() {
           </div>
 
           <div className="space-y-4">
+            {/* Cost */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Cost <span className="text-red-600">*</span>
+                Cost LKR<span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <p className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 text-[13px]" >LKR</p>
+                <Banknote size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                 <input
                   type="number"
-                  min=" 0"
-                  step=" 0.01"
+                  min="0"
+                  step="0.01"
                   value={P_cost}
                   onChange={(e) => setCost(e.target.value)}
                   placeholder="0.00"
@@ -161,20 +153,25 @@ export default function PurchaseAddPage() {
               </div>
             </div>
 
+            {/* Quantity */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 Quantity <span className="text-red-600">*</span>
               </label>
-              <input
-                type="number"
-                min="0"
-                value={P_quantiy}
-                onChange={(e) => setQty(e.target.value)}
-                placeholder="0"
-                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
-              />
+              <div className="relative">
+                <Layers size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                <input
+                  type="number"
+                  min="1"
+                  value={P_quantiy}
+                  onChange={(e) => setQty(e.target.value)}
+                  placeholder="1"
+                  className="w-full rounded-xl border border-black/10 pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e30613]/30"
+                />
+              </div>
             </div>
 
+            {/* Note */}
             <div>
               <label className="block text-sm font-medium mb-1">Note</label>
               <input

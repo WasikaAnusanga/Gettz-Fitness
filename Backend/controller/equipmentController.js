@@ -26,7 +26,7 @@ export const addEquipment= async (req ,res)=>{
 
     if(req.user.role=="Equipment Manager"){
         const {
-            Eq_code,
+            
             Eq_name,
             Eq_type,
             Eq_status,
@@ -34,8 +34,20 @@ export const addEquipment= async (req ,res)=>{
             Eq_supplier,
             IM_ID
         }=req.body;
+        
+        const output = await Equipment.find().sort({ _id: -1 }).limit(1);
 
+        let Eq_code;
+        if (output.length === 0) {
+            Eq_code = 1;
+        } else {
+            const lastPlanId = Number(output[0].Eq_code); 
+            Eq_code = lastPlanId + 1;
+        }
+
+        
         let equipment;
+        console.log(Eq_code);
         
         try{
             equipment= new Equipment({
