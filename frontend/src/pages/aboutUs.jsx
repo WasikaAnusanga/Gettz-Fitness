@@ -1,3 +1,5 @@
+import gym from "../assets/gym.jpg"
+
 export default function AboutUs() {
   return (
     <div className="bg-white text-[#111] min-h-screen pb-10">
@@ -26,7 +28,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ===== MISSION / VISION (two colored cards) ===== */}
+      {/* ===== MISSION / VISION ===== */}
       <section
         id="about"
         className="max-w-7xl mx-auto px-5 grid md:grid-cols-2 gap-6 mt-[-60px]"
@@ -42,7 +44,7 @@ export default function AboutUs() {
           </p>
         </div>
 
-        {/* Keep this card RED (#FF0000) */}
+        {/* Keep this card RED */}
         <div className="rounded-2xl p-6 md:p-8 bg-white border border-red-600/20 shadow-sm">
           <h3 className="text-xl font-bold">Vision</h3>
           <p className="text-gray-700 mt-3">
@@ -55,93 +57,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ===== COACH CARDS ===== */}
-      <section id="coaches" className="max-w-7xl mx-auto px-5 mt-12">
-        <h2 className="text-2xl md:text-3xl font-extrabold">
-          Let’s get to know our <span className="text-[#FF0000]">coaches</span>
-        </h2>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {[
-            {
-              name: "Ava Carter",
-              role: "Strength Coach",
-              img: "https://images.unsplash.com/photo-1548690312-e3b507d8c110?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-              name: "Noah Bennett",
-              role: "Performance Trainer",
-              img: "https://images.unsplash.com/photo-1554298063-9c5d4f09b6a1?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-              name: "Maya Lopez",
-              role: "Mobility & Yoga",
-              img: "https://images.unsplash.com/photo-1552196563-55cd4e45efb3?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-              name: "Liam Chen",
-              role: "Nutrition Specialist",
-              img: "https://images.unsplash.com/photo-1553531384-411a0c2b3c50?q=80&w=1200&auto=format&fit=crop",
-            },
-          ].map((c, i) => (
-            <div
-              key={i}
-              className="rounded-2xl overflow-hidden bg-white border border-red-600/20 shadow-sm hover:border-[#FF0000]/60 transition"
-            >
-              <div className="h-48 overflow-hidden">
-                <img
-                  src={c.img}
-                  alt={c.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <h4 className="font-bold">{c.name}</h4>
-                <p className="text-gray-600 text-sm">{c.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* secondary row to mirror template */}
-        <div className="grid sm:grid-cols-3 gap-6 mt-6">
-          {[
-            {
-              name: "Ethan Park",
-              role: "HIIT Coach",
-              img: "https://images.unsplash.com/photo-1596357395104-5b5d5d0b8d5f?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-              name: "Sofia Martins",
-              role: "Endurance",
-              img: "https://images.unsplash.com/photo-1554344728-77cf90d9ed26?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-              name: "Jake Turner",
-              role: "Powerlifting",
-              img: "https://images.unsplash.com/photo-1507398941214-572c25f4b1dc?q=80&w=1200&auto=format&fit=crop",
-            },
-          ].map((c, i) => (
-            <div
-              key={`row2-${i}`}
-              className="rounded-2xl overflow-hidden bg-white border border-red-600/20 shadow-sm hover:border-[#FF0000]/60 transition"
-            >
-              <div className="h-44 overflow-hidden">
-                <img
-                  src={c.img}
-                  alt={c.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <h4 className="font-bold">{c.name}</h4>
-                <p className="text-gray-600 text-sm">{c.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ===== SUCCESS STORIES (image + stats) ===== */}
       <section
         id="results"
@@ -149,7 +64,7 @@ export default function AboutUs() {
       >
         <div className="rounded-2xl overflow-hidden border border-red-600/20 shadow-xl">
           <img
-            src="https://images.unsplash.com/photo-1552196567-5c01f3f2c2b6?q=80&w=1600&auto=format&fit=crop"
+            src={gym}
             alt="Happy members celebrating results"
             className="w-full h-[340px] object-cover"
           />

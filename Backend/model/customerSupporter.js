@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
-import Counter from './counter.js';    
+import generateID from "../utils/idGenerator.js";    
 
 const CustomerSupporterSchema = new mongoose.Schema({
     supporterId: {
         type: String,
-        unique: true
+        unique: true,
+        default : function () {
+              return "Cus" + generateID()
+            }
     },
     name: {
         type: String,
@@ -66,17 +69,6 @@ const CustomerSupporterSchema = new mongoose.Schema({
     }
 });
 
-CustomerSupporterSchema.pre("save",async function(next){
-    if(this.isNew){
-        const counter = await Counter.findByIdAndUpdate(
-            { _id: 'customerSupporterId' },
-            { $inc: { seq: 1 } },
-            { new: true, upsert: true }
-        );
-        this.supporterId = `Supporter ${counter.seq}`;
-    }
-    next();
-})
 const CustomerSupporter = mongoose.model('CustomerSupporter',CustomerSupporterSchema)
 export default CustomerSupporter;
 

@@ -92,7 +92,6 @@ export default function MealPlan() {
       "request_date",
       "height",
       "weight",
-
       "description",
       "mealType",
     ];
@@ -129,13 +128,6 @@ export default function MealPlan() {
     const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
 
-    // Role check
-    const role = user?.role;
-    if (role !== "user") {
-      toast.error("Only users can request meal plans.");
-      return;
-    }
-
     // Validate all
     const newErrors = validateAll();
     if (Object.values(newErrors).some(Boolean)) {
@@ -144,11 +136,11 @@ export default function MealPlan() {
       return;
     }
 
-    // Prefer user._id as user_id (if you saved Mongo _id in localStorage)
+    //check if the user is logged in to the system
     const derivedUserId = user?._id || form.user_id || "";
 
     if (!derivedUserId) {
-      toast.error("Missing user id. Please sign in again.");
+      toast.error("Please log in to continue.");
       return;
     }
 
@@ -176,7 +168,6 @@ export default function MealPlan() {
         text: "We will inform you once your meal plan is ready.",
         icon: "success",
       });
-      toast.success("Meal Request Created!");
       resetForm();
     } catch (err) {
       const msg =

@@ -2,8 +2,8 @@ import meal from "../model/mealplan.js";
 import MealPlan from "../model/mealplan.js";
 
 export const getMealPlan = (req, res) => {
-  req.user = { role: "Trainer" };
-  if (req.user.role == "Trainer") {
+  req.user = { role: "trainer" };
+  if (req.user.role == "trainer") {
     MealPlan.find()
       .then((response) => {
         res.json({ response });
@@ -35,12 +35,9 @@ export const getOneMealPlan = (req, res) => {
   }
 };
 
-
-
-
 export const addMealPlan = (req, res) => {
-  req.user = { role: "Trainer" };
-  if (req.user.role == "Trainer") {
+  req.user = { role: "trainer" };
+  if (req.user.role == "trainer") {
     const mealplan = new MealPlan({
       user_name: req.body.user_name,
       meal_name: req.body.meal_name,
@@ -66,8 +63,8 @@ export const addMealPlan = (req, res) => {
 };
 
 export const updateMealPlan = (req, res) => {
-  req.user = { role: "Trainer" };
-  if (req.user.role == "Trainer") {
+  req.user = { role: "trainer" };
+  if (req.user.role == "trainer") {
     const {
       user_name,
       meal_name,
@@ -106,8 +103,8 @@ export const updateMealPlan = (req, res) => {
 };
 
 export const deleteMeal = (req, res) => {
-  req.user = { role: "Trainer" };
-  if (req.user.role == "Trainer") {
+  req.user = { role: "trainer" };
+  if (req.user.role == "trainer") {
     const mealPlan_id = Number(req.params.id);
     MealPlan.findOneAndDelete({ mealPlan_id: mealPlan_id })
       .then((response) => {
